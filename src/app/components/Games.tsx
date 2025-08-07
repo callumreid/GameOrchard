@@ -73,6 +73,7 @@ export default function Games() {
 
   // Control video playback based on ready state and game state
   useEffect(() => {
+    if (!isStarted) return;
     if (videoRef.current) {
       const isReady = sessionStatus === "CONNECTED" && isWebRTCReady;
 
@@ -82,10 +83,11 @@ export default function Games() {
         videoRef.current.play();
       }
     }
-  }, [sessionStatus, isWebRTCReady, gameState]);
+  }, [sessionStatus, isWebRTCReady, gameState, isStarted]);
 
   // Control background music based on game state
   useEffect(() => {
+    if (!isStarted) return;
     if (audioRef.current) {
       // Play music during landing, spinning, orchard, and transition states
       // Pause during playing state
@@ -98,22 +100,9 @@ export default function Games() {
         });
       }
     }
-  }, [gameState, hasUserInteracted]);
+  }, [gameState, hasUserInteracted, isStarted]);
 
-  useEffect(() => {
-    const handler = () => {
-      setHasUserInteracted(true);
-      if (audioRef.current) {
-        audioRef.current.play().catch(() => {});
-      }
-    };
-    window.addEventListener("pointerdown", handler, { once: true });
-    window.addEventListener("keydown", handler, { once: true });
-    return () => {
-      window.removeEventListener("pointerdown", handler);
-      window.removeEventListener("keydown", handler);
-    };
-  }, []);
+  // Interaction will be captured via the Start button; no global listeners
 
   // Auto-start sequence
   useEffect(() => {
