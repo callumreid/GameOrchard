@@ -24,6 +24,7 @@ export default function Games() {
   const [GameComponent, setGameComponent] =
     useState<React.ComponentType<any> | null>(null);
   const [hasUserInteracted, setHasUserInteracted] = useState(false);
+  const [isStarted, setIsStarted] = useState(false);
 
   // Multi-game sequence state
   const [currentGameIndex, setCurrentGameIndex] = useState(0);
@@ -119,7 +120,8 @@ export default function Games() {
     if (
       gameState === "landing" &&
       sessionStatus === "CONNECTED" &&
-      isWebRTCReady
+      isWebRTCReady &&
+      isStarted
     ) {
       // After 1 second, start flashing the title
       const flashTimer = setTimeout(() => {
@@ -145,7 +147,7 @@ export default function Games() {
         clearTimeout(startGameTimer);
       };
     }
-  }, [gameState, sessionStatus, isWebRTCReady, selectedGame, GameComponent]);
+  }, [gameState, sessionStatus, isWebRTCReady, selectedGame, GameComponent, isStarted]);
 
   // Initialize game sequence
   useEffect(() => {
@@ -334,6 +336,13 @@ export default function Games() {
     };
 
     const isReady = sessionStatus === "CONNECTED" && isWebRTCReady;
+    const handleStart = () => {
+      setHasUserInteracted(true);
+      setIsStarted(true);
+      if (audioRef.current) {
+        audioRef.current.play().catch(() => {});
+      }
+    };
 
     return (
       <div className="relative flex flex-col items-center justify-center h-full text-white">
@@ -475,6 +484,19 @@ export default function Games() {
                   getConnectionStatus()}
               </span>
             </div>
+            {!isStarted && (
+              <button
+                onClick={handleStart}
+                disabled={!isReady}
+                className={`px-8 py-3 rounded-lg font-bold text-xl transition-colors ${
+                  isReady
+                    ? "bg-green-500 hover:bg-green-600 text-black"
+                    : "bg-gray-600 text-gray-300 cursor-not-allowed"
+                }`}
+              >
+                Start
+              </button>
+            )}
           </div>
         </div>
       </div>
