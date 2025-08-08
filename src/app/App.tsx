@@ -2,7 +2,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { v4 as uuidv4 } from "uuid";
-import { Capacitor, registerPlugin } from "@capacitor/core";
 
 import Image from "next/image";
 
@@ -36,11 +35,6 @@ const sdkScenarioMap: Record<string, RealtimeAgent[]> = {
 
 import useAudioDownload from "./hooks/useAudioDownload";
 import { useHandleSessionHistory } from "./hooks/useHandleSessionHistory";
-
-// Fire TV mic key plugin
-const MicKey = Capacitor.isNativePlatform()
-  ? registerPlugin<any>("MicKey")
-  : undefined;
 
 function App() {
   const searchParams = useSearchParams()!;
@@ -479,49 +473,7 @@ function App() {
     }
   }, [isAudioPlaybackEnabled]);
 
-  // Handle native Fire TV mic key events
-  useEffect(() => {
-    if (!MicKey) return; // Only run on native platforms
-
-    const handleNativeMicKey = (event: { type: string }) => {
-      console.log(
-        `[NativeMicKey] Event: ${event.type}, mKeyPressed: ${mKeyPressedRef.current}, isPTTUserSpeaking: ${isPTTUserSpeaking}`
-      );
-
-      if (event.type === "down") {
-        // Prevent multiple calls when key is held down
-        if (mKeyPressedRef.current) {
-          console.log("[NativeMicKey] Key already pressed, ignoring repeat");
-          return;
-        }
-
-        mKeyPressedRef.current = true;
-
-        if (isPTTActive) {
-          // In PTT mode, trigger talk button
-          handleTalkButtonDown();
-        }
-      } else if (event.type === "up") {
-        mKeyPressedRef.current = false;
-
-        if (isPTTActive) {
-          // In PTT mode, release talk button
-          handleTalkButtonUp();
-        }
-      }
-    };
-
-    const listener = MicKey.addListener("micKey", handleNativeMicKey);
-
-    return () => {
-      listener?.remove();
-    };
-  }, [
-    isPTTActive,
-    isPTTUserSpeaking,
-    handleTalkButtonDown,
-    handleTalkButtonUp,
-  ]);
+  // Web-only: no native mic key events
 
   // Ensure mute state is propagated to transport right after we connect or
   // whenever the SDK client reference becomes available.
