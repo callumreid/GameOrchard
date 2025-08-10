@@ -1,21 +1,7 @@
 import { useCallback, useRef } from "react";
-import { Capacitor, registerPlugin } from "@capacitor/core";
 
-interface AudioInputPlugin {
-  start(options: {
-    sampleRate?: number;
-  }): Promise<{ success: boolean; sampleRate: number; bufferSize: number }>;
-  stop(): Promise<void>;
-  addListener(
-    eventName: string,
-    listenerFunc: (data: any) => void
-  ): Promise<any>;
-  removeAllListeners(): Promise<void>;
-}
-
-const AudioInput = Capacitor.isNativePlatform()
-  ? registerPlugin<AudioInputPlugin>("AudioInput")
-  : undefined;
+// Web-only: no native audio input; expose a no-op interface
+const AudioInput = undefined;
 
 export function useNativeAudioInput() {
   const isRecording = useRef(false);
@@ -29,12 +15,8 @@ export function useNativeAudioInput() {
       sampleRate: number = 44000,
       onAudioData: (audioData: ArrayBuffer) => void
     ): Promise<boolean> => {
-      if (!AudioInput) {
-        console.error(
-          "[NativeAudioInput] Plugin not available on this platform"
-        );
-        return false;
-      }
+      // Web-only: no native audio recording available
+      return false;
 
       if (isRecording.current) {
         console.warn("[NativeAudioInput] Already recording");
@@ -105,7 +87,7 @@ export function useNativeAudioInput() {
   );
 
   const stopRecording = useCallback(async (): Promise<void> => {
-    if (!AudioInput || !isRecording.current) {
+    if (!isRecording.current) {
       return;
     }
 
@@ -134,6 +116,6 @@ export function useNativeAudioInput() {
     startRecording,
     stopRecording,
     isRecordingActive,
-    isAvailable: !!AudioInput,
+    isAvailable: false,
   };
 }

@@ -1,20 +1,14 @@
 "use client";
 import React, { useState, useEffect, useRef, useCallback } from "react";
-import { Capacitor, registerPlugin } from "@capacitor/core";
 import {
   allPlannedGames,
   getGameById,
   isGameImplemented,
   getImplementedGames,
-} from "../../../games-orchard";
-import { GameMetadata } from "../../../games-orchard/types";
+} from "@/games-orchard";
+import { GameMetadata } from "@/games-orchard/types";
 import { useGameSession } from "../providers/GameSessionProvider";
 import PTTAnimation from "./PTTAnimation";
-
-// Fire TV mic key plugin
-const MicKey = Capacitor.isNativePlatform()
-  ? registerPlugin<any>("MicKey")
-  : undefined;
 
 export default function Games() {
   const [gameState, setGameState] = useState<
@@ -136,7 +130,14 @@ export default function Games() {
         clearTimeout(startGameTimer);
       };
     }
-  }, [gameState, sessionStatus, isWebRTCReady, selectedGame, GameComponent, isStarted]);
+  }, [
+    gameState,
+    sessionStatus,
+    isWebRTCReady,
+    selectedGame,
+    GameComponent,
+    isStarted,
+  ]);
 
   // Initialize game sequence
   useEffect(() => {
@@ -198,37 +199,6 @@ export default function Games() {
     await pushToTalkStopNative();
     console.log("[PTT] Stopping push-to-talk");
   }, [sessionStatus, isPTTUserSpeaking, pushToTalkStopNative]);
-
-  // Handle native Fire TV mic key events
-  useEffect(() => {
-    if (!MicKey) return; // Only run on native platforms
-
-    const handleNativeMicKey = (event: { type: string }) => {
-      console.log(
-        `[NativeMicKey] Event: ${event.type}, mKeyPressed: ${mKeyPressedRef.current}, isPTTUserSpeaking: ${isPTTUserSpeaking}`
-      );
-
-      if (event.type === "down") {
-        // Prevent multiple calls when key is held down
-        if (mKeyPressedRef.current) {
-          console.log("[NativeMicKey] Key already pressed, ignoring repeat");
-          return;
-        }
-
-        mKeyPressedRef.current = true;
-        handleTalkButtonDown();
-      } else if (event.type === "up") {
-        mKeyPressedRef.current = false;
-        handleTalkButtonUp();
-      }
-    };
-
-    const listener = MicKey.addListener("micKey", handleNativeMicKey);
-
-    return () => {
-      listener?.remove();
-    };
-  }, [isPTTUserSpeaking, handleTalkButtonDown, handleTalkButtonUp]);
 
   const _handleStartGame = () => {
     if (selectedGame && GameComponent) {

@@ -2,7 +2,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { v4 as uuidv4 } from "uuid";
-import { Capacitor, registerPlugin } from "@capacitor/core";
 
 import Image from "next/image";
 
@@ -38,11 +37,6 @@ const sdkScenarioMap: Record<string, RealtimeAgent[]> = {
 
 import useAudioDownload from "../hooks/useAudioDownload";
 import { useHandleSessionHistory } from "../hooks/useHandleSessionHistory";
-
-// Fire TV mic key plugin
-const MicKey = Capacitor.isNativePlatform()
-  ? registerPlugin<any>("MicKey")
-  : undefined;
 
 function DebugApp() {
   const searchParams = useSearchParams()!;
@@ -417,45 +411,7 @@ function DebugApp() {
     }
   }, [isAudioPlaybackEnabled]);
 
-  useEffect(() => {
-    if (!MicKey) return;
-
-    const handleNativeMicKey = (event: { type: string }) => {
-      console.log(
-        `[NativeMicKey] Event: ${event.type}, mKeyPressed: ${mKeyPressedRef.current}, isPTTUserSpeaking: ${isPTTUserSpeaking}`
-      );
-
-      if (event.type === "down") {
-        if (mKeyPressedRef.current) {
-          console.log("[NativeMicKey] Key already pressed, ignoring repeat");
-          return;
-        }
-
-        mKeyPressedRef.current = true;
-
-        if (isPTTActive) {
-          handleTalkButtonDown();
-        }
-      } else if (event.type === "up") {
-        mKeyPressedRef.current = false;
-
-        if (isPTTActive) {
-          handleTalkButtonUp();
-        }
-      }
-    };
-
-    const listener = MicKey.addListener("micKey", handleNativeMicKey);
-
-    return () => {
-      listener?.remove();
-    };
-  }, [
-    isPTTActive,
-    isPTTUserSpeaking,
-    handleTalkButtonDown,
-    handleTalkButtonUp,
-  ]);
+  // Web-only: no native mic key events
 
   useEffect(() => {
     if (sessionStatus === "CONNECTED") {
