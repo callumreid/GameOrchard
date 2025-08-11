@@ -73,6 +73,7 @@ export function useGameAgent(options: UseGameAgentOptions = {}) {
 
   // Listen for game tool calls in the transcript items
   useEffect(() => {
+    console.log("📜 [DEBUG] useEffect transcript monitor running, items count:", transcriptItems?.length, "gameType:", gameType);
     if (!transcriptItems || transcriptItems.length === 0) return;
 
     // Look for recent breadcrumb items with tool call results
@@ -84,7 +85,9 @@ export function useGameAgent(options: UseGameAgentOptions = {}) {
       .slice(-10); // Check last 10 breadcrumbs
 
     for (const item of recentBreadcrumbs) {
+      console.log("🔍 [DEBUG] Processing breadcrumb:", item.title, "data:", !!item.data);
       if (item.title?.includes("function call result:")) {
+        console.log("📋 [DEBUG] Found function call result:", item.title);
         // Handle child advice game
         if (
           item.title.includes("start_child_advice_game") &&
@@ -92,14 +95,17 @@ export function useGameAgent(options: UseGameAgentOptions = {}) {
           gameType === "advise-the-child"
         ) {
           try {
+            console.log("🎯 [DEBUG] Found start_child_advice_game for gameType:", gameType);
             const scenario = item.data as GameScenario;
+            console.log("🎯 [DEBUG] Parsed scenario:", scenario);
             setCurrentScenario(scenario);
             setIsGameActive(true);
+            console.log("🎯 [DEBUG] Calling onGameStart callback");
             onGameStart?.(scenario);
             setProcessedItemIds((prev) => new Set(prev).add(item.itemId));
           } catch (e) {
             console.error(
-              "Failed to parse child advice game start scenario:",
+              "❌ [DEBUG] Failed to parse child advice game start scenario:",
               e
             );
           }
@@ -516,15 +522,19 @@ export function useGameAgent(options: UseGameAgentOptions = {}) {
   }, [transcriptItems, onGameStart, onGameFinish, processedItemIds, gameType]);
 
   const startGame = useCallback(() => {
+    console.log("🎮 [DEBUG] startGame called with gameType:", gameType);
+    console.log("🎮 [DEBUG] sendUserText available:", !!sendUserText);
+    console.log("🎮 [DEBUG] isWebRTCReady:", isWebRTCReady);
+    
     if (!sendUserText) {
       console.error(
-        "sendUserText not available - is realtime session connected?"
+        "❌ [DEBUG] sendUserText not available - is realtime session connected?"
       );
       return;
     }
 
     if (!isWebRTCReady) {
-      console.log("WebRTC not ready yet, waiting...");
+      console.log("⏳ [DEBUG] WebRTC not ready yet, waiting...");
       return;
     }
 
@@ -556,7 +566,9 @@ export function useGameAgent(options: UseGameAgentOptions = {}) {
         "Hello! I'm ready to play Sell the Lemon. Please start the game (call the tool start_lemon_sale_game)!",
     };
 
-    sendUserText(gameMessages[gameType]);
+    const message = gameMessages[gameType];
+    console.log("📤 [DEBUG] Sending message to agent:", message);
+    sendUserText(message);
   }, [sendUserText, isWebRTCReady, gameType]);
 
   const sendPlayerText = useCallback(
