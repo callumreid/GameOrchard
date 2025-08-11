@@ -66,7 +66,7 @@ function App() {
   // Ref to identify whether the latest agent switch came from an automatic handoff
   const handoffTriggeredRef = useRef(false);
   // Ref to track if M key is currently being pressed to prevent repeat events
-  const mKeyPressedRef = useRef(false);
+  const _mKeyPressedRef = useRef(false);
 
   const sdkAudioElement = React.useMemo(() => {
     if (typeof window === "undefined") return undefined;

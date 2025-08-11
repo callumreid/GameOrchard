@@ -46,7 +46,7 @@ export default function Games() {
 
   // PTT state
   const [isPTTUserSpeaking, setIsPTTUserSpeaking] = useState<boolean>(false);
-  const mKeyPressedRef = useRef(false);
+  const _mKeyPressedRef = useRef(false);
 
   const {
     sendUserText,
@@ -167,7 +167,7 @@ export default function Games() {
   }, [implementedGames]);
 
   // PTT handlers
-  const handleTalkButtonDown = useCallback(async () => {
+  const _handleTalkButtonDown = useCallback(async () => {
     console.log("[PTT] handleTalkButtonDown");
     console.log("[PTT] sessionStatus", sessionStatus);
     console.log("[PTT] isWebRTCReady", isWebRTCReady);
@@ -191,7 +191,7 @@ export default function Games() {
     pushToTalkStartNative,
   ]);
 
-  const handleTalkButtonUp = useCallback(async () => {
+  const _handleTalkButtonUp = useCallback(async () => {
     console.log("[PTT] handleTalkButtonUp");
     if (sessionStatus !== "CONNECTED" || !isPTTUserSpeaking) return;
 

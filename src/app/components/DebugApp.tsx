@@ -53,7 +53,7 @@ function DebugApp() {
 
   const audioElementRef = useRef<HTMLAudioElement | null>(null);
   const handoffTriggeredRef = useRef(false);
-  const mKeyPressedRef = useRef(false);
+  const _mKeyPressedRef = useRef(false);
 
   const sdkAudioElement = React.useMemo(() => {
     if (typeof window === "undefined") return undefined;
