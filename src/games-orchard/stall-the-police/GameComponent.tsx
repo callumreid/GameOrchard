@@ -29,7 +29,6 @@ function StallThePoliceGame(props: Partial<GameControlProps>) {
     startTimer,
     sendPlayerText: _sendPlayerText,
     gameState,
-    isPTTUserSpeaking: nativeIsPTTUserSpeaking,
   } = props;
   const [hostFinishedSpeaking, setHostFinishedSpeaking] = useState(false);
   const [isPTTUserSpeaking, setIsPTTUserSpeaking] = useState(false);
@@ -179,7 +178,7 @@ function StallThePoliceGame(props: Partial<GameControlProps>) {
           )}
 
           {/* User Speech Bubble */}
-          {(latestUser || isPTTUserSpeaking || nativeIsPTTUserSpeaking) && (
+          {(latestUser || isPTTUserSpeaking) && (
             <div className="mb-2">
               <div className="flex justify-end">
                 <div className="bg-green-100 border-2 border-green-300 rounded-2xl rounded-br-none p-4 max-w-md text-black">
@@ -187,7 +186,7 @@ function StallThePoliceGame(props: Partial<GameControlProps>) {
                     👤 You:
                   </div>
                   <div className="text-green-900 text-lg">
-                    {isPTTUserSpeaking || nativeIsPTTUserSpeaking
+                    {isPTTUserSpeaking
                       ? "🎤 Speaking..."
                       : latestUser.startsWith("Hello! I'm ready to play")
                       ? "Got something to say?"

@@ -29,7 +29,6 @@ function ExplainDeathGame(props: Partial<GameControlProps>) {
     startTimer,
     sendPlayerText: _sendPlayerText,
     gameState,
-    isPTTUserSpeaking: nativeIsPTTUserSpeaking,
   } = props;
   const [hostFinishedSpeaking, setHostFinishedSpeaking] = useState(false);
   const [isPTTUserSpeaking, setIsPTTUserSpeaking] = useState(false);
@@ -200,7 +199,7 @@ function ExplainDeathGame(props: Partial<GameControlProps>) {
                     👨‍👩 You (Parent):
                   </div>
                   <div className="text-gray-900 text-lg">
-                    {isPTTUserSpeaking || nativeIsPTTUserSpeaking
+                    {isPTTUserSpeaking
                       ? "🎤 Explaining death..."
                       : latestUser.startsWith("Hello! I'm ready to play")
                       ? "Press mic to explain death to your daughter"

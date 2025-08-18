@@ -29,7 +29,6 @@ function PwnTheBullyGame(props: Partial<GameControlProps>) {
     startTimer,
     sendPlayerText: _sendPlayerText,
     gameState,
-    isPTTUserSpeaking: nativeIsPTTUserSpeaking,
   } = props;
   const [hostFinishedSpeaking, setHostFinishedSpeaking] = useState(false);
   const [isPTTUserSpeaking, setIsPTTUserSpeaking] = useState(false);
@@ -200,7 +199,7 @@ function PwnTheBullyGame(props: Partial<GameControlProps>) {
                     💪 You:
                   </div>
                   <div className="text-blue-900 text-lg">
-                    {isPTTUserSpeaking || nativeIsPTTUserSpeaking
+                    {isPTTUserSpeaking
                       ? "🎤 Crafting your comeback..."
                       : latestUser.startsWith("Hello! I'm ready to play")
                       ? "Press mic to deliver your comeback"

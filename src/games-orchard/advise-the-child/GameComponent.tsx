@@ -29,7 +29,6 @@ function AdviseTheChildGame(props: Partial<GameControlProps>) {
     startTimer,
     sendPlayerText: _sendPlayerText,
     gameState,
-    isPTTUserSpeaking: nativeIsPTTUserSpeaking,
   } = props;
   const [hostFinishedSpeaking, setHostFinishedSpeaking] = useState(false);
   const [isPTTUserSpeaking, setIsPTTUserSpeaking] = useState(false);
@@ -185,7 +184,7 @@ function AdviseTheChildGame(props: Partial<GameControlProps>) {
                     👤 You:
                   </div>
                   <div className="text-green-900 text-lg">
-                    {isPTTUserSpeaking || nativeIsPTTUserSpeaking
+                    {isPTTUserSpeaking
                       ? "🎤 Giving advice..."
                       : latestUser.startsWith("Hello! I'm ready to play")
                       ? "Press mic to give your advice"

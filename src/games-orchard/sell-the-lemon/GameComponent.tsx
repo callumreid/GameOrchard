@@ -29,7 +29,6 @@ function SellTheLemonGame(props: Partial<GameControlProps>) {
     startTimer,
     sendPlayerText: _sendPlayerText,
     gameState,
-    isPTTUserSpeaking: nativeIsPTTUserSpeaking,
   } = props;
   const [hostFinishedSpeaking, setHostFinishedSpeaking] = useState(false);
   const [isPTTUserSpeaking, setIsPTTUserSpeaking] = useState(false);
@@ -186,7 +185,7 @@ function SellTheLemonGame(props: Partial<GameControlProps>) {
                     🚗 You (Car Dealer):
                   </div>
                   <div className="text-yellow-900 text-lg">
-                    {isPTTUserSpeaking || nativeIsPTTUserSpeaking
+                    {isPTTUserSpeaking
                       ? "🎤 Making your pitch..."
                       : latestUser.startsWith("Hello! I'm ready to play")
                       ? "Press mic to make your sales pitch"

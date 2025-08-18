@@ -29,7 +29,6 @@ function ConvinceTheAliensGame(props: Partial<GameControlProps>) {
     startTimer,
     sendPlayerText: _sendPlayerText,
     gameState,
-    isPTTUserSpeaking: nativeIsPTTUserSpeaking,
   } = props;
   const [hostFinishedSpeaking, setHostFinishedSpeaking] = useState(false);
   const [isPTTUserSpeaking, setIsPTTUserSpeaking] = useState(false);
@@ -185,7 +184,7 @@ function ConvinceTheAliensGame(props: Partial<GameControlProps>) {
                     🌍 Human Ambassador:
                   </div>
                   <div className="text-blue-100 text-lg">
-                    {isPTTUserSpeaking || nativeIsPTTUserSpeaking
+                    {isPTTUserSpeaking
                       ? "🎤 Pleading for humanity..."
                       : latestUser.startsWith("Hello! I'm ready to play")
                       ? "Press mic to plead for humanity"

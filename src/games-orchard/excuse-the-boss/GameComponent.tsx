@@ -29,7 +29,6 @@ function ExcuseTheBossGame(props: Partial<GameControlProps>) {
     startTimer,
     sendPlayerText: _sendPlayerText,
     gameState,
-    isPTTUserSpeaking: nativeIsPTTUserSpeaking,
   } = props;
   const [hostFinishedSpeaking, setHostFinishedSpeaking] = useState(false);
   const [isPTTUserSpeaking, setIsPTTUserSpeaking] = useState(false);
@@ -202,7 +201,7 @@ function ExcuseTheBossGame(props: Partial<GameControlProps>) {
                     🥛 You (Half-dressed):
                   </div>
                   <div className="text-blue-900 text-lg">
-                    {isPTTUserSpeaking || nativeIsPTTUserSpeaking
+                    {isPTTUserSpeaking
                       ? "🎤 Spinning your excuse..."
                       : latestUser.startsWith("Hello! I'm ready to play")
                       ? "Press mic to give your legendary excuse"

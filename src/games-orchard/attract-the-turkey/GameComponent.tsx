@@ -29,7 +29,6 @@ function AttractTheTurkeyGame(props: Partial<GameControlProps>) {
     startTimer,
     sendPlayerText: _sendPlayerText,
     gameState,
-    isPTTUserSpeaking: nativeIsPTTUserSpeaking,
   } = props;
   const [hostFinishedSpeaking, setHostFinishedSpeaking] = useState(false);
   const [isPTTUserSpeaking, setIsPTTUserSpeaking] = useState(false);
@@ -206,7 +205,7 @@ function AttractTheTurkeyGame(props: Partial<GameControlProps>) {
                     🧍 You (Turkey Whisperer):
                   </div>
                   <div className="text-orange-900 text-lg">
-                    {isPTTUserSpeaking || nativeIsPTTUserSpeaking
+                    {isPTTUserSpeaking
                       ? "🎤 Gobbling charismatically..."
                       : latestUser.startsWith("Hello! I'm ready to play")
                       ? "Press mic to gobble at the turkey"

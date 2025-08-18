@@ -29,7 +29,6 @@ function PointTheTaskGame(props: Partial<GameControlProps>) {
     startTimer,
     sendPlayerText: _sendPlayerText,
     gameState,
-    isPTTUserSpeaking: nativeIsPTTUserSpeaking,
   } = props;
   const [hostFinishedSpeaking, setHostFinishedSpeaking] = useState(false);
   const [isPTTUserSpeaking, setIsPTTUserSpeaking] = useState(false);
@@ -192,7 +191,7 @@ function PointTheTaskGame(props: Partial<GameControlProps>) {
                     👨‍💻 You:
                   </div>
                   <div className="text-green-900 text-lg">
-                    {isPTTUserSpeaking || nativeIsPTTUserSpeaking
+                    {isPTTUserSpeaking
                       ? "🎤 Estimating..."
                       : latestUser.startsWith("Hello! I'm ready to play")
                       ? "Press mic to give your point estimate"
