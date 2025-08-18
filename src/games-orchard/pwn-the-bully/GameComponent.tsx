@@ -29,7 +29,6 @@ function PwnTheBullyGame(props: Partial<GameControlProps>) {
     startTimer,
     sendPlayerText: _sendPlayerText,
     gameState,
-    isPTTUserSpeaking: nativeIsPTTUserSpeaking,
   } = props;
   const [hostFinishedSpeaking, setHostFinishedSpeaking] = useState(false);
   const [isPTTUserSpeaking, setIsPTTUserSpeaking] = useState(false);
@@ -40,8 +39,8 @@ function PwnTheBullyGame(props: Partial<GameControlProps>) {
     sessionStatus,
     isWebRTCReady,
     interrupt,
-    pushToTalkStartNative,
-    pushToTalkStopNative,
+    pushToTalkStart,
+    pushToTalkStop,
   } = useGameSession();
 
   // Real-time transcription display
@@ -145,22 +144,22 @@ function PwnTheBullyGame(props: Partial<GameControlProps>) {
     interrupt();
     pttStartTimeRef.current = Date.now(); // Mark when PTT started
     setIsPTTUserSpeaking(true);
-    await pushToTalkStartNative();
+    await pushToTalkStart();
     console.log("PTT started at:", pttStartTimeRef.current);
   }, [
     sessionStatus,
     isWebRTCReady,
     isPTTUserSpeaking,
     interrupt,
-    pushToTalkStartNative,
+    pushToTalkStart,
   ]);
 
   const handleTalkButtonUp = useCallback(async () => {
     if (sessionStatus !== "CONNECTED" || !isPTTUserSpeaking) return;
 
     setIsPTTUserSpeaking(false);
-    await pushToTalkStopNative();
-  }, [sessionStatus, isPTTUserSpeaking, pushToTalkStopNative]);
+    await pushToTalkStop();
+  }, [sessionStatus, isPTTUserSpeaking, pushToTalkStop]);
 
   return (
     <div className="min-h-screen flex flex-col justify-center items-center p-4 bg-gradient-to-br from-red-200 via-orange-200 to-yellow-200">
@@ -200,7 +199,7 @@ function PwnTheBullyGame(props: Partial<GameControlProps>) {
                     💪 You:
                   </div>
                   <div className="text-blue-900 text-lg">
-                    {isPTTUserSpeaking || nativeIsPTTUserSpeaking
+                    {isPTTUserSpeaking
                       ? "🎤 Crafting your comeback..."
                       : latestUser.startsWith("Hello! I'm ready to play")
                       ? "Press mic to deliver your comeback"

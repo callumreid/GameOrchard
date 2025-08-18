@@ -29,7 +29,6 @@ function EvaluateYourselfGame(props: Partial<GameControlProps>) {
     startTimer,
     sendPlayerText: _sendPlayerText,
     gameState,
-    isPTTUserSpeaking: nativeIsPTTUserSpeaking,
   } = props;
   const [hostFinishedSpeaking, setHostFinishedSpeaking] = useState(false);
   const [isPTTUserSpeaking, setIsPTTUserSpeaking] = useState(false);
@@ -40,8 +39,8 @@ function EvaluateYourselfGame(props: Partial<GameControlProps>) {
     sessionStatus,
     isWebRTCReady,
     interrupt,
-    pushToTalkStartNative,
-    pushToTalkStopNative,
+    pushToTalkStart,
+    pushToTalkStop,
   } = useGameSession();
 
   // Real-time transcription display
@@ -135,22 +134,22 @@ function EvaluateYourselfGame(props: Partial<GameControlProps>) {
     interrupt();
     pttStartTimeRef.current = Date.now(); // Mark when PTT started
     setIsPTTUserSpeaking(true);
-    await pushToTalkStartNative();
+    await pushToTalkStart();
     console.log("PTT started at:", pttStartTimeRef.current);
   }, [
     sessionStatus,
     isWebRTCReady,
     isPTTUserSpeaking,
     interrupt,
-    pushToTalkStartNative,
+    pushToTalkStart,
   ]);
 
   const handleTalkButtonUp = useCallback(async () => {
     if (sessionStatus !== "CONNECTED" || !isPTTUserSpeaking) return;
 
     setIsPTTUserSpeaking(false);
-    await pushToTalkStopNative();
-  }, [sessionStatus, isPTTUserSpeaking, pushToTalkStopNative]);
+    await pushToTalkStop();
+  }, [sessionStatus, isPTTUserSpeaking, pushToTalkStop]);
 
   return (
     <div className="min-h-screen flex flex-col justify-center items-center p-4 bg-gradient-to-br from-gray-600 via-gray-700 to-gray-800">
@@ -189,7 +188,7 @@ function EvaluateYourselfGame(props: Partial<GameControlProps>) {
                     👤 Employee (You):
                   </div>
                   <div className="text-green-900 text-lg">
-                    {isPTTUserSpeaking || nativeIsPTTUserSpeaking
+                    {isPTTUserSpeaking
                       ? "🎤 Self-evaluating..."
                       : latestUser.startsWith("Hello! I'm ready to play")
                       ? "Press mic to evaluate yourself"

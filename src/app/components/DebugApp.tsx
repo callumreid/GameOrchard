@@ -77,9 +77,8 @@ function DebugApp() {
     sendEvent,
     interrupt,
     mute,
-    pushToTalkStartNative,
-    pushToTalkStopNative,
-    isNativeAudioAvailable,
+    pushToTalkStart,
+    pushToTalkStop,
   } = useRealtimeSession({
     onConnectionChange: (s) => setSessionStatus(s as SessionStatus),
     onAgentHandoff: (agentName: string) => {
@@ -297,36 +296,16 @@ function DebugApp() {
 
     interrupt();
     setIsPTTUserSpeaking(true);
-
-    if (isNativeAudioAvailable) {
-      console.log("[PTT] Using native audio input");
-      pushToTalkStartNative().then((success) => {
-        if (!success) {
-          console.error("[PTT] Failed to start native audio recording");
-          setIsPTTUserSpeaking(false);
-        } else {
-          console.log("[PTT] Native audio recording started");
-        }
-      });
-    } else {
-      console.log("[PTT] Using WebRTC audio input");
-      sendClientEvent({ type: "input_audio_buffer.clear" }, "clear PTT buffer");
-    }
+    console.log("[PTT] Using WebRTC audio input");
+    pushToTalkStart();
   };
 
   const handleTalkButtonUp = () => {
     if (sessionStatus !== "CONNECTED" || !isPTTUserSpeaking) return;
 
     setIsPTTUserSpeaking(false);
-
-    if (isNativeAudioAvailable) {
-      console.log("[PTT] Stopping native audio input");
-      pushToTalkStopNative();
-    } else {
-      console.log("[PTT] Stopping WebRTC audio input");
-      sendClientEvent({ type: "input_audio_buffer.commit" }, "commit PTT");
-      sendClientEvent({ type: "response.create" }, "trigger response PTT");
-    }
+    console.log("[PTT] Stopping WebRTC audio input");
+    pushToTalkStop();
   };
 
   const onToggleConnection = () => {

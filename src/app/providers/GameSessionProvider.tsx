@@ -20,8 +20,8 @@ interface GameSessionContextValue {
   sendUserText: (text: string) => void;
   mute: (muted: boolean) => void;
   interrupt: () => void;
-  pushToTalkStartNative: () => Promise<boolean>;
-  pushToTalkStopNative: () => Promise<void>;
+  pushToTalkStart: () => Promise<void>;
+  pushToTalkStop: () => Promise<void>;
 }
 
 const GameSessionContext = createContext<GameSessionContextValue | undefined>(
@@ -45,8 +45,8 @@ export function GameSessionProvider({ children }: GameSessionProviderProps) {
     sendUserText,
     mute,
     interrupt,
-    pushToTalkStartNative,
-    pushToTalkStopNative,
+    pushToTalkStart,
+    pushToTalkStop,
   } = useRealtimeSession({
     onConnectionChange: (status) => {
       console.log("[GameSession] Connection status changed to:", status);
@@ -154,8 +154,8 @@ export function GameSessionProvider({ children }: GameSessionProviderProps) {
     sendUserText,
     mute,
     interrupt,
-    pushToTalkStartNative,
-    pushToTalkStopNative,
+    pushToTalkStart,
+    pushToTalkStop,
   };
 
   return (

@@ -39,8 +39,8 @@ function SaveTheirSoulGame(props: Partial<GameControlProps>) {
     sessionStatus,
     isWebRTCReady,
     interrupt,
-    pushToTalkStartNative,
-    pushToTalkStopNative,
+    pushToTalkStart,
+    pushToTalkStop,
   } = useGameSession();
 
   // Real-time transcription display
@@ -167,26 +167,26 @@ function SaveTheirSoulGame(props: Partial<GameControlProps>) {
     pttStartTimeRef.current = Date.now(); // Mark when PTT started
     setIsPTTUserSpeaking(true);
     setCurrentTranscriptionText(""); // Clear previous text
-    await pushToTalkStartNative();
+    await pushToTalkStart();
     console.log("PTT started at:", pttStartTimeRef.current);
   }, [
     sessionStatus,
     isWebRTCReady,
     isPTTUserSpeaking,
     interrupt,
-    pushToTalkStartNative,
+    pushToTalkStart,
   ]);
 
   const handleTalkButtonUp = useCallback(async () => {
     if (sessionStatus !== "CONNECTED" || !isPTTUserSpeaking) return;
 
     setIsPTTUserSpeaking(false);
-    await pushToTalkStopNative();
+    await pushToTalkStop();
     console.log("PTT stopped. Final text:", currentTranscriptionText);
   }, [
     sessionStatus,
     isPTTUserSpeaking,
-    pushToTalkStopNative,
+    pushToTalkStop,
     currentTranscriptionText,
   ]);
 

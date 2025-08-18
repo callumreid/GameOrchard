@@ -29,7 +29,6 @@ function ExplainDeathGame(props: Partial<GameControlProps>) {
     startTimer,
     sendPlayerText: _sendPlayerText,
     gameState,
-    isPTTUserSpeaking: nativeIsPTTUserSpeaking,
   } = props;
   const [hostFinishedSpeaking, setHostFinishedSpeaking] = useState(false);
   const [isPTTUserSpeaking, setIsPTTUserSpeaking] = useState(false);
@@ -40,8 +39,8 @@ function ExplainDeathGame(props: Partial<GameControlProps>) {
     sessionStatus,
     isWebRTCReady,
     interrupt,
-    pushToTalkStartNative,
-    pushToTalkStopNative,
+    pushToTalkStart,
+    pushToTalkStop,
   } = useGameSession();
 
   // Real-time transcription display
@@ -147,22 +146,22 @@ function ExplainDeathGame(props: Partial<GameControlProps>) {
     interrupt();
     pttStartTimeRef.current = Date.now(); // Mark when PTT started
     setIsPTTUserSpeaking(true);
-    await pushToTalkStartNative();
+    await pushToTalkStart();
     console.log("PTT started at:", pttStartTimeRef.current);
   }, [
     sessionStatus,
     isWebRTCReady,
     isPTTUserSpeaking,
     interrupt,
-    pushToTalkStartNative,
+    pushToTalkStart,
   ]);
 
   const handleTalkButtonUp = useCallback(async () => {
     if (sessionStatus !== "CONNECTED" || !isPTTUserSpeaking) return;
 
     setIsPTTUserSpeaking(false);
-    await pushToTalkStopNative();
-  }, [sessionStatus, isPTTUserSpeaking, pushToTalkStopNative]);
+    await pushToTalkStop();
+  }, [sessionStatus, isPTTUserSpeaking, pushToTalkStop]);
 
   return (
     <div className="min-h-screen flex flex-col justify-center items-center p-4 bg-gradient-to-br from-gray-200 via-slate-300 to-gray-400">
@@ -200,7 +199,7 @@ function ExplainDeathGame(props: Partial<GameControlProps>) {
                     👨‍👩 You (Parent):
                   </div>
                   <div className="text-gray-900 text-lg">
-                    {isPTTUserSpeaking || nativeIsPTTUserSpeaking
+                    {isPTTUserSpeaking
                       ? "🎤 Explaining death..."
                       : latestUser.startsWith("Hello! I'm ready to play")
                       ? "Press mic to explain death to your daughter"
