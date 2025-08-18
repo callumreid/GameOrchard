@@ -40,8 +40,8 @@ function AdviseTheChildGame(props: Partial<GameControlProps>) {
     sessionStatus,
     isWebRTCReady,
     interrupt,
-    pushToTalkStartNative,
-    pushToTalkStopNative,
+    pushToTalkStart,
+    pushToTalkStop,
   } = useGameSession();
 
   // Real-time transcription display
@@ -132,22 +132,22 @@ function AdviseTheChildGame(props: Partial<GameControlProps>) {
     interrupt();
     pttStartTimeRef.current = Date.now(); // Mark when PTT started
     setIsPTTUserSpeaking(true);
-    await pushToTalkStartNative();
+    await pushToTalkStart();
     console.log("PTT started at:", pttStartTimeRef.current);
   }, [
     sessionStatus,
     isWebRTCReady,
     isPTTUserSpeaking,
     interrupt,
-    pushToTalkStartNative,
+    pushToTalkStart,
   ]);
 
   const handleTalkButtonUp = useCallback(async () => {
     if (sessionStatus !== "CONNECTED" || !isPTTUserSpeaking) return;
 
     setIsPTTUserSpeaking(false);
-    await pushToTalkStopNative();
-  }, [sessionStatus, isPTTUserSpeaking, pushToTalkStopNative]);
+    await pushToTalkStop();
+  }, [sessionStatus, isPTTUserSpeaking, pushToTalkStop]);
 
   return (
     <div className="min-h-screen flex flex-col justify-center items-center p-4 bg-gradient-to-br from-pink-200 via-blue-200 to-purple-200">
