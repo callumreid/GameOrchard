@@ -196,11 +196,11 @@ function PwnTheBullyGame(props: Partial<GameControlProps>) {
               <div className="flex justify-end">
                 <div className="bg-blue-100 border-2 border-blue-300 rounded-2xl rounded-br-none p-4 max-w-md text-black">
                   <div className="text-sm text-blue-800 font-medium mb-1">
-                    💪 You:
+                    💪 You (Buttered Up Slug Chump):
                   </div>
                   <div className="text-blue-900 text-lg">
                     {isPTTUserSpeaking
-                      ? "🎤 Crafting your comeback..."
+                      ? "🎤 Clapping back..."
                       : latestUser.startsWith("Hello! I'm ready to play")
                       ? "Press mic to deliver your comeback"
                       : latestUser}
@@ -220,32 +220,27 @@ function PwnTheBullyGame(props: Partial<GameControlProps>) {
       </div>
 
       {/* Push-to-Talk Button - Web */}
-      {hostFinishedSpeaking &&
-        sessionStatus === "CONNECTED" &&
+      {sessionStatus === "CONNECTED" &&
         isWebRTCReady && (
-          <div className="fixed bottom-1/4 right-6 z-10">
-            <div className="bg-orange-50 border-2 border-orange-200 rounded-full p-4 shadow-lg">
-              <div className="text-center">
-                <div className="text-xs text-orange-800 mb-1">
-                  Hold to Clap Back
-                </div>
-                <button
-                  onMouseDown={handleTalkButtonDown}
-                  onMouseUp={handleTalkButtonUp}
-                  onMouseLeave={handleTalkButtonUp}
-                  onTouchStart={handleTalkButtonDown}
-                  onTouchEnd={handleTalkButtonUp}
-                  className={`w-16 h-16 rounded-full border-4 border-orange-400 transition-all duration-150 ${
-                    isPTTUserSpeaking
-                      ? "bg-red-500 scale-110 shadow-lg"
-                      : "bg-orange-200 hover:bg-orange-300"
-                  }`}
-                >
-                  <div className="text-5xl">
-                    {isPTTUserSpeaking ? "🔴" : "💪"}
-                  </div>
-                </button>
+          <div className="flex flex-col items-center mt-8">
+            <button
+              onMouseDown={handleTalkButtonDown}
+              onMouseUp={handleTalkButtonUp}
+              onMouseLeave={handleTalkButtonUp}
+              onTouchStart={handleTalkButtonDown}
+              onTouchEnd={handleTalkButtonUp}
+              className={`w-32 h-32 sm:w-40 sm:h-40 rounded-full border-4 border-orange-400 transition-all duration-150 shadow-lg ${
+                isPTTUserSpeaking
+                  ? "bg-red-500 scale-110"
+                  : "bg-orange-200 hover:bg-orange-300"
+              }`}
+            >
+              <div className="text-8xl sm:text-9xl">
+                {isPTTUserSpeaking ? "🔴" : "💪"}
               </div>
+            </button>
+            <div className="text-sm text-orange-800 mt-2 font-bold">
+              Hold to Clap Back
             </div>
           </div>
         )}

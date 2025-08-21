@@ -185,9 +185,9 @@ function ConvinceTheAliensGame(props: Partial<GameControlProps>) {
                   </div>
                   <div className="text-blue-100 text-lg">
                     {isPTTUserSpeaking
-                      ? "🎤 Pleading for humanity..."
+                      ? "🎤 Pleading..."
                       : latestUser.startsWith("Hello! I'm ready to play")
-                      ? "Press mic to plead for humanity"
+                      ? "Press mic to plead"
                       : latestUser}
                   </div>
                 </div>
@@ -205,32 +205,27 @@ function ConvinceTheAliensGame(props: Partial<GameControlProps>) {
       </div>
 
       {/* Push-to-Talk Button - Web */}
-      {hostFinishedSpeaking &&
-        sessionStatus === "CONNECTED" &&
+      {sessionStatus === "CONNECTED" &&
         isWebRTCReady && (
-          <div className="fixed bottom-1/4 right-6 z-10">
-            <div className="bg-green-900 border-2 border-green-400 rounded-full p-4 shadow-lg">
-              <div className="text-center">
-                <div className="text-xs text-green-300 mb-1">
-                  Hold to Save Earth
-                </div>
-                <button
-                  onMouseDown={handleTalkButtonDown}
-                  onMouseUp={handleTalkButtonUp}
-                  onMouseLeave={handleTalkButtonUp}
-                  onTouchStart={handleTalkButtonDown}
-                  onTouchEnd={handleTalkButtonUp}
-                  className={`w-16 h-16 rounded-full border-4 border-green-400 transition-all duration-150 ${
-                    isPTTUserSpeaking
-                      ? "bg-red-500 scale-110 shadow-lg"
-                      : "bg-green-700 hover:bg-green-600"
-                  }`}
-                >
-                  <div className="text-5xl">
-                    {isPTTUserSpeaking ? "🔴" : "🎤"}
-                  </div>
-                </button>
+          <div className="flex flex-col items-center mt-8">
+            <button
+              onMouseDown={handleTalkButtonDown}
+              onMouseUp={handleTalkButtonUp}
+              onMouseLeave={handleTalkButtonUp}
+              onTouchStart={handleTalkButtonDown}
+              onTouchEnd={handleTalkButtonUp}
+              className={`w-32 h-32 sm:w-40 sm:h-40 rounded-full border-4 border-green-400 transition-all duration-150 shadow-lg ${
+                isPTTUserSpeaking
+                  ? "bg-red-500 scale-110"
+                  : "bg-green-700 hover:bg-green-600"
+              }`}
+            >
+              <div className="text-8xl sm:text-9xl">
+                {isPTTUserSpeaking ? "🔴" : "🎤"}
               </div>
+            </button>
+            <div className="text-sm text-green-300 mt-2 font-bold">
+              Hold to Plead for Humanity
             </div>
           </div>
         )}

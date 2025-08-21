@@ -200,7 +200,7 @@ function ExplainDeathGame(props: Partial<GameControlProps>) {
                   </div>
                   <div className="text-gray-900 text-lg">
                     {isPTTUserSpeaking
-                      ? "🎤 Explaining death..."
+                      ? "🎤 Dropping truth bombs..."
                       : latestUser.startsWith("Hello! I'm ready to play")
                       ? "Press mic to explain death to your daughter"
                       : latestUser}
@@ -220,32 +220,27 @@ function ExplainDeathGame(props: Partial<GameControlProps>) {
       </div>
 
       {/* Push-to-Talk Button - Web */}
-      {hostFinishedSpeaking &&
-        sessionStatus === "CONNECTED" &&
+      {sessionStatus === "CONNECTED" &&
         isWebRTCReady && (
-          <div className="fixed bottom-1/4 right-6 z-10">
-            <div className="bg-gray-50 border-2 border-gray-200 rounded-full p-4 shadow-lg">
-              <div className="text-center">
-                <div className="text-xs text-gray-800 mb-1">
-                  Hold to Explain
-                </div>
-                <button
-                  onMouseDown={handleTalkButtonDown}
-                  onMouseUp={handleTalkButtonUp}
-                  onMouseLeave={handleTalkButtonUp}
-                  onTouchStart={handleTalkButtonDown}
-                  onTouchEnd={handleTalkButtonUp}
-                  className={`w-16 h-16 rounded-full border-4 border-gray-400 transition-all duration-150 ${
-                    isPTTUserSpeaking
-                      ? "bg-red-500 scale-110 shadow-lg"
-                      : "bg-gray-200 hover:bg-gray-300"
-                  }`}
-                >
-                  <div className="text-5xl">
-                    {isPTTUserSpeaking ? "🔴" : "💭"}
-                  </div>
-                </button>
+          <div className="flex flex-col items-center mt-8">
+            <button
+              onMouseDown={handleTalkButtonDown}
+              onMouseUp={handleTalkButtonUp}
+              onMouseLeave={handleTalkButtonUp}
+              onTouchStart={handleTalkButtonDown}
+              onTouchEnd={handleTalkButtonUp}
+              className={`w-32 h-32 sm:w-40 sm:h-40 rounded-full border-4 border-gray-400 transition-all duration-150 shadow-lg ${
+                isPTTUserSpeaking
+                  ? "bg-red-500 scale-110"
+                  : "bg-gray-200 hover:bg-gray-300"
+              }`}
+            >
+              <div className="text-8xl sm:text-9xl">
+                {isPTTUserSpeaking ? "🔴" : "💭"}
               </div>
+            </button>
+            <div className="text-sm text-gray-800 mt-2 font-bold">
+              Hold to Ruin Her Childhood
             </div>
           </div>
         )}
