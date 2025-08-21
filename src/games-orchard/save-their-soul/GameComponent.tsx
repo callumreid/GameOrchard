@@ -2,6 +2,8 @@
 import React, { useState, useEffect, useCallback, useRef } from "react";
 import BaseGame from "../BaseGame";
 import { GameProps } from "../types";
+import GameScreen from "../components/GameScreen";
+import SpeechBubbles from "../components/SpeechBubbles";
 import {
   useGameAgent,
   GameScenario,
@@ -191,104 +193,74 @@ function SaveTheirSoulGame(props: Partial<GameControlProps>) {
   ]);
 
   return (
-    <div className="min-h-screen flex flex-col justify-center items-center p-4 bg-gradient-to-br from-gray-900 via-purple-900 to-black">
-      <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-lg shadow-lg p-6 max-w-4xl w-full mt-16 border-4 border-purple-600">
-        <div className="flex justify-between items-center">
-          <h2 className="text-2xl font-bold mb-4 text-center text-purple-200">
-            🙏✨ Save Their Soul
-          </h2>
-          <div className="text-lg font-semibold text-purple-200 p-3 bg-purple-900 rounded-lg border-2 border-purple-500">
-            Time: {gameState?.timeRemaining || 30}s
-          </div>
+    <GameScreen
+      backgroundClassName="bg-gradient-to-br from-gray-900 via-purple-900 to-black"
+      cardClassName="bg-gradient-to-br from-gray-800 to-gray-900 border-4 border-purple-600"
+      headerCenter={
+        <h2 className="text-2xl font-bold mb-4 text-center text-purple-200">
+          🙏✨ Save Their Soul
+        </h2>
+      }
+      headerRight={
+        <div className="text-lg font-semibold text-purple-200 p-3 bg-purple-900 rounded-lg border-2 border-purple-500">
+          Time: {gameState?.timeRemaining || 30}s
         </div>
-        {/* Speech Bubble - 3 a.m. bus stop theme */}
-        <div className="bg-gradient-to-br from-gray-700 to-gray-800 border-4 border-purple-500 rounded-lg p-6 mb-4 min-h-[200px] flex flex-col justify-center">
-          {/* Host/Stranger Speech Bubble */}
-          {latestHost && (
-            <div className="mb-4">
-              <div className="flex justify-start">
-                <div className="bg-gradient-to-br from-gray-600 to-gray-700 border-3 border-gray-500 rounded-2xl rounded-bl-none p-4 max-w-md text-white shadow-lg">
-                  <div className="text-sm text-gray-300 font-medium mb-1">
-                    😞 Lost Stranger:
-                  </div>
-                  <div className="text-gray-100 text-lg font-bold">
-                    {latestHost}
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* User Speech Bubble */}
-          {(latestUser || isPTTUserSpeaking) && (
-            <div className="mb-2">
-              <div className="flex justify-end">
-                <div className="bg-gradient-to-br from-purple-600 to-purple-700 border-3 border-purple-500 rounded-2xl rounded-br-none p-4 max-w-md text-white shadow-lg">
-                  <div className="text-sm text-purple-200 font-medium mb-1">
-                    🙏 You (Missionary):
-                  </div>
-                  <div className="text-purple-100 text-lg font-semibold">
-                    {isPTTUserSpeaking
-                      ? currentTranscriptionText ||
-                        "🎤 Spreading the good word..."
-                      : latestUser || "Press mic to save their soul"}
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* No conversation yet */}
-          {!latestHost && !latestUser && !isPTTUserSpeaking && (
-            <div className="text-center text-purple-300 text-lg font-medium">
-              The neon light flickers... pigeons judge from above... your moment
-              approaches...
-            </div>
-          )}
+      }
+      speechAreaClassName="bg-gradient-to-br from-gray-700 to-gray-800 border-4 border-purple-500 rounded-lg p-6 min-h-[200px] flex flex-col justify-center"
+      ptt={{
+        show:
+          hostFinishedSpeaking &&
+          sessionStatus === "CONNECTED" &&
+          isWebRTCReady,
+        containerClassName:
+          "bg-gradient-to-br from-purple-100 to-purple-200 border-4 border-purple-500",
+        label: "Hold to Preach",
+        isActive: isPTTUserSpeaking,
+        buttonClassName: isPTTUserSpeaking
+          ? "w-16 h-16 rounded-full border-4 border-purple-600 transition-all duration-150 bg-red-500 scale-110 shadow-lg"
+          : "w-16 h-16 rounded-full border-4 border-purple-600 transition-all duration-150 bg-purple-400 hover:bg-purple-500",
+        idleIcon: "🙏",
+        activeIcon: "🔴",
+        onPressStart: handleTalkButtonDown,
+        onPressEnd: handleTalkButtonUp,
+      }}
+      footer={
+        <div className="flex justify-center space-x-3 text-2xl opacity-40">
+          <span>🚏</span>
+          <span>🌙</span>
+          <span>📱</span>
+          <span>🕐</span>
+          <span>🙏</span>
+          <span>✨</span>
         </div>
-      </div>
-
-      {/* Push-to-Talk Button - Web */}
-      {hostFinishedSpeaking &&
-        sessionStatus === "CONNECTED" &&
-        isWebRTCReady && (
-          <div className="fixed bottom-1/4 right-6 z-10">
-            <div className="bg-gradient-to-br from-purple-100 to-purple-200 border-4 border-purple-500 rounded-full p-4 shadow-xl">
-              <div className="text-center">
-                <div className="text-xs text-purple-800 mb-1 font-bold">
-                  Hold to Preach
-                </div>
-                <button
-                  onMouseDown={handleTalkButtonDown}
-                  onMouseUp={handleTalkButtonUp}
-                  onMouseLeave={handleTalkButtonUp}
-                  onTouchStart={handleTalkButtonDown}
-                  onTouchEnd={handleTalkButtonUp}
-                  className={`w-16 h-16 rounded-full border-4 border-purple-600 transition-all duration-150 ${
-                    isPTTUserSpeaking
-                      ? "bg-red-500 scale-110 shadow-lg"
-                      : "bg-purple-400 hover:bg-purple-500"
-                  }`}
-                >
-                  <div className="text-5xl">
-                    {isPTTUserSpeaking ? "🔴" : "🙏"}
-                  </div>
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
-
-      {/* Decorative elements - 3 a.m. bus stop themed */}
-      <div className="flex justify-center space-x-3 text-2xl opacity-40 mt-4">
-        <span>🚏</span>
-        <span>🌙</span>
-        <span>📱</span>
-        <span>🕐</span>
-        <span>🙏</span>
-        <span>✨</span>
-      </div>
-    </div>
+      }
+    >
+      <SpeechBubbles
+        latestHost={latestHost}
+        latestUser={latestUser}
+        isUserSpeaking={isPTTUserSpeaking}
+        speakingText={
+          currentTranscriptionText || "🎤 Spreading the good word..."
+        }
+        userReadyHint="Press mic to save their soul"
+        hostConfig={{
+          label: <span>😞 Lost Stranger:</span>,
+          bubbleClassName:
+            "bg-gradient-to-br from-gray-600 to-gray-700 border-3 border-gray-500 text-white shadow-lg",
+          labelClassName: "text-sm text-gray-300 font-medium mb-1",
+          textClassName: "text-gray-100 text-lg font-bold",
+        }}
+        userConfig={{
+          label: <span>🙏 You (Missionary):</span>,
+          bubbleClassName:
+            "bg-gradient-to-br from-purple-600 to-purple-700 border-3 border-purple-500 text-white shadow-lg",
+          labelClassName: "text-sm text-purple-200 font-medium mb-1",
+          textClassName: "text-purple-100 text-lg font-semibold",
+        }}
+        emptyStateText="The neon light flickers... pigeons judge from above... your moment approaches..."
+        emptyStateClassName="text-center text-purple-300 text-lg font-medium"
+      />
+    </GameScreen>
   );
 }
 

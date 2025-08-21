@@ -2,6 +2,8 @@
 import React, { useState, useEffect, useCallback, useRef } from "react";
 import BaseGame from "../BaseGame";
 import { GameProps } from "../types";
+import GameScreen from "../components/GameScreen";
+import SpeechBubbles from "../components/SpeechBubbles";
 import {
   useGameAgent,
   GameScenario,
@@ -155,103 +157,69 @@ function PointTheTaskGame(props: Partial<GameControlProps>) {
   }, [sessionStatus, isPTTUserSpeaking, pushToTalkStop]);
 
   return (
-    <div className="min-h-screen flex flex-col justify-center items-center p-4 bg-gradient-to-br from-gray-300 via-gray-400 to-gray-500">
-      <div className="bg-white rounded-lg shadow-lg p-6 max-w-5xl w-full mt-16">
-        <div className="flex justify-between items-center mb-6">
-          <h2 className="text-2xl font-bold text-center text-gray-800">
-            📊 Point the Engineering Task
-          </h2>
-          <div className="text-lg font-semibold text-gray-800 p-3 bg-gray-100 rounded-lg">
-            Time: {gameState?.timeRemaining || 30}s
-          </div>
+    <GameScreen
+      backgroundClassName="bg-gradient-to-br from-gray-300 via-gray-400 to-gray-500"
+      cardClassName="bg-white shadow-lg"
+      headerCenter={
+        <h2 className="text-2xl font-bold text-center text-gray-800">
+          📊 Point the Engineering Task
+        </h2>
+      }
+      headerRight={
+        <div className="text-lg font-semibold text-gray-800 p-3 bg-gray-100 rounded-lg">
+          Time: {gameState?.timeRemaining || 30}s
         </div>
-
-        {/* Speech Bubble - Meeting Conversation */}
-        <div className="bg-gray-50 border-2 border-gray-200 rounded-lg p-6 mb-4 min-h-[250px] flex flex-col justify-center">
-          {/* Host Speech Bubble */}
-          {latestHost && (
-            <div className="mb-4">
-              <div className="flex justify-start">
-                <div className="bg-blue-100 border-2 border-blue-300 rounded-2xl rounded-bl-none p-4 max-w-lg text-black">
-                  <div className="text-sm text-blue-800 font-medium mb-1">
-                    🎯 Meeting Facilitator:
-                  </div>
-                  <div className="text-blue-900 text-lg">{latestHost}</div>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* User Speech Bubble */}
-          {(latestUser || isPTTUserSpeaking) && (
-            <div className="mb-2">
-              <div className="flex justify-end">
-                <div className="bg-green-100 border-2 border-green-300 rounded-2xl rounded-br-none p-4 max-w-lg text-black">
-                  <div className="text-sm text-green-800 font-medium mb-1">
-                    👨‍💻 You:
-                  </div>
-                  <div className="text-green-900 text-lg">
-                    {isPTTUserSpeaking
-                      ? "🎤 Estimating..."
-                      : latestUser.startsWith("Hello! I'm ready to play")
-                      ? "Press mic to give your point estimate"
-                      : latestUser}
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* No conversation yet */}
-          {!latestHost && !latestUser && !isPTTUserSpeaking && (
-            <div className="text-center text-gray-500 text-lg">
-              Meeting will start here... prepare for mind-numbing corporate
-              speak...
-            </div>
-          )}
+      }
+      speechAreaClassName="bg-gray-50 border-2 border-gray-200 rounded-lg p-6 min-h-[250px] flex flex-col justify-center"
+      ptt={{
+        show:
+          hostFinishedSpeaking &&
+          sessionStatus === "CONNECTED" &&
+          isWebRTCReady,
+        containerClassName: "bg-blue-50 border-2 border-blue-200",
+        label: "Hold to Point",
+        isActive: isPTTUserSpeaking,
+        buttonClassName: isPTTUserSpeaking
+          ? "w-16 h-16 rounded-full border-4 border-blue-400 transition-all duration-150 bg-red-500 scale-110 shadow-lg"
+          : "w-16 h-16 rounded-full border-4 border-blue-400 transition-all duration-150 bg-blue-200 hover:bg-blue-300",
+        idleIcon: "🎤",
+        activeIcon: "🔴",
+        onPressStart: handleTalkButtonDown,
+        onPressEnd: handleTalkButtonUp,
+      }}
+      footer={
+        <div className="flex justify-center space-x-4 text-2xl opacity-30">
+          <span>📊</span>
+          <span>💼</span>
+          <span>⏰</span>
+          <span>📈</span>
+          <span>🎯</span>
+          <span>📋</span>
+          <span>💤</span>
         </div>
-      </div>
-
-      {/* Push-to-Talk Button - Web */}
-      {hostFinishedSpeaking &&
-        sessionStatus === "CONNECTED" &&
-        isWebRTCReady && (
-          <div className="fixed bottom-1/4 right-6 z-10">
-            <div className="bg-blue-50 border-2 border-blue-200 rounded-full p-4 shadow-lg">
-              <div className="text-center">
-                <div className="text-xs text-blue-800 mb-1">Hold to Point</div>
-                <button
-                  onMouseDown={handleTalkButtonDown}
-                  onMouseUp={handleTalkButtonUp}
-                  onMouseLeave={handleTalkButtonUp}
-                  onTouchStart={handleTalkButtonDown}
-                  onTouchEnd={handleTalkButtonUp}
-                  className={`w-16 h-16 rounded-full border-4 border-blue-400 transition-all duration-150 ${
-                    isPTTUserSpeaking
-                      ? "bg-red-500 scale-110 shadow-lg"
-                      : "bg-blue-200 hover:bg-blue-300"
-                  }`}
-                >
-                  <div className="text-5xl">
-                    {isPTTUserSpeaking ? "🔴" : "🎤"}
-                  </div>
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
-
-      {/* Decorative meeting elements */}
-      <div className="flex justify-center space-x-4 text-2xl opacity-30 mt-4">
-        <span>📊</span>
-        <span>💼</span>
-        <span>⏰</span>
-        <span>📈</span>
-        <span>🎯</span>
-        <span>📋</span>
-        <span>💤</span>
-      </div>
-    </div>
+      }
+    >
+      <SpeechBubbles
+        latestHost={latestHost}
+        latestUser={latestUser}
+        isUserSpeaking={isPTTUserSpeaking}
+        speakingText="🎤 Estimating..."
+        userReadyHint="Press mic to give your point estimate"
+        hostConfig={{
+          label: <span>🎯 Meeting Facilitator:</span>,
+          bubbleClassName: "bg-blue-100 border-2 border-blue-300 text-black",
+          labelClassName: "text-sm text-blue-800 font-medium mb-1",
+          textClassName: "text-blue-900 text-lg",
+        }}
+        userConfig={{
+          label: <span>👨‍💻 You:</span>,
+          bubbleClassName: "bg-green-100 border-2 border-green-300 text-black",
+          labelClassName: "text-sm text-green-800 font-medium mb-1",
+          textClassName: "text-green-900 text-lg",
+        }}
+        emptyStateText="Meeting will start here... prepare for mind-numbing corporate speak..."
+      />
+    </GameScreen>
   );
 }
 

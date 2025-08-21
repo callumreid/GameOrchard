@@ -2,6 +2,8 @@
 import React, { useState, useEffect, useCallback, useRef } from "react";
 import BaseGame from "../BaseGame";
 import { GameProps } from "../types";
+import SpeechBubbles from "../components/SpeechBubbles";
+import GameScreen from "../components/GameScreen";
 import {
   useGameAgent,
   GameScenario,
@@ -191,103 +193,74 @@ function PitchStartupGame(props: Partial<GameControlProps>) {
   ]);
 
   return (
-    <div className="min-h-screen flex flex-col justify-center items-center p-4 bg-gradient-to-br from-gray-800 via-blue-900 to-gray-900">
-      <div className="bg-gradient-to-br from-gray-50 to-blue-50 rounded-lg shadow-2xl p-6 max-w-4xl w-full mt-16 border-4 border-blue-600">
-        <div className="flex justify-between items-center">
-          <h2 className="text-2xl font-bold mb-4 text-center text-slate-900">
-            🏢💰 Pitch Startup
-          </h2>
-          <div className="text-lg font-semibold text-slate-900 p-3 bg-slate-200 rounded-lg border-2 border-slate-400">
-            Time: {gameState?.timeRemaining || 30}s
-          </div>
+    <GameScreen
+      backgroundClassName="bg-gradient-to-br from-gray-800 via-blue-900 to-gray-900"
+      cardClassName="bg-gradient-to-br from-gray-50 to-blue-50 border-4 border-blue-600 shadow-2xl"
+      headerCenter={
+        <h2 className="text-2xl font-bold mb-4 text-center text-slate-900">
+          🏢💰 Pitch Startup
+        </h2>
+      }
+      headerRight={
+        <div className="text-lg font-semibold text-slate-900 p-3 bg-slate-200 rounded-lg border-2 border-slate-400">
+          Time: {gameState?.timeRemaining || 30}s
         </div>
-        {/* Speech Bubble - Mahogany boardroom theme */}
-        <div className="bg-gradient-to-br from-slate-100 to-gray-50 border-4 border-slate-400 rounded-lg p-6 mb-4 min-h-[200px] flex flex-col justify-center">
-          {/* Host/VC Speech Bubble */}
-          {latestHost && (
-            <div className="mb-4">
-              <div className="flex justify-start">
-                <div className="bg-gradient-to-br from-slate-200 to-gray-200 border-3 border-slate-500 rounded-2xl rounded-bl-none p-4 max-w-md text-black shadow-lg">
-                  <div className="text-sm text-slate-800 font-medium mb-1">
-                    🤵 Venture Capitalists:
-                  </div>
-                  <div className="text-slate-900 text-lg font-bold">
-                    {latestHost}
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* User Speech Bubble */}
-          {(latestUser || isPTTUserSpeaking) && (
-            <div className="mb-2">
-              <div className="flex justify-end">
-                <div className="bg-gradient-to-br from-blue-200 to-indigo-200 border-3 border-blue-500 rounded-2xl rounded-br-none p-4 max-w-md text-black shadow-lg">
-                  <div className="text-sm text-blue-800 font-medium mb-1">
-                    💡 You (Visionary):
-                  </div>
-                  <div className="text-blue-900 text-lg font-semibold">
-                    {isPTTUserSpeaking
-                      ? currentTranscriptionText ||
-                        "🎤 Disrupting the paradigm..."
-                      : latestUser || "Press mic to pitch your unicorn startup"}
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* No conversation yet */}
-          {!latestHost && !latestUser && !isPTTUserSpeaking && (
-            <div className="text-center text-slate-700 text-lg font-medium">
-              The mahogany boardroom awaits your disruptive vision...
-            </div>
-          )}
+      }
+      speechAreaClassName="bg-gradient-to-br from-slate-100 to-gray-50 border-4 border-slate-400 rounded-lg p-6 min-h-[200px] flex flex-col justify-center"
+      ptt={{
+        show:
+          hostFinishedSpeaking &&
+          sessionStatus === "CONNECTED" &&
+          isWebRTCReady,
+        containerClassName:
+          "bg-gradient-to-br from-slate-100 to-gray-100 border-4 border-slate-400",
+        label: "Hold to Pitch",
+        isActive: isPTTUserSpeaking,
+        buttonClassName: isPTTUserSpeaking
+          ? "w-16 h-16 rounded-full border-4 border-slate-600 transition-all duration-150 bg-red-500 scale-110 shadow-lg"
+          : "w-16 h-16 rounded-full border-4 border-slate-600 transition-all duration-150 bg-slate-300 hover:bg-slate-400",
+        idleIcon: "💡",
+        activeIcon: "🔴",
+        onPressStart: handleTalkButtonDown,
+        onPressEnd: handleTalkButtonUp,
+      }}
+      footer={
+        <div className="flex justify-center space-x-3 text-2xl opacity-40">
+          <span>🏢</span>
+          <span>💰</span>
+          <span>🦄</span>
+          <span>📈</span>
+          <span>☕</span>
+          <span>💡</span>
         </div>
-      </div>
-
-      {/* Push-to-Talk Button - Web */}
-      {hostFinishedSpeaking &&
-        sessionStatus === "CONNECTED" &&
-        isWebRTCReady && (
-          <div className="fixed bottom-1/4 right-6 z-10">
-            <div className="bg-gradient-to-br from-slate-100 to-gray-100 border-4 border-slate-400 rounded-full p-4 shadow-xl">
-              <div className="text-center">
-                <div className="text-xs text-slate-800 mb-1 font-bold">
-                  Hold to Pitch
-                </div>
-                <button
-                  onMouseDown={handleTalkButtonDown}
-                  onMouseUp={handleTalkButtonUp}
-                  onMouseLeave={handleTalkButtonUp}
-                  onTouchStart={handleTalkButtonDown}
-                  onTouchEnd={handleTalkButtonUp}
-                  className={`w-16 h-16 rounded-full border-4 border-slate-600 transition-all duration-150 ${
-                    isPTTUserSpeaking
-                      ? "bg-red-500 scale-110 shadow-lg"
-                      : "bg-slate-300 hover:bg-slate-400"
-                  }`}
-                >
-                  <div className="text-5xl">
-                    {isPTTUserSpeaking ? "🔴" : "💡"}
-                  </div>
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
-
-      {/* Decorative elements - Silicon Valley boardroom themed */}
-      <div className="flex justify-center space-x-3 text-2xl opacity-40 mt-4">
-        <span>🏢</span>
-        <span>💰</span>
-        <span>🦄</span>
-        <span>📈</span>
-        <span>☕</span>
-        <span>💡</span>
-      </div>
-    </div>
+      }
+    >
+      <SpeechBubbles
+        latestHost={latestHost}
+        latestUser={latestUser}
+        isUserSpeaking={isPTTUserSpeaking}
+        speakingText={
+          currentTranscriptionText || "🎤 Disrupting the paradigm..."
+        }
+        userReadyHint="Press mic to pitch your unicorn startup"
+        hostConfig={{
+          label: <span>🤵 Venture Capitalists:</span>,
+          bubbleClassName:
+            "bg-gradient-to-br from-slate-200 to-gray-200 border-3 border-slate-500 text-black shadow-lg",
+          labelClassName: "text-sm text-slate-800 font-medium mb-1",
+          textClassName: "text-slate-900 text-lg font-bold",
+        }}
+        userConfig={{
+          label: <span>💡 You (Visionary):</span>,
+          bubbleClassName:
+            "bg-gradient-to-br from-blue-200 to-indigo-200 border-3 border-blue-500 text-black shadow-lg",
+          labelClassName: "text-sm text-blue-800 font-medium mb-1",
+          textClassName: "text-blue-900 text-lg font-semibold",
+        }}
+        emptyStateText="The mahogany boardroom awaits your disruptive vision..."
+        emptyStateClassName="text-center text-slate-700 text-lg font-medium"
+      />
+    </GameScreen>
   );
 }
 

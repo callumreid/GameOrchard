@@ -2,6 +2,8 @@
 import React, { useState, useEffect, useCallback, useRef } from "react";
 import BaseGame from "../BaseGame";
 import { GameProps } from "../types";
+import GameScreen from "../components/GameScreen";
+import SpeechBubbles from "../components/SpeechBubbles";
 import {
   useGameAgent,
   GameScenario,
@@ -148,102 +150,69 @@ function ConvinceTheAliensGame(props: Partial<GameControlProps>) {
   }, [sessionStatus, isPTTUserSpeaking, pushToTalkStop]);
 
   return (
-    <div className="min-h-screen flex flex-col justify-center items-center p-4 bg-gradient-to-br from-purple-900 via-indigo-900 to-black">
-      <div className="bg-gray-900 border-4 border-green-400 rounded-lg shadow-2xl p-6 max-w-4xl w-full mt-16">
-        <div className="flex justify-between items-center">
-          <div className="text-lg font-semibold text-green-400 p-3 bg-black rounded-lg border border-green-400">
-            Human Score: {gameState?.score || 0}
-          </div>
-          <h2 className="text-2xl font-bold mb-4 text-center text-green-400">
-            👽 Convince The Aliens 🛸
-          </h2>
+    <GameScreen
+      backgroundClassName="bg-gradient-to-br from-purple-900 via-indigo-900 to-black"
+      cardClassName="bg-gray-900 border-4 border-green-400 shadow-2xl"
+      headerLeft={
+        <div className="text-lg font-semibold text-green-400 p-3 bg-black rounded-lg border border-green-400">
+          Human Score: {gameState?.score || 0}
         </div>
-
-        {/* Speech Bubble - Centered and Prominent */}
-        <div className="bg-black border-2 border-green-400 rounded-lg p-6 mb-4 min-h-[200px] flex flex-col justify-center">
-          {/* Host Speech Bubble */}
-          {latestHost && (
-            <div className="mb-4">
-              <div className="flex justify-start">
-                <div className="bg-purple-900 border-2 border-purple-400 rounded-2xl rounded-bl-none p-4 max-w-md text-white">
-                  <div className="text-sm text-purple-300 font-medium mb-1">
-                    👽 Alien Overlord:
-                  </div>
-                  <div className="text-purple-100 text-lg">{latestHost}</div>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* User Speech Bubble */}
-          {(latestUser || isPTTUserSpeaking) && (
-            <div className="mb-2">
-              <div className="flex justify-end">
-                <div className="bg-blue-900 border-2 border-blue-400 rounded-2xl rounded-br-none p-4 max-w-md text-white">
-                  <div className="text-sm text-blue-300 font-medium mb-1">
-                    🌍 Human Ambassador:
-                  </div>
-                  <div className="text-blue-100 text-lg">
-                    {isPTTUserSpeaking
-                      ? "🎤 Pleading for humanity..."
-                      : latestUser.startsWith("Hello! I'm ready to play")
-                      ? "Press mic to plead for humanity"
-                      : latestUser}
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* No conversation yet */}
-          {!latestHost && !latestUser && !isPTTUserSpeaking && (
-            <div className="text-center text-green-400 text-lg">
-              Alien-Human diplomacy will appear here...
-            </div>
-          )}
+      }
+      headerCenter={
+        <h2 className="text-2xl font-bold mb-4 text-center text-green-400">
+          👽 Convince The Aliens 🛸
+        </h2>
+      }
+      speechAreaClassName="bg-black border-2 border-green-400 rounded-lg p-6 min-h-[200px] flex flex-col justify-center"
+      ptt={{
+        show:
+          hostFinishedSpeaking &&
+          sessionStatus === "CONNECTED" &&
+          isWebRTCReady,
+        containerClassName: "bg-green-900 border-2 border-green-400",
+        label: "Hold to Save Earth",
+        isActive: isPTTUserSpeaking,
+        buttonClassName: isPTTUserSpeaking
+          ? "w-16 h-16 rounded-full border-4 border-green-400 transition-all duration-150 bg-red-500 scale-110 shadow-lg"
+          : "w-16 h-16 rounded-full border-4 border-green-400 transition-all duration-150 bg-green-700 hover:bg-green-600",
+        idleIcon: "🎤",
+        activeIcon: "🔴",
+        onPressStart: handleTalkButtonDown,
+        onPressEnd: handleTalkButtonUp,
+      }}
+      footer={
+        <div className="flex justify-center space-x-3 text-lg opacity-30">
+          <span>🛸</span>
+          <span>👽</span>
+          <span>🌍</span>
+          <span>💫</span>
+          <span>🚀</span>
         </div>
-      </div>
-
-      {/* Push-to-Talk Button - Web */}
-      {hostFinishedSpeaking &&
-        sessionStatus === "CONNECTED" &&
-        isWebRTCReady && (
-          <div className="fixed bottom-1/4 right-6 z-10">
-            <div className="bg-green-900 border-2 border-green-400 rounded-full p-4 shadow-lg">
-              <div className="text-center">
-                <div className="text-xs text-green-300 mb-1">
-                  Hold to Save Earth
-                </div>
-                <button
-                  onMouseDown={handleTalkButtonDown}
-                  onMouseUp={handleTalkButtonUp}
-                  onMouseLeave={handleTalkButtonUp}
-                  onTouchStart={handleTalkButtonDown}
-                  onTouchEnd={handleTalkButtonUp}
-                  className={`w-16 h-16 rounded-full border-4 border-green-400 transition-all duration-150 ${
-                    isPTTUserSpeaking
-                      ? "bg-red-500 scale-110 shadow-lg"
-                      : "bg-green-700 hover:bg-green-600"
-                  }`}
-                >
-                  <div className="text-5xl">
-                    {isPTTUserSpeaking ? "🔴" : "🎤"}
-                  </div>
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
-
-      {/* Decorative elements - Space themed */}
-      <div className="flex justify-center space-x-3 text-lg opacity-30 mt-4">
-        <span>🛸</span>
-        <span>👽</span>
-        <span>🌍</span>
-        <span>💫</span>
-        <span>🚀</span>
-      </div>
-    </div>
+      }
+    >
+      <SpeechBubbles
+        latestHost={latestHost}
+        latestUser={latestUser}
+        isUserSpeaking={isPTTUserSpeaking}
+        speakingText="🎤 Pleading for humanity..."
+        userReadyHint="Press mic to plead for humanity"
+        hostConfig={{
+          label: <span>👽 Alien Overlord:</span>,
+          bubbleClassName:
+            "bg-purple-900 border-2 border-purple-400 text-white",
+          labelClassName: "text-sm text-purple-300 font-medium mb-1",
+          textClassName: "text-purple-100 text-lg",
+        }}
+        userConfig={{
+          label: <span>🌍 Human Ambassador:</span>,
+          bubbleClassName: "bg-blue-900 border-2 border-blue-400 text-white",
+          labelClassName: "text-sm text-blue-300 font-medium mb-1",
+          textClassName: "text-blue-100 text-lg",
+        }}
+        emptyStateText="Alien-Human diplomacy will appear here..."
+        emptyStateClassName="text-center text-green-400 text-lg"
+      />
+    </GameScreen>
   );
 }
 
