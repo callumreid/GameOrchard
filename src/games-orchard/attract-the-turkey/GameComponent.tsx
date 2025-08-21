@@ -30,7 +30,7 @@ function AttractTheTurkeyGame(props: Partial<GameControlProps>) {
     sendPlayerText: _sendPlayerText,
     gameState,
   } = props;
-  const [hostFinishedSpeaking, setHostFinishedSpeaking] = useState(false);
+  const [_hostFinishedSpeaking, setHostFinishedSpeaking] = useState(false);
   const [isPTTUserSpeaking, setIsPTTUserSpeaking] = useState(false);
   const pttStartTimeRef = useRef<number>(0);
 
@@ -202,11 +202,11 @@ function AttractTheTurkeyGame(props: Partial<GameControlProps>) {
               <div className="flex justify-end">
                 <div className="bg-orange-100 border-2 border-orange-300 rounded-2xl rounded-br-none p-4 max-w-md text-black">
                   <div className="text-sm text-orange-800 font-medium mb-1">
-                    🧍 You (Turkey Whisperer):
+                    🧍 You (Turkey Temptress):
                   </div>
                   <div className="text-orange-900 text-lg">
                     {isPTTUserSpeaking
-                      ? "🎤 Gobbling charismatically..."
+                      ? "🎤 Gobbling careless whispers..."
                       : latestUser.startsWith("Hello! I'm ready to play")
                       ? "Press mic to gobble at the turkey"
                       : latestUser}
@@ -226,43 +226,27 @@ function AttractTheTurkeyGame(props: Partial<GameControlProps>) {
       </div>
 
       {/* Push-to-Talk Button - Web */}
-      {hostFinishedSpeaking &&
-        sessionStatus === "CONNECTED" &&
+      {sessionStatus === "CONNECTED" &&
         isWebRTCReady && (
-          <div className="fixed bottom-1/4 right-6 z-10">
-            <div className="bg-amber-50 border-2 border-amber-200 rounded-full p-4 shadow-lg">
-              <div className="text-center">
-                <div className="text-xs text-amber-800 mb-1">
-                  Hold to Gobble
-                </div>
-                <button
-                  onMouseDown={handleTalkButtonDown}
-                  onMouseUp={handleTalkButtonUp}
-                  onMouseLeave={handleTalkButtonUp}
-                  onTouchStart={handleTalkButtonDown}
-                  onTouchEnd={handleTalkButtonUp}
-                  className={`w-16 h-16 rounded-full border-4 border-amber-400 transition-all duration-150 ${
-                    isPTTUserSpeaking
-                      ? "bg-red-500 scale-110 shadow-lg"
-                      : "bg-amber-200 hover:bg-amber-300"
-                  }`}
-                >
-                  <div className="text-5xl">
-                    {isPTTUserSpeaking ? "🔴" : "🦃"}
-                  </div>
-                </button>
+          <div className="flex flex-col items-center mt-8">
+            <button
+              onMouseDown={handleTalkButtonDown}
+              onMouseUp={handleTalkButtonUp}
+              onMouseLeave={handleTalkButtonUp}
+              onTouchStart={handleTalkButtonDown}
+              onTouchEnd={handleTalkButtonUp}
+            >
+              <div className="text-8xl sm:text-9xl">
+                {isPTTUserSpeaking ? "🦃" : "🫦"}
               </div>
+            </button>
+            <div className="text-sm text-amber-800 mt-2 font-bold">
+              Hold to Gobble
             </div>
           </div>
         )}
 
-      {/* Decorative elements - Thanksgiving/turkey themed */}
-      <div className="flex justify-center space-x-3 text-lg opacity-30 mt-4">
-        <span>🦃</span>
-        <span>🍂</span>
-        <span>🌾</span>
-        <span>🥧</span>
-      </div>
+
     </div>
   );
 }

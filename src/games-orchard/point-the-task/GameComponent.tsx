@@ -30,7 +30,7 @@ function PointTheTaskGame(props: Partial<GameControlProps>) {
     sendPlayerText: _sendPlayerText,
     gameState,
   } = props;
-  const [hostFinishedSpeaking, setHostFinishedSpeaking] = useState(false);
+  const [_hostFinishedSpeaking, setHostFinishedSpeaking] = useState(false);
   const [isPTTUserSpeaking, setIsPTTUserSpeaking] = useState(false);
   const pttStartTimeRef = useRef<number>(0);
 
@@ -188,7 +188,7 @@ function PointTheTaskGame(props: Partial<GameControlProps>) {
               <div className="flex justify-end">
                 <div className="bg-green-100 border-2 border-green-300 rounded-2xl rounded-br-none p-4 max-w-lg text-black">
                   <div className="text-sm text-green-800 font-medium mb-1">
-                    👨‍💻 You:
+                    👨‍💻 You (Sucker to capitalism):
                   </div>
                   <div className="text-green-900 text-lg">
                     {isPTTUserSpeaking
@@ -213,44 +213,32 @@ function PointTheTaskGame(props: Partial<GameControlProps>) {
       </div>
 
       {/* Push-to-Talk Button - Web */}
-      {hostFinishedSpeaking &&
-        sessionStatus === "CONNECTED" &&
+      {sessionStatus === "CONNECTED" &&
         isWebRTCReady && (
-          <div className="fixed bottom-1/4 right-6 z-10">
-            <div className="bg-blue-50 border-2 border-blue-200 rounded-full p-4 shadow-lg">
-              <div className="text-center">
-                <div className="text-xs text-blue-800 mb-1">Hold to Point</div>
-                <button
-                  onMouseDown={handleTalkButtonDown}
-                  onMouseUp={handleTalkButtonUp}
-                  onMouseLeave={handleTalkButtonUp}
-                  onTouchStart={handleTalkButtonDown}
-                  onTouchEnd={handleTalkButtonUp}
-                  className={`w-16 h-16 rounded-full border-4 border-blue-400 transition-all duration-150 ${
-                    isPTTUserSpeaking
-                      ? "bg-red-500 scale-110 shadow-lg"
-                      : "bg-blue-200 hover:bg-blue-300"
-                  }`}
-                >
-                  <div className="text-5xl">
-                    {isPTTUserSpeaking ? "🔴" : "🎤"}
-                  </div>
-                </button>
+          <div className="flex flex-col items-center mt-8">
+            <button
+              onMouseDown={handleTalkButtonDown}
+              onMouseUp={handleTalkButtonUp}
+              onMouseLeave={handleTalkButtonUp}
+              onTouchStart={handleTalkButtonDown}
+              onTouchEnd={handleTalkButtonUp}
+              className={`w-32 h-32 sm:w-40 sm:h-40 rounded-full border-4 border-blue-400 transition-all duration-150 shadow-lg ${
+                isPTTUserSpeaking
+                  ? "bg-red-500 scale-110"
+                  : "bg-blue-200 hover:bg-blue-300"
+              }`}
+            >
+              <div className="text-8xl sm:text-9xl">
+                {isPTTUserSpeaking ? "2️⃣" : "🃏"}
               </div>
+            </button>
+            <div className="text-sm text-blue-800 mt-2 font-bold">
+              Hold to Point
             </div>
-          </div>
+          </div> 
         )}
 
-      {/* Decorative meeting elements */}
-      <div className="flex justify-center space-x-4 text-2xl opacity-30 mt-4">
-        <span>📊</span>
-        <span>💼</span>
-        <span>⏰</span>
-        <span>📈</span>
-        <span>🎯</span>
-        <span>📋</span>
-        <span>💤</span>
-      </div>
+
     </div>
   );
 }

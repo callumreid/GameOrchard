@@ -29,7 +29,7 @@ function PitchStartupGame(props: Partial<GameControlProps>) {
     sendPlayerText: _sendPlayerText,
     gameState,
   } = props;
-  const [hostFinishedSpeaking, setHostFinishedSpeaking] = useState(false);
+  const [_hostFinishedSpeaking, setHostFinishedSpeaking] = useState(false);
   const [isPTTUserSpeaking, setIsPTTUserSpeaking] = useState(false);
   const [currentTranscriptionText, setCurrentTranscriptionText] = useState("");
   const pttStartTimeRef = useRef<number>(0);
@@ -225,7 +225,7 @@ function PitchStartupGame(props: Partial<GameControlProps>) {
               <div className="flex justify-end">
                 <div className="bg-gradient-to-br from-blue-200 to-indigo-200 border-3 border-blue-500 rounded-2xl rounded-br-none p-4 max-w-md text-black shadow-lg">
                   <div className="text-sm text-blue-800 font-medium mb-1">
-                    💡 You (Visionary):
+                    💡 You (Overconfident Underprepared):
                   </div>
                   <div className="text-blue-900 text-lg font-semibold">
                     {isPTTUserSpeaking
@@ -248,45 +248,32 @@ function PitchStartupGame(props: Partial<GameControlProps>) {
       </div>
 
       {/* Push-to-Talk Button - Web */}
-      {hostFinishedSpeaking &&
-        sessionStatus === "CONNECTED" &&
+      {sessionStatus === "CONNECTED" &&
         isWebRTCReady && (
-          <div className="fixed bottom-1/4 right-6 z-10">
-            <div className="bg-gradient-to-br from-slate-100 to-gray-100 border-4 border-slate-400 rounded-full p-4 shadow-xl">
-              <div className="text-center">
-                <div className="text-xs text-slate-800 mb-1 font-bold">
-                  Hold to Pitch
-                </div>
-                <button
-                  onMouseDown={handleTalkButtonDown}
-                  onMouseUp={handleTalkButtonUp}
-                  onMouseLeave={handleTalkButtonUp}
-                  onTouchStart={handleTalkButtonDown}
-                  onTouchEnd={handleTalkButtonUp}
-                  className={`w-16 h-16 rounded-full border-4 border-slate-600 transition-all duration-150 ${
-                    isPTTUserSpeaking
-                      ? "bg-red-500 scale-110 shadow-lg"
-                      : "bg-slate-300 hover:bg-slate-400"
-                  }`}
-                >
-                  <div className="text-5xl">
-                    {isPTTUserSpeaking ? "🔴" : "💡"}
-                  </div>
-                </button>
+          <div className="flex flex-col items-center mt-8">
+            <button
+              onMouseDown={handleTalkButtonDown}
+              onMouseUp={handleTalkButtonUp}
+              onMouseLeave={handleTalkButtonUp}
+              onTouchStart={handleTalkButtonDown}
+              onTouchEnd={handleTalkButtonUp}
+              className={`w-32 h-32 sm:w-40 sm:h-40 rounded-full border-4 border-slate-600 transition-all duration-150 shadow-lg ${
+                isPTTUserSpeaking
+                  ? "bg-red-500 scale-110"
+                  : "bg-slate-300 hover:bg-slate-400"
+              }`}
+            >
+              <div className="text-8xl sm:text-9xl">
+                {isPTTUserSpeaking ? "🤥" : "⏳"}
               </div>
+            </button>
+            <div className="text-sm text-slate-800 mt-2 font-bold">
+              Hold to Pitch
             </div>
           </div>
         )}
 
-      {/* Decorative elements - Silicon Valley boardroom themed */}
-      <div className="flex justify-center space-x-3 text-2xl opacity-40 mt-4">
-        <span>🏢</span>
-        <span>💰</span>
-        <span>🦄</span>
-        <span>📈</span>
-        <span>☕</span>
-        <span>💡</span>
-      </div>
+
     </div>
   );
 }

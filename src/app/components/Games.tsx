@@ -22,9 +22,11 @@ export default function Games() {
 
   // Multi-game sequence state
   const [currentGameIndex, setCurrentGameIndex] = useState(0);
-  const [implementedGames] = useState<GameMetadata[]>(() =>
-    getImplementedGames()
-  );
+  const [implementedGames] = useState<GameMetadata[]>(() => {
+    const games = getImplementedGames();
+    // Shuffle the games array for random order
+    return [...games].sort(() => Math.random() - 0.5);
+  });
   const [currentTransitionVideo, setCurrentTransitionVideo] = useState(0);
   const transitionVideos = [
     "/bg-video.mp4",
@@ -47,6 +49,38 @@ export default function Games() {
   // PTT state
   const [isPTTUserSpeaking, setIsPTTUserSpeaking] = useState<boolean>(false);
   const _mKeyPressedRef = useRef(false);
+
+  const gradientPalette = [
+    "#fde68a",
+    "#93c5fd",
+    "#fecaca",
+    "#bbf7d0",
+    "#fbcfe8",
+    "#ddd6fe",
+    "#a7f3d0",
+    "#fca5a5",
+    "#67e8f9",
+    "#e9d5ff",
+    "#d1fae5",
+    "#bae6fd",
+  ];
+  const gradientsByGameRef = useRef<Record<string, { from: string; to: string }>>({});
+  /** Returns a stable random two-color gradient for a given game id. */
+  const getGradientForGame = useCallback((gameId: string) => {
+    const existing = gradientsByGameRef.current[gameId];
+    if (existing) return existing;
+    const pick = () => gradientPalette[Math.floor(Math.random() * gradientPalette.length)];
+    const from = pick();
+    let to = pick();
+    let guard = 0;
+    while (to === from && guard < 6) {
+      to = pick();
+      guard++;
+    }
+    const gradient = { from, to };
+    gradientsByGameRef.current[gameId] = gradient;
+    return gradient;
+  }, []);
 
   const {
     sendUserText,
@@ -543,8 +577,10 @@ export default function Games() {
     </div>
   );
 
-  const renderGamePlay = () => (
-    <div className="flex flex-col items-center justify-center h-full bg-gradient-to-br from-red-600 to-pink-600 text-white p-8">
+  const renderGamePlay = () => {
+    const gradient = selectedGame ? getGradientForGame(selectedGame.id) : null;
+    return (
+    <div className="w-full h-full" style={gradient ? { backgroundImage: `linear-gradient(135deg, ${gradient.from}, ${gradient.to})` } : undefined}>
       {/* <button
         onClick={handleBackToLanding}
         className="absolute top-4 left-4 bg-white bg-opacity-20 hover:bg-opacity-30 px-4 py-2 rounded-lg font-medium transition-colors"
@@ -573,7 +609,7 @@ export default function Games() {
                   capabilities.
                 </p>
                 <p className="text-sm mt-4 opacity-75">
-                  Category: {selectedGame.category} | Difficulty:{" "}
+                  Category: {selectedGame.category} | Difficulty: {" "}
                   {selectedGame.difficulty}/5
                   {selectedGame.requiresVoice && " | Voice Required"}
                 </p>
@@ -590,7 +626,8 @@ export default function Games() {
         </div>
       )}
     </div>
-  );
+    );
+  };
 
   const renderTransition = () => (
     <div className="relative flex flex-col items-center justify-center h-full text-white">

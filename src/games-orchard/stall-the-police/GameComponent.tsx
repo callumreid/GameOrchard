@@ -30,7 +30,7 @@ function StallThePoliceGame(props: Partial<GameControlProps>) {
     sendPlayerText: _sendPlayerText,
     gameState,
   } = props;
-  const [hostFinishedSpeaking, setHostFinishedSpeaking] = useState(false);
+  const [_hostFinishedSpeaking, setHostFinishedSpeaking] = useState(false);
   const [isPTTUserSpeaking, setIsPTTUserSpeaking] = useState(false);
   const pttStartTimeRef = useRef<number>(0);
 
@@ -169,7 +169,7 @@ function StallThePoliceGame(props: Partial<GameControlProps>) {
               <div className="flex justify-start">
                 <div className="bg-red-100 border-2 border-red-300 rounded-2xl rounded-bl-none p-4 max-w-md text-black">
                   <div className="text-sm text-red-800 font-medium mb-1">
-                    🚔 Officer:
+                    🚔 Gun Slinging Piggy:
                   </div>
                   <div className="text-red-900 text-lg">{latestHost}</div>
                 </div>
@@ -187,7 +187,7 @@ function StallThePoliceGame(props: Partial<GameControlProps>) {
                   </div>
                   <div className="text-green-900 text-lg">
                     {isPTTUserSpeaking
-                      ? "🎤 Speaking..."
+                      ? "🎤 Stalling..."
                       : latestUser.startsWith("Hello! I'm ready to play")
                       ? "Got something to say?"
                       : latestUser}
@@ -207,41 +207,30 @@ function StallThePoliceGame(props: Partial<GameControlProps>) {
       </div>
 
       {/* Push-to-Talk Button - Web */}
-      {hostFinishedSpeaking &&
-        sessionStatus === "CONNECTED" &&
+      {sessionStatus === "CONNECTED" &&
         isWebRTCReady && (
-          <div className="fixed bottom-1/4 right-6 z-10">
-            <div className="bg-red-50 border-2 border-red-200 rounded-full p-4 shadow-lg">
-              <div className="text-center">
-                <div className="text-xs text-red-800 mb-1">Hold to Talk</div>
-                <button
-                  onMouseDown={handleTalkButtonDown}
-                  onMouseUp={handleTalkButtonUp}
-                  onMouseLeave={handleTalkButtonUp}
-                  onTouchStart={handleTalkButtonDown}
-                  onTouchEnd={handleTalkButtonUp}
-                  className={`w-16 h-16 rounded-full border-4 border-red-400 transition-all duration-150 ${
-                    isPTTUserSpeaking
-                      ? "bg-red-500 scale-110 shadow-lg"
-                      : "bg-red-200 hover:bg-red-300"
-                  }`}
-                >
-                  <div className="text-5xl">
-                    {isPTTUserSpeaking ? "🔴" : "🎤"}
-                  </div>
-                </button>
+          <div className="flex flex-col items-center mt-8">
+            <button
+              onMouseDown={handleTalkButtonDown}
+              onMouseUp={handleTalkButtonUp}
+              onMouseLeave={handleTalkButtonUp}
+              onTouchStart={handleTalkButtonDown}
+              onTouchEnd={handleTalkButtonUp}
+              className={`w-32 h-32 sm:w-40 sm:h-40 rounded-full border-4 border-red-400 transition-all duration-150 shadow-lg ${
+                isPTTUserSpeaking
+                  ? "bg-red-500 scale-110"
+                  : "bg-red-200 hover:bg-red-300"
+              }`}
+            >
+              <div className="text-8xl sm:text-9xl">
+                {isPTTUserSpeaking ? "🔫" : "🚔"}
               </div>
+            </button>
+            <div className="text-sm text-red-800 mt-2 font-bold">
+              Hold to Stall
             </div>
           </div>
         )}
-
-      {/* Decorative elements - Smaller */}
-      <div className="flex justify-center space-x-3 text-lg opacity-30 mt-4">
-        <span>🚨</span>
-        <span>⚖️</span>
-        <span>🤐</span>
-        <span>🏃</span>
-      </div>
     </div>
   );
 }

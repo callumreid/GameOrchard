@@ -174,7 +174,7 @@ export default function BaseGame({
     <div className="relative w-screen h-screen overflow-hidden">
       {/* Normal Game UI - Hidden when horror banner is active */}
       <div
-        className={`flex flex-col h-full bg-gradient-to-br from-blue-600 to-purple-600 text-white ${
+        className={`flex flex-col h-full text-white ${
           showHorrorBanner ? "hidden" : ""
         }`}
       >

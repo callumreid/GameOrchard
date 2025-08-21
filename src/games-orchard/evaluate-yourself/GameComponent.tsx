@@ -30,7 +30,7 @@ function EvaluateYourselfGame(props: Partial<GameControlProps>) {
     sendPlayerText: _sendPlayerText,
     gameState,
   } = props;
-  const [hostFinishedSpeaking, setHostFinishedSpeaking] = useState(false);
+  const [_hostFinishedSpeaking, setHostFinishedSpeaking] = useState(false);
   const [isPTTUserSpeaking, setIsPTTUserSpeaking] = useState(false);
   const pttStartTimeRef = useRef<number>(0);
 
@@ -209,44 +209,26 @@ function EvaluateYourselfGame(props: Partial<GameControlProps>) {
       </div>
 
       {/* Push-to-Talk Button - Web */}
-      {hostFinishedSpeaking &&
-        sessionStatus === "CONNECTED" &&
+      {sessionStatus === "CONNECTED" &&
         isWebRTCReady && (
-          <div className="fixed bottom-1/4 right-6 z-10">
-            <div className="bg-blue-100 border-2 border-blue-300 rounded-full p-4 shadow-lg">
-              <div className="text-center">
-                <div className="text-xs text-blue-800 mb-1">
-                  Hold to Self-Evaluate
-                </div>
-                <button
-                  onMouseDown={handleTalkButtonDown}
-                  onMouseUp={handleTalkButtonUp}
-                  onMouseLeave={handleTalkButtonUp}
-                  onTouchStart={handleTalkButtonDown}
-                  onTouchEnd={handleTalkButtonUp}
-                  className={`w-16 h-16 rounded-full border-4 border-blue-400 transition-all duration-150 ${
-                    isPTTUserSpeaking
-                      ? "bg-red-500 scale-110 shadow-lg"
-                      : "bg-blue-200 hover:bg-blue-300"
-                  }`}
-                >
-                  <div className="text-5xl">
-                    {isPTTUserSpeaking ? "🔴" : "🎤"}
-                  </div>
-                </button>
+          <div className="flex flex-col items-center mt-8">
+            <button
+              onMouseDown={handleTalkButtonDown}
+              onMouseUp={handleTalkButtonUp}
+              onMouseLeave={handleTalkButtonUp}
+              onTouchStart={handleTalkButtonDown}
+              onTouchEnd={handleTalkButtonUp}
+            >
+              <div className="text-8xl sm:text-9xl">
+                {isPTTUserSpeaking ? "💼" : "🤔" }
               </div>
+            </button>
+            <div className="text-sm text-blue-800 mt-2 font-bold">
+              Hold to Defend Your Value
             </div>
           </div>
         )}
 
-      {/* Decorative elements - Corporate themed */}
-      <div className="flex justify-center space-x-3 text-lg opacity-30 mt-4">
-        <span>💼</span>
-        <span>📊</span>
-        <span>💰</span>
-        <span>📋</span>
-        <span>⏰</span>
-      </div>
     </div>
   );
 }
