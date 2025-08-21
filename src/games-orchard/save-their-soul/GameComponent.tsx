@@ -189,7 +189,7 @@ function SaveTheirSoulGame(props: Partial<GameControlProps>) {
   ]);
 
   return (
-    <div className="min-h-screen flex flex-col justify-center items-center p-4 bg-gradient-to-br from-amber-900 via-yellow-900 to-amber-950">
+    <div className="min-h-screen flex flex-col justify-center items-center p-4 pb-24 bg-gradient-to-br from-amber-900 via-yellow-900 to-amber-950">
       <div className="bg-gradient-to-br from-yellow-100 to-amber-100 rounded-lg shadow-lg p-6 max-w-4xl w-full mt-16 border-4 border-amber-800">
         <div className="flex justify-between items-center">
           <h2 className="text-2xl font-bold mb-4 text-center text-amber-900">
@@ -248,28 +248,26 @@ function SaveTheirSoulGame(props: Partial<GameControlProps>) {
       {/* Push-to-Talk Button - Web */}
       { sessionStatus === "CONNECTED" &&
         isWebRTCReady && (
-          <div className="fixed bottom-1/4 right-6 z-10">
-          <div className="flex flex-col items-center mt-8">
+          <div className="flex flex-col items-center mt-8 md:fixed md:bottom-1/4 md:right-6 md:z-10 fixed bottom-4 left-1/2 transform md:transform-none -translate-x-1/2 md:translate-x-0 z-50">
             <button
               onMouseDown={handleTalkButtonDown}
               onMouseUp={handleTalkButtonUp}
               onMouseLeave={handleTalkButtonUp}
               onTouchStart={handleTalkButtonDown}
               onTouchEnd={handleTalkButtonUp}
-              className={`w-32 h-32 sm:w-40 sm:h-40 rounded-full border-4 border-amber-700 transition-all duration-150 shadow-lg ${
+              className={`w-20 h-20 md:w-32 md:h-32 sm:md:w-40 sm:md:h-40 rounded-full border-4 border-amber-700 transition-all duration-150 shadow-lg ${
                 isPTTUserSpeaking
                   ? "bg-yellow-600 scale-110"
                   : "bg-amber-200 hover:bg-amber-300"
               }`}
             >
-              <div className="text-8xl sm:text-9xl">
+              <div className="text-6xl md:text-8xl sm:md:text-9xl">
                 {isPTTUserSpeaking ?  "🙏" : "🔮"} 
               </div>
             </button>
-            <div className="text-sm text-amber-900 mt-2 font-bold">
+            <div className="text-sm text-amber-900 mt-2 font-bold bg-white md:bg-transparent px-2 py-1 rounded">
               Hold to Preach
             </div>
-          </div>
           </div>
         )}
 

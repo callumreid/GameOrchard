@@ -191,7 +191,7 @@ function PitchStartupGame(props: Partial<GameControlProps>) {
   ]);
 
   return (
-    <div className="min-h-screen flex flex-col justify-center items-center p-4 bg-gradient-to-br from-gray-800 via-blue-900 to-gray-900">
+    <div className="min-h-screen flex flex-col justify-center items-center p-4 pb-24 bg-gradient-to-br from-gray-800 via-blue-900 to-gray-900">
       <div className="bg-gradient-to-br from-gray-50 to-blue-50 rounded-lg shadow-2xl p-6 max-w-4xl w-full mt-16 border-4 border-blue-600">
         <div className="flex justify-between items-center">
           <h2 className="text-2xl font-bold mb-4 text-center text-slate-900">
@@ -247,27 +247,27 @@ function PitchStartupGame(props: Partial<GameControlProps>) {
         </div>
       </div>
 
-      {/* Push-to-Talk Button - Web */}
+      {/* Push-to-Talk Button - Fixed for mobile, inline for desktop */}
       {sessionStatus === "CONNECTED" &&
         isWebRTCReady && (
-          <div className="flex flex-col items-center mt-8">
+          <div className="flex flex-col items-center mt-8 md:mt-8 md:relative fixed bottom-4 left-1/2 transform -translate-x-1/2 md:transform-none md:left-auto md:bottom-auto z-50">
             <button
               onMouseDown={handleTalkButtonDown}
               onMouseUp={handleTalkButtonUp}
               onMouseLeave={handleTalkButtonUp}
               onTouchStart={handleTalkButtonDown}
               onTouchEnd={handleTalkButtonUp}
-              className={`w-32 h-32 sm:w-40 sm:h-40 rounded-full border-4 border-slate-600 transition-all duration-150 shadow-lg ${
+              className={`w-20 h-20 md:w-32 md:h-32 sm:md:w-40 sm:md:h-40 rounded-full border-4 border-slate-600 transition-all duration-150 shadow-lg ${
                 isPTTUserSpeaking
                   ? "bg-red-500 scale-110"
                   : "bg-slate-300 hover:bg-slate-400"
               }`}
             >
-              <div className="text-8xl sm:text-9xl">
+              <div className="text-6xl md:text-8xl sm:md:text-9xl">
                 {isPTTUserSpeaking ? "🤥" : "⏳"}
               </div>
             </button>
-            <div className="text-sm text-slate-800 mt-2 font-bold">
+            <div className="text-sm text-slate-800 mt-2 font-bold bg-white md:bg-transparent px-2 py-1 rounded">
               Hold to Pitch
             </div>
           </div>

@@ -155,7 +155,7 @@ function PointTheTaskGame(props: Partial<GameControlProps>) {
   }, [sessionStatus, isPTTUserSpeaking, pushToTalkStop]);
 
   return (
-    <div className="min-h-screen flex flex-col justify-center items-center p-4 bg-gradient-to-br from-gray-300 via-gray-400 to-gray-500">
+    <div className="min-h-screen flex flex-col justify-center items-center p-4 pb-24 bg-gradient-to-br from-gray-300 via-gray-400 to-gray-500">
       <div className="bg-white rounded-lg shadow-lg p-6 max-w-5xl w-full mt-16">
         <div className="flex justify-between items-center mb-6">
           <h2 className="text-2xl font-bold text-center text-gray-800">
@@ -215,24 +215,24 @@ function PointTheTaskGame(props: Partial<GameControlProps>) {
       {/* Push-to-Talk Button - Web */}
       {sessionStatus === "CONNECTED" &&
         isWebRTCReady && (
-          <div className="flex flex-col items-center mt-8">
+          <div className="flex flex-col items-center mt-8 md:mt-8 md:relative fixed bottom-4 left-1/2 transform -translate-x-1/2 md:transform-none md:left-auto md:bottom-auto z-50">
             <button
               onMouseDown={handleTalkButtonDown}
               onMouseUp={handleTalkButtonUp}
               onMouseLeave={handleTalkButtonUp}
               onTouchStart={handleTalkButtonDown}
               onTouchEnd={handleTalkButtonUp}
-              className={`w-32 h-32 sm:w-40 sm:h-40 rounded-full border-4 border-blue-400 transition-all duration-150 shadow-lg ${
+              className={`w-20 h-20 md:w-32 md:h-32 sm:md:w-40 sm:md:h-40 rounded-full border-4 border-blue-400 transition-all duration-150 shadow-lg ${
                 isPTTUserSpeaking
                   ? "bg-red-500 scale-110"
                   : "bg-blue-200 hover:bg-blue-300"
               }`}
             >
-              <div className="text-8xl sm:text-9xl">
+              <div className="text-6xl md:text-8xl sm:md:text-9xl">
                 {isPTTUserSpeaking ? "2️⃣" : "🃏"}
               </div>
             </button>
-            <div className="text-sm text-blue-800 mt-2 font-bold">
+            <div className="text-sm text-blue-800 mt-2 font-bold bg-white md:bg-transparent px-2 py-1 rounded">
               Hold to Point
             </div>
           </div> 

@@ -47,8 +47,7 @@ export default function Games() {
   const audioRef = useRef<HTMLAudioElement>(null);
 
   // PTT state
-  const [isPTTUserSpeaking, setIsPTTUserSpeaking] = useState<boolean>(false);
-  const _mKeyPressedRef = useRef(false);
+  const [isPTTUserSpeaking] = useState<boolean>(false);
 
   const gradientPalette = [
     "#fde68a",
@@ -86,9 +85,6 @@ export default function Games() {
     sendUserText,
     sessionStatus,
     isWebRTCReady,
-    interrupt,
-    pushToTalkStart,
-    pushToTalkStop,
   } = useGameSession();
 
   // Debug logging for session state
@@ -200,39 +196,6 @@ export default function Games() {
     setCurrentGameIndex(0);
   }, [implementedGames]);
 
-  // PTT handlers
-  const _handleTalkButtonDown = useCallback(async () => {
-    console.log("[PTT] handleTalkButtonDown");
-    console.log("[PTT] sessionStatus", sessionStatus);
-    console.log("[PTT] isWebRTCReady", isWebRTCReady);
-    if (sessionStatus !== "CONNECTED" || !isWebRTCReady) return;
-
-    // Prevent multiple simultaneous PTT sessions
-    if (isPTTUserSpeaking) {
-      console.log("[PTT] Already speaking, ignoring additional keydown");
-      return;
-    }
-
-    interrupt();
-    setIsPTTUserSpeaking(true);
-    await pushToTalkStart();
-    console.log("[PTT] Starting push-to-talk");
-  }, [
-    sessionStatus,
-    isWebRTCReady,
-    isPTTUserSpeaking,
-    interrupt,
-    pushToTalkStart,
-  ]);
-
-  const _handleTalkButtonUp = useCallback(async () => {
-    console.log("[PTT] handleTalkButtonUp");
-    if (sessionStatus !== "CONNECTED" || !isPTTUserSpeaking) return;
-
-    setIsPTTUserSpeaking(false);
-    await pushToTalkStop();
-    console.log("[PTT] Stopping push-to-talk");
-  }, [sessionStatus, isPTTUserSpeaking, pushToTalkStop]);
 
   const _handleStartGame = () => {
     if (selectedGame && GameComponent) {

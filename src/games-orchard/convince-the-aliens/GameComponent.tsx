@@ -148,7 +148,7 @@ function ConvinceTheAliensGame(props: Partial<GameControlProps>) {
   }, [sessionStatus, isPTTUserSpeaking, pushToTalkStop]);
 
   return (
-    <div className="min-h-screen flex flex-col justify-center items-center p-4 bg-gradient-to-br from-purple-900 via-indigo-900 to-black">
+    <div className="min-h-screen flex flex-col justify-center items-center p-4 pb-24 bg-gradient-to-br from-purple-900 via-indigo-900 to-black">
       <div className="bg-gray-900 border-4 border-green-400 rounded-lg shadow-2xl p-6 max-w-4xl w-full mt-16">
         <div className="flex justify-between items-center">
           <div className="text-lg font-semibold text-green-400 p-3 bg-black rounded-lg border border-green-400">
@@ -207,20 +207,21 @@ function ConvinceTheAliensGame(props: Partial<GameControlProps>) {
       {/* Push-to-Talk Button - Web */}
       {sessionStatus === "CONNECTED" &&
         isWebRTCReady && (
-          <div className="flex flex-col items-center mt-8">
+          <div className="flex flex-col items-center mt-8 md:mt-8 md:relative fixed bottom-4 left-1/2 transform -translate-x-1/2 md:transform-none md:left-auto md:bottom-auto z-50">
             <button
               onMouseDown={handleTalkButtonDown}
               onMouseUp={handleTalkButtonUp}
               onMouseLeave={handleTalkButtonUp}
               onTouchStart={handleTalkButtonDown}
               onTouchEnd={handleTalkButtonUp}
+              className="bg-white rounded-full shadow-lg p-2 md:bg-transparent md:shadow-none md:p-0"
               
             >
-              <div className="text-8xl sm:text-9xl">
+              <div className="text-6xl md:text-8xl sm:md:text-9xl">
                 {isPTTUserSpeaking ? "👾" : "🐄" }
               </div>
             </button>
-            <div className="text-sm text-green-300 mt-2 font-bold">
+            <div className="text-sm text-green-300 mt-2 font-bold bg-white md:bg-transparent px-2 py-1 rounded">
               Hold to Plead for Humanity
             </div>
           </div>
