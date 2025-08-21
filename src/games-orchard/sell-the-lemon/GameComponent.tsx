@@ -150,7 +150,7 @@ function SellTheLemonGame(props: Partial<GameControlProps>) {
   }, [sessionStatus, isPTTUserSpeaking, pushToTalkStop]);
 
   return (
-    <div className="min-h-screen flex flex-col justify-center items-center p-4 bg-gradient-to-br from-yellow-200 via-orange-200 to-red-200">
+    <div className="min-h-screen flex flex-col justify-center items-center p-4 pb-24 bg-gradient-to-br from-yellow-200 via-orange-200 to-red-200">
       <div className="bg-white rounded-lg shadow-lg p-6 max-w-4xl w-full mt-16">
         <div className="flex justify-between items-center">
           <h2 className="text-2xl font-bold mb-4 text-center text-gray-800">
@@ -205,10 +205,10 @@ function SellTheLemonGame(props: Partial<GameControlProps>) {
         </div>
       </div>
 
-      {/* Push-to-Talk Button - Web */}
+      {/* Push-to-Talk Button - Fixed for mobile, inline for desktop */}
       {sessionStatus === "CONNECTED" &&
         isWebRTCReady && (
-          <div className="flex flex-col items-center mt-8">
+          <div className="flex flex-col items-center mt-8 md:mt-8 md:relative fixed bottom-4 left-1/2 transform -translate-x-1/2 md:transform-none md:left-auto md:bottom-auto z-50">
             <button
               onMouseDown={handleTalkButtonDown}
               onMouseUp={handleTalkButtonUp}
@@ -216,7 +216,7 @@ function SellTheLemonGame(props: Partial<GameControlProps>) {
               onTouchStart={handleTalkButtonDown}
               onTouchEnd={handleTalkButtonUp}
             >
-              <div className="text-8xl sm:text-9xl">
+              <div className="text-6xl md:text-8xl sm:md:text-9xl">
                 {isPTTUserSpeaking ? "💰" : "🚗"}
               </div>
             </button>
