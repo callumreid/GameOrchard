@@ -30,7 +30,7 @@ function AttractTheTurkeyGame(props: Partial<GameControlProps>) {
     sendPlayerText: _sendPlayerText,
     gameState,
   } = props;
-  const [hostFinishedSpeaking, setHostFinishedSpeaking] = useState(false);
+  const [_hostFinishedSpeaking, setHostFinishedSpeaking] = useState(false);
   const [isPTTUserSpeaking, setIsPTTUserSpeaking] = useState(false);
   const pttStartTimeRef = useRef<number>(0);
 
@@ -235,14 +235,9 @@ function AttractTheTurkeyGame(props: Partial<GameControlProps>) {
               onMouseLeave={handleTalkButtonUp}
               onTouchStart={handleTalkButtonDown}
               onTouchEnd={handleTalkButtonUp}
-              className={`w-32 h-32 sm:w-40 sm:h-40 rounded-full border-4 border-amber-400 transition-all duration-150 shadow-lg ${
-                isPTTUserSpeaking
-                  ? "bg-red-500 scale-110"
-                  : "bg-amber-200 hover:bg-amber-300"
-              }`}
             >
               <div className="text-8xl sm:text-9xl">
-                {isPTTUserSpeaking ? "🔴" : "🦃"}
+                {isPTTUserSpeaking ? "🦃" : "🫦"}
               </div>
             </button>
             <div className="text-sm text-amber-800 mt-2 font-bold">

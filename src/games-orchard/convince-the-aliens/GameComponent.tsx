@@ -30,7 +30,7 @@ function ConvinceTheAliensGame(props: Partial<GameControlProps>) {
     sendPlayerText: _sendPlayerText,
     gameState,
   } = props;
-  const [hostFinishedSpeaking, setHostFinishedSpeaking] = useState(false);
+  const [_hostFinishedSpeaking, setHostFinishedSpeaking] = useState(false);
   const [isPTTUserSpeaking, setIsPTTUserSpeaking] = useState(false);
   const pttStartTimeRef = useRef<number>(0);
 
@@ -181,7 +181,7 @@ function ConvinceTheAliensGame(props: Partial<GameControlProps>) {
               <div className="flex justify-end">
                 <div className="bg-blue-900 border-2 border-blue-400 rounded-2xl rounded-br-none p-4 max-w-md text-white">
                   <div className="text-sm text-blue-300 font-medium mb-1">
-                    🌍 Human Ambassador:
+                    🌍 Ambassador of the Long Pig:
                   </div>
                   <div className="text-blue-100 text-lg">
                     {isPTTUserSpeaking
@@ -214,14 +214,10 @@ function ConvinceTheAliensGame(props: Partial<GameControlProps>) {
               onMouseLeave={handleTalkButtonUp}
               onTouchStart={handleTalkButtonDown}
               onTouchEnd={handleTalkButtonUp}
-              className={`w-32 h-32 sm:w-40 sm:h-40 rounded-full border-4 border-green-400 transition-all duration-150 shadow-lg ${
-                isPTTUserSpeaking
-                  ? "bg-red-500 scale-110"
-                  : "bg-green-700 hover:bg-green-600"
-              }`}
+              
             >
               <div className="text-8xl sm:text-9xl">
-                {isPTTUserSpeaking ? "🔴" : "🎤"}
+                {isPTTUserSpeaking ? "👾" : "🐄" }
               </div>
             </button>
             <div className="text-sm text-green-300 mt-2 font-bold">

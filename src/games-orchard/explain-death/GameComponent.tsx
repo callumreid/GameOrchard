@@ -30,7 +30,7 @@ function ExplainDeathGame(props: Partial<GameControlProps>) {
     sendPlayerText: _sendPlayerText,
     gameState,
   } = props;
-  const [hostFinishedSpeaking, setHostFinishedSpeaking] = useState(false);
+  const [_hostFinishedSpeaking, setHostFinishedSpeaking] = useState(false);
   const [isPTTUserSpeaking, setIsPTTUserSpeaking] = useState(false);
   const pttStartTimeRef = useRef<number>(0);
 
@@ -236,11 +236,11 @@ function ExplainDeathGame(props: Partial<GameControlProps>) {
               }`}
             >
               <div className="text-8xl sm:text-9xl">
-                {isPTTUserSpeaking ? "🔴" : "💭"}
+                {isPTTUserSpeaking ? "🪦" : "👵"}
               </div>
             </button>
             <div className="text-sm text-gray-800 mt-2 font-bold">
-              Hold to Ruin Her Childhood
+              Hold to Ruin Childhood
             </div>
           </div>
         )}

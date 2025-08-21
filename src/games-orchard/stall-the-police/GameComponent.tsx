@@ -30,7 +30,7 @@ function StallThePoliceGame(props: Partial<GameControlProps>) {
     sendPlayerText: _sendPlayerText,
     gameState,
   } = props;
-  const [hostFinishedSpeaking, setHostFinishedSpeaking] = useState(false);
+  const [_hostFinishedSpeaking, setHostFinishedSpeaking] = useState(false);
   const [isPTTUserSpeaking, setIsPTTUserSpeaking] = useState(false);
   const pttStartTimeRef = useRef<number>(0);
 
@@ -169,7 +169,7 @@ function StallThePoliceGame(props: Partial<GameControlProps>) {
               <div className="flex justify-start">
                 <div className="bg-red-100 border-2 border-red-300 rounded-2xl rounded-bl-none p-4 max-w-md text-black">
                   <div className="text-sm text-red-800 font-medium mb-1">
-                    🚔 Piggy:
+                    🚔 Gun Slinging Piggy:
                   </div>
                   <div className="text-red-900 text-lg">{latestHost}</div>
                 </div>
@@ -223,7 +223,7 @@ function StallThePoliceGame(props: Partial<GameControlProps>) {
               }`}
             >
               <div className="text-8xl sm:text-9xl">
-                {isPTTUserSpeaking ? "🔴" : "🎤"}
+                {isPTTUserSpeaking ? "🔫" : "🚔"}
               </div>
             </button>
             <div className="text-sm text-red-800 mt-2 font-bold">
@@ -231,14 +231,6 @@ function StallThePoliceGame(props: Partial<GameControlProps>) {
             </div>
           </div>
         )}
-
-      {/* Decorative elements - Smaller */}
-      <div className="flex justify-center space-x-3 text-lg opacity-30 mt-4">
-        <span>🚨</span>
-        <span>⚖️</span>
-        <span>🤐</span>
-        <span>🏃</span>
-      </div>
     </div>
   );
 }

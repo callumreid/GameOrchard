@@ -30,7 +30,7 @@ function PointTheTaskGame(props: Partial<GameControlProps>) {
     sendPlayerText: _sendPlayerText,
     gameState,
   } = props;
-  const [hostFinishedSpeaking, setHostFinishedSpeaking] = useState(false);
+  const [_hostFinishedSpeaking, setHostFinishedSpeaking] = useState(false);
   const [isPTTUserSpeaking, setIsPTTUserSpeaking] = useState(false);
   const pttStartTimeRef = useRef<number>(0);
 
@@ -229,7 +229,7 @@ function PointTheTaskGame(props: Partial<GameControlProps>) {
               }`}
             >
               <div className="text-8xl sm:text-9xl">
-                {isPTTUserSpeaking ? "🔴" : "🎤"}
+                {isPTTUserSpeaking ? "2️⃣" : "🃏"}
               </div>
             </button>
             <div className="text-sm text-blue-800 mt-2 font-bold">

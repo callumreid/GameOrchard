@@ -212,14 +212,9 @@ function AdviseTheChildGame(props: Partial<GameControlProps>) {
               onMouseLeave={handleTalkButtonUp}
               onTouchStart={handleTalkButtonDown}
               onTouchEnd={handleTalkButtonUp}
-              className={`w-32 h-32 sm:w-40 sm:h-40 rounded-full border-4 border-yellow-400 transition-all duration-150 shadow-lg ${
-                isPTTUserSpeaking
-                  ? "bg-red-500 scale-110"
-                  : "bg-yellow-200 hover:bg-yellow-300"
-              }`}
             >
               <div className="text-8xl sm:text-9xl">
-                {isPTTUserSpeaking ? "🔴" : "🎤"}
+                {isPTTUserSpeaking ? "🫵" : "👶"}
               </div>
             </button>
             <div className="text-sm text-gray-600 mt-2 font-medium">

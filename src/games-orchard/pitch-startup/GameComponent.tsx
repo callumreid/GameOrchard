@@ -29,7 +29,7 @@ function PitchStartupGame(props: Partial<GameControlProps>) {
     sendPlayerText: _sendPlayerText,
     gameState,
   } = props;
-  const [hostFinishedSpeaking, setHostFinishedSpeaking] = useState(false);
+  const [_hostFinishedSpeaking, setHostFinishedSpeaking] = useState(false);
   const [isPTTUserSpeaking, setIsPTTUserSpeaking] = useState(false);
   const [currentTranscriptionText, setCurrentTranscriptionText] = useState("");
   const pttStartTimeRef = useRef<number>(0);
@@ -264,7 +264,7 @@ function PitchStartupGame(props: Partial<GameControlProps>) {
               }`}
             >
               <div className="text-8xl sm:text-9xl">
-                {isPTTUserSpeaking ? "🔴" : "💡"}
+                {isPTTUserSpeaking ? "🤥" : "⏳"}
               </div>
             </button>
             <div className="text-sm text-slate-800 mt-2 font-bold">

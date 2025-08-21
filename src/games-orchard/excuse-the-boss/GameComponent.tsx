@@ -200,7 +200,7 @@ function ExcuseTheBossGame(props: Partial<GameControlProps>) {
                   </div>
                   <div className="text-green-900 text-lg">
                     {isPTTUserSpeaking
-                      ? "🎤 Spinning your excuse..."
+                      ? "🎤 Spluttering incoherently..."
                       : latestUser.startsWith("Hello! I'm ready to play")
                       ? "Press mic to give your legendary excuse"
                       : latestUser}
@@ -229,18 +229,13 @@ function ExcuseTheBossGame(props: Partial<GameControlProps>) {
               onMouseLeave={handleTalkButtonUp}
               onTouchStart={handleTalkButtonDown}
               onTouchEnd={handleTalkButtonUp}
-              className={`w-32 h-32 sm:w-40 sm:h-40 rounded-full border-4 border-gray-600 transition-all duration-150 shadow-lg ${
-                isPTTUserSpeaking
-                  ? "bg-green-500 scale-110"
-                  : "bg-gray-200 hover:bg-gray-300"
-              }`}
             >
               <div className="text-8xl sm:text-9xl">
-                {isPTTUserSpeaking ? "🔴" : "📞"}
+                {isPTTUserSpeaking ? "📞": "💤"}
               </div>
             </button>
             <div className="text-sm text-black mt-2 font-bold">
-              Hold to Excuse
+              Hold to Fake Emergency
             </div>
           </div>
         )}

@@ -223,7 +223,7 @@ function SaveTheirSoulGame(props: Partial<GameControlProps>) {
               <div className="flex justify-end">
                 <div className="bg-gradient-to-br from-yellow-700 to-amber-700 border-3 border-yellow-600 rounded-2xl rounded-br-none p-4 max-w-md text-yellow-100 shadow-lg">
                   <div className="text-sm text-yellow-200 font-medium mb-1">
-                    🙏 You (Head of God's Sales team):
+                    🙏 You (Head of God&apos;s Sales team):
                   </div>
                   <div className="text-yellow-100 text-lg font-semibold">
                     {isPTTUserSpeaking
@@ -263,7 +263,7 @@ function SaveTheirSoulGame(props: Partial<GameControlProps>) {
               }`}
             >
               <div className="text-8xl sm:text-9xl">
-                {isPTTUserSpeaking ? "🔴" : "🙏"}
+                {isPTTUserSpeaking ?  "🙏" : "🔮"} 
               </div>
             </button>
             <div className="text-sm text-amber-900 mt-2 font-bold">
