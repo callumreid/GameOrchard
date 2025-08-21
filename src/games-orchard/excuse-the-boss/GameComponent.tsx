@@ -30,7 +30,6 @@ function ExcuseTheBossGame(props: Partial<GameControlProps>) {
     sendPlayerText: _sendPlayerText,
     gameState,
   } = props;
-  const [hostFinishedSpeaking, setHostFinishedSpeaking] = useState(false);
   const [isPTTUserSpeaking, setIsPTTUserSpeaking] = useState(false);
   const pttStartTimeRef = useRef<number>(0);
 
@@ -90,7 +89,6 @@ function ExcuseTheBossGame(props: Partial<GameControlProps>) {
 
       // Start timer after boss finishes demanding explanation (estimated 10 seconds)
       setTimeout(() => {
-        setHostFinishedSpeaking(true);
         startTimer?.();
         updateMessage?.(
           "Time to spin your excuse! You have 30 seconds to dazzle them with your creativity!"
@@ -164,27 +162,27 @@ function ExcuseTheBossGame(props: Partial<GameControlProps>) {
   }, [sessionStatus, isPTTUserSpeaking, pushToTalkStop]);
 
   return (
-    <div className="min-h-screen flex flex-col justify-center items-center p-4 bg-gradient-to-br from-blue-100 via-indigo-200 to-purple-300">
+    <div className="min-h-screen flex flex-col justify-center items-center p-4 bg-gradient-to-br from-gray-100 via-green-100 to-gray-200">
       <div className="bg-white rounded-lg shadow-lg p-6 max-w-4xl w-full mt-16">
         <div className="flex justify-between items-center">
-          <h2 className="text-2xl font-bold mb-4 text-center text-gray-800">
+          <h2 className="text-2xl font-bold mb-4 text-center text-black">
             📞💼 Excuse for the Boss
           </h2>
-          <div className="text-lg font-semibold text-gray-800 p-3 bg-gray-100 rounded-lg">
+          <div className="text-lg font-semibold text-white p-3 bg-black rounded-lg">
             Time: {gameState?.timeRemaining || 30}s
           </div>
         </div>
         {/* Speech Bubble - Centered and Prominent */}
-        <div className="bg-gray-50 border-2 border-gray-200 rounded-lg p-6 mb-4 min-h-[200px] flex flex-col justify-center">
+        <div className="bg-gray-50 border-2 border-gray-300 rounded-lg p-6 mb-4 min-h-[200px] flex flex-col justify-center">
           {/* Host/Boss Speech Bubble */}
           {latestHost && (
             <div className="mb-4">
               <div className="flex justify-start">
-                <div className="bg-red-100 border-2 border-red-300 rounded-2xl rounded-bl-none p-4 max-w-md text-black">
-                  <div className="text-sm text-red-800 font-medium mb-1">
+                <div className="bg-black border-2 border-gray-800 rounded-2xl rounded-bl-none p-4 max-w-md text-white">
+                  <div className="text-sm text-gray-300 font-medium mb-1">
                     👔 Your Boss:
                   </div>
-                  <div className="text-red-900 text-lg font-bold">
+                  <div className="text-white text-lg font-bold">
                     {latestHost}
                   </div>
                 </div>
@@ -196,11 +194,11 @@ function ExcuseTheBossGame(props: Partial<GameControlProps>) {
           {(latestUser || isPTTUserSpeaking) && (
             <div className="mb-2">
               <div className="flex justify-end">
-                <div className="bg-blue-100 border-2 border-blue-300 rounded-2xl rounded-br-none p-4 max-w-md text-black">
-                  <div className="text-sm text-blue-800 font-medium mb-1">
+                <div className="bg-green-100 border-2 border-green-400 rounded-2xl rounded-br-none p-4 max-w-md text-black">
+                  <div className="text-sm text-green-800 font-medium mb-1">
                     🥛 You (Half-dressed):
                   </div>
-                  <div className="text-blue-900 text-lg">
+                  <div className="text-green-900 text-lg">
                     {isPTTUserSpeaking
                       ? "🎤 Spinning your excuse..."
                       : latestUser.startsWith("Hello! I'm ready to play")
@@ -221,42 +219,33 @@ function ExcuseTheBossGame(props: Partial<GameControlProps>) {
         </div>
       </div>
 
-      {/* Push-to-Talk Button - Web */}
-      {hostFinishedSpeaking &&
-        sessionStatus === "CONNECTED" &&
+      {/* Push-to-Talk Button - Corporate styled */}
+      {sessionStatus === "CONNECTED" &&
         isWebRTCReady && (
-          <div className="fixed bottom-1/4 right-6 z-10">
-            <div className="bg-blue-50 border-2 border-blue-200 rounded-full p-4 shadow-lg">
-              <div className="text-center">
-                <div className="text-xs text-blue-800 mb-1">Hold to Excuse</div>
-                <button
-                  onMouseDown={handleTalkButtonDown}
-                  onMouseUp={handleTalkButtonUp}
-                  onMouseLeave={handleTalkButtonUp}
-                  onTouchStart={handleTalkButtonDown}
-                  onTouchEnd={handleTalkButtonUp}
-                  className={`w-16 h-16 rounded-full border-4 border-blue-400 transition-all duration-150 ${
-                    isPTTUserSpeaking
-                      ? "bg-red-500 scale-110 shadow-lg"
-                      : "bg-blue-200 hover:bg-blue-300"
-                  }`}
-                >
-                  <div className="text-5xl">
-                    {isPTTUserSpeaking ? "🔴" : "📞"}
-                  </div>
-                </button>
+          <div className="flex flex-col items-center mt-8">
+            <button
+              onMouseDown={handleTalkButtonDown}
+              onMouseUp={handleTalkButtonUp}
+              onMouseLeave={handleTalkButtonUp}
+              onTouchStart={handleTalkButtonDown}
+              onTouchEnd={handleTalkButtonUp}
+              className={`w-32 h-32 sm:w-40 sm:h-40 rounded-full border-4 border-gray-600 transition-all duration-150 shadow-lg ${
+                isPTTUserSpeaking
+                  ? "bg-green-500 scale-110"
+                  : "bg-gray-200 hover:bg-gray-300"
+              }`}
+            >
+              <div className="text-8xl sm:text-9xl">
+                {isPTTUserSpeaking ? "🔴" : "📞"}
               </div>
+            </button>
+            <div className="text-sm text-black mt-2 font-bold">
+              Hold to Excuse
             </div>
           </div>
         )}
 
-      {/* Decorative elements - Corporate/office themed */}
-      <div className="flex justify-center space-x-3 text-lg opacity-30 mt-4">
-        <span>📞</span>
-        <span>💼</span>
-        <span>🥛</span>
-        <span>😰</span>
-      </div>
+  
     </div>
   );
 }

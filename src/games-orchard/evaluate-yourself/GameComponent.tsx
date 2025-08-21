@@ -239,14 +239,6 @@ function EvaluateYourselfGame(props: Partial<GameControlProps>) {
           </div>
         )}
 
-      {/* Decorative elements - Corporate themed */}
-      <div className="flex justify-center space-x-3 text-lg opacity-30 mt-4">
-        <span>💼</span>
-        <span>📊</span>
-        <span>💰</span>
-        <span>📋</span>
-        <span>⏰</span>
-      </div>
     </div>
   );
 }

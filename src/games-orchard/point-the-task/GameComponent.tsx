@@ -241,16 +241,7 @@ function PointTheTaskGame(props: Partial<GameControlProps>) {
           </div>
         )}
 
-      {/* Decorative meeting elements */}
-      <div className="flex justify-center space-x-4 text-2xl opacity-30 mt-4">
-        <span>📊</span>
-        <span>💼</span>
-        <span>⏰</span>
-        <span>📈</span>
-        <span>🎯</span>
-        <span>📋</span>
-        <span>💤</span>
-      </div>
+
     </div>
   );
 }

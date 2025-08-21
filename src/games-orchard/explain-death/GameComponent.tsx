@@ -250,13 +250,7 @@ function ExplainDeathGame(props: Partial<GameControlProps>) {
           </div>
         )}
 
-      {/* Decorative elements - Existential/family themed */}
-      <div className="flex justify-center space-x-3 text-lg opacity-30 mt-4">
-        <span>👧</span>
-        <span>💭</span>
-        <span>⚰️</span>
-        <span>🖤</span>
-      </div>
+
     </div>
   );
 }

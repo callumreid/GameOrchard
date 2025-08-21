@@ -278,15 +278,7 @@ function PitchStartupGame(props: Partial<GameControlProps>) {
           </div>
         )}
 
-      {/* Decorative elements - Silicon Valley boardroom themed */}
-      <div className="flex justify-center space-x-3 text-2xl opacity-40 mt-4">
-        <span>🏢</span>
-        <span>💰</span>
-        <span>🦄</span>
-        <span>📈</span>
-        <span>☕</span>
-        <span>💡</span>
-      </div>
+
     </div>
   );
 }
