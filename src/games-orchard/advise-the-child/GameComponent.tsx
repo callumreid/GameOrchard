@@ -30,7 +30,6 @@ function AdviseTheChildGame(props: Partial<GameControlProps>) {
     sendPlayerText: _sendPlayerText,
     gameState,
   } = props;
-  const [hostFinishedSpeaking, setHostFinishedSpeaking] = useState(false);
   const [isPTTUserSpeaking, setIsPTTUserSpeaking] = useState(false);
   const pttStartTimeRef = useRef<number>(0);
 
@@ -85,7 +84,6 @@ function AdviseTheChildGame(props: Partial<GameControlProps>) {
 
       // Start timer after host finishes speaking (estimated 8 seconds for host to speak)
       setTimeout(() => {
-        setHostFinishedSpeaking(true);
         startTimer?.();
         updateMessage?.(
           "Now give your advice! You have 30 seconds to respond thoughtfully."
@@ -149,7 +147,7 @@ function AdviseTheChildGame(props: Partial<GameControlProps>) {
   }, [sessionStatus, isPTTUserSpeaking, pushToTalkStop]);
 
   return (
-    <div className="min-h-screen flex flex-col justify-center items-center p-4 bg-gradient-to-br from-pink-200 via-blue-200 to-purple-200">
+    <div className="min-h-screen flex flex-col justify-center items-center p-4 bg-gradient-to-br from-yellow-200 via-blue-200 to-blue-300">
       <div className="bg-white rounded-lg shadow-lg p-6 max-w-4xl w-full mt-16">
         <div className="flex justify-between items-center">
           <h2 className="text-2xl font-bold mb-4 text-center text-gray-800">
@@ -185,7 +183,7 @@ function AdviseTheChildGame(props: Partial<GameControlProps>) {
                   </div>
                   <div className="text-green-900 text-lg">
                     {isPTTUserSpeaking
-                      ? "🎤 Giving advice..."
+                      ? "🎤 Advising the ute..."
                       : latestUser.startsWith("Hello! I'm ready to play")
                       ? "Press mic to give your advice"
                       : latestUser}
@@ -204,42 +202,33 @@ function AdviseTheChildGame(props: Partial<GameControlProps>) {
         </div>
       </div>
 
-      {/* Push-to-Talk Button - Web */}
-      {hostFinishedSpeaking &&
-        sessionStatus === "CONNECTED" &&
+      {/* Push-to-Talk Button - Integrated with card */}
+      {sessionStatus === "CONNECTED" &&
         isWebRTCReady && (
-          <div className="fixed bottom-1/4 right-6 z-10">
-            <div className="bg-yellow-50 border-2 border-yellow-200 rounded-full p-4 shadow-lg">
-              <div className="text-center">
-                <div className="text-xs text-yellow-800 mb-1">Hold to Talk</div>
-                <button
-                  onMouseDown={handleTalkButtonDown}
-                  onMouseUp={handleTalkButtonUp}
-                  onMouseLeave={handleTalkButtonUp}
-                  onTouchStart={handleTalkButtonDown}
-                  onTouchEnd={handleTalkButtonUp}
-                  className={`w-16 h-16 rounded-full border-4 border-yellow-400 transition-all duration-150 ${
-                    isPTTUserSpeaking
-                      ? "bg-red-500 scale-110 shadow-lg"
-                      : "bg-yellow-200 hover:bg-yellow-300"
-                  }`}
-                >
-                  <div className="text-5xl">
-                    {isPTTUserSpeaking ? "🔴" : "🎤"}
-                  </div>
-                </button>
+          <div className="flex flex-col items-center mt-8">
+            <button
+              onMouseDown={handleTalkButtonDown}
+              onMouseUp={handleTalkButtonUp}
+              onMouseLeave={handleTalkButtonUp}
+              onTouchStart={handleTalkButtonDown}
+              onTouchEnd={handleTalkButtonUp}
+              className={`w-32 h-32 sm:w-40 sm:h-40 rounded-full border-4 border-yellow-400 transition-all duration-150 shadow-lg ${
+                isPTTUserSpeaking
+                  ? "bg-red-500 scale-110"
+                  : "bg-yellow-200 hover:bg-yellow-300"
+              }`}
+            >
+              <div className="text-8xl sm:text-9xl">
+                {isPTTUserSpeaking ? "🔴" : "🎤"}
               </div>
+            </button>
+            <div className="text-sm text-gray-600 mt-2 font-medium">
+              Hold to Talk
             </div>
           </div>
         )}
 
-      {/* Decorative elements - Smaller */}
-      <div className="flex justify-center space-x-3 text-lg opacity-30 mt-4">
-        <span>❤️</span>
-        <span>🤗</span>
-        <span>💪</span>
-        <span>🌟</span>
-      </div>
+
     </div>
   );
 }

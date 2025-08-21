@@ -544,7 +544,7 @@ export default function Games() {
   );
 
   const renderGamePlay = () => (
-    <div className="flex flex-col items-center justify-center h-full bg-gradient-to-br from-red-600 to-pink-600 text-white p-8">
+    <div className="flex flex-col items-center justify-center h-full text-white p-8 bg-gradient-to-br from-yellow-200 via-blue-200 to-blue-300">
       {/* <button
         onClick={handleBackToLanding}
         className="absolute top-4 left-4 bg-white bg-opacity-20 hover:bg-opacity-30 px-4 py-2 rounded-lg font-medium transition-colors"
