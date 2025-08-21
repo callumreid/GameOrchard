@@ -22,9 +22,11 @@ export default function Games() {
 
   // Multi-game sequence state
   const [currentGameIndex, setCurrentGameIndex] = useState(0);
-  const [implementedGames] = useState<GameMetadata[]>(() =>
-    getImplementedGames()
-  );
+  const [implementedGames] = useState<GameMetadata[]>(() => {
+    const games = getImplementedGames();
+    // Shuffle the games array for random order
+    return [...games].sort(() => Math.random() - 0.5);
+  });
   const [currentTransitionVideo, setCurrentTransitionVideo] = useState(0);
   const transitionVideos = [
     "/bg-video.mp4",
