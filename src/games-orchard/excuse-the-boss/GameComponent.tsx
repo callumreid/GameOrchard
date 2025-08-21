@@ -229,13 +229,12 @@ function ExcuseTheBossGame(props: Partial<GameControlProps>) {
               onMouseLeave={handleTalkButtonUp}
               onTouchStart={handleTalkButtonDown}
               onTouchEnd={handleTalkButtonUp}
-              className="bg-white rounded-full shadow-lg p-2 md:bg-transparent md:shadow-none md:p-0"
             >
               <div className="text-6xl md:text-8xl sm:md:text-9xl">
                 {isPTTUserSpeaking ? "📞": "💤"}
               </div>
             </button>
-            <div className="text-sm text-black mt-2 font-bold bg-white md:bg-transparent px-2 py-1 rounded">
+            <div className="text-sm text-black mt-2 font-bold">
               Hold to Fake Emergency
             </div>
           </div>

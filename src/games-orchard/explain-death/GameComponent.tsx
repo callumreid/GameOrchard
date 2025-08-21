@@ -229,17 +229,12 @@ function ExplainDeathGame(props: Partial<GameControlProps>) {
               onMouseLeave={handleTalkButtonUp}
               onTouchStart={handleTalkButtonDown}
               onTouchEnd={handleTalkButtonUp}
-              className={`w-20 h-20 md:w-32 md:h-32 sm:md:w-40 sm:md:h-40 rounded-full border-4 border-gray-400 transition-all duration-150 shadow-lg ${
-                isPTTUserSpeaking
-                  ? "bg-red-500 scale-110"
-                  : "bg-gray-200 hover:bg-gray-300"
-              }`}
             >
               <div className="text-6xl md:text-8xl sm:md:text-9xl">
                 {isPTTUserSpeaking ? "🪦" : "👵"}
               </div>
             </button>
-            <div className="text-sm text-gray-800 mt-2 font-bold bg-white md:bg-transparent px-2 py-1 rounded">
+            <div className="text-sm text-gray-800 mt-2 font-bold">
               Hold to Ruin Childhood
             </div>
           </div>
