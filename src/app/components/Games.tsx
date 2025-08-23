@@ -1,5 +1,6 @@
 "use client";
-import React, { useState, useEffect, useRef, useCallback } from "react";
+import React, { useState, useEffect, useRef } from "react";
+import dynamic from "next/dynamic";
 import {
   allPlannedGames,
   getGameById,
@@ -10,9 +11,14 @@ import { GameMetadata } from "@/games-orchard/types";
 import { useGameSession } from "../providers/GameSessionProvider";
 import PTTAnimation from "./PTTAnimation";
 
+const FlyingFruitsBackground = dynamic(
+  () => import("./FlyingFruitsBackground"),
+  { ssr: false }
+);
+
 export default function Games() {
   const [gameState, setGameState] = useState<
-    "landing" | "spinning" | "playing" | "orchard" | "transition"
+    "landing" | "playing" | "transition"
   >("landing");
   const [selectedGame, setSelectedGame] = useState<GameMetadata | null>(null);
   const [GameComponent, setGameComponent] =
@@ -29,13 +35,33 @@ export default function Games() {
   });
   const [currentTransitionVideo, setCurrentTransitionVideo] = useState(0);
   const transitionVideos = [
-    "/bg-video.mp4",
-    "/bg-video-1.mp4",
-    "/bg-video-2.mp4",
-    "/bg-video-3.mp4",
-    "/bg-video-4.mp4",
-    "/bg-video-5.mp4",
+    "/bg-video-apple.mp4",
+    "/bg-video-banana.mp4",
+    "/bg-video-lemon.mp4",
+    "/bg-video-watermelon.mp4",
+    "/bg-video-kiwi.mp4",
+    "/bg-video-strawberry.mp4",
   ];
+
+  const fruitForVideo = (videoSrc: string) => {
+    if (videoSrc.includes("apple"))
+      return { model: "/apple.glb", color: "#ff4d4d" };
+    if (videoSrc.includes("banana"))
+      return { model: "/banana.glb", color: "#ffbf40" };
+    if (videoSrc.includes("lemon"))
+      return { model: "/lemon.glb", color: "#fff176" };
+    if (videoSrc.includes("watermelon"))
+      return { model: "/watermelon.glb", color: "#ff6b6b" };
+    if (videoSrc.includes("kiwi"))
+      return { model: "/kiwi.glb", color: "#a3e635" };
+    if (videoSrc.includes("strawberry"))
+      return { model: "/strawberry.glb", color: "#ff3b3b" };
+    return { model: "/banana.glb", color: "#ffbf40" };
+  };
+
+  const currentFruit = fruitForVideo(
+    transitionVideos[currentTransitionVideo] ?? ""
+  );
 
   // Auto-start sequence state
   const [showContent, setShowContent] = useState(true);
@@ -49,43 +75,9 @@ export default function Games() {
   // PTT state
   const [isPTTUserSpeaking] = useState<boolean>(false);
 
-  const gradientPalette = [
-    "#fde68a",
-    "#93c5fd",
-    "#fecaca",
-    "#bbf7d0",
-    "#fbcfe8",
-    "#ddd6fe",
-    "#a7f3d0",
-    "#fca5a5",
-    "#67e8f9",
-    "#e9d5ff",
-    "#d1fae5",
-    "#bae6fd",
-  ];
-  const gradientsByGameRef = useRef<Record<string, { from: string; to: string }>>({});
-  /** Returns a stable random two-color gradient for a given game id. */
-  const getGradientForGame = useCallback((gameId: string) => {
-    const existing = gradientsByGameRef.current[gameId];
-    if (existing) return existing;
-    const pick = () => gradientPalette[Math.floor(Math.random() * gradientPalette.length)];
-    const from = pick();
-    let to = pick();
-    let guard = 0;
-    while (to === from && guard < 6) {
-      to = pick();
-      guard++;
-    }
-    const gradient = { from, to };
-    gradientsByGameRef.current[gameId] = gradient;
-    return gradient;
-  }, []);
+  // Former gradient background has been replaced with a 3D bananas scene
 
-  const {
-    sendUserText,
-    sessionStatus,
-    isWebRTCReady,
-  } = useGameSession();
+  const { sendUserText, sessionStatus, isWebRTCReady } = useGameSession();
 
   // Debug logging for session state
   useEffect(() => {
@@ -113,7 +105,6 @@ export default function Games() {
   useEffect(() => {
     if (!isStarted) return;
     if (audioRef.current) {
-      // Play music during landing, spinning, orchard, and transition states
       // Pause during playing state
       if (gameState === "playing") {
         audioRef.current.pause();
@@ -125,8 +116,6 @@ export default function Games() {
       }
     }
   }, [gameState, hasUserInteracted, isStarted]);
-
-  // Interaction will be captured via the Start button; no global listeners
 
   // Auto-start sequence
   useEffect(() => {
@@ -196,13 +185,6 @@ export default function Games() {
     setCurrentGameIndex(0);
   }, [implementedGames]);
 
-
-  const _handleStartGame = () => {
-    if (selectedGame && GameComponent) {
-      setGameState("playing");
-    }
-  };
-
   const handleBackToLanding = () => {
     setGameState("landing");
     // Reset game sequence
@@ -218,24 +200,6 @@ export default function Games() {
       const component = getGameById(firstGame.id);
       setGameComponent(() => component);
     }
-  };
-
-  const _handleVisitOrchard = () => {
-    setGameState("orchard");
-  };
-
-  const handleSelectGameFromOrchard = (game: GameMetadata) => {
-    setSelectedGame(game);
-
-    // Load component if implemented
-    if (isGameImplemented(game.id)) {
-      const component = getGameById(game.id);
-      setGameComponent(() => component);
-    } else {
-      setGameComponent(null);
-    }
-
-    setGameState("playing");
   };
 
   const handleGameEnd = (_result: any) => {
@@ -312,7 +276,7 @@ export default function Games() {
           poster="/video-frame-0.jpg"
           className="absolute inset-0 w-full h-full object-cover z-0"
         >
-          <source src="/bg-video.mp4" type="video/mp4" />
+          <source src="/bg-video-apple.mp4" type="video/mp4" />
         </video>
 
         {/* Dark overlay for better text readability */}
@@ -459,136 +423,29 @@ export default function Games() {
     );
   };
 
-  const renderSpinner = () => (
-    <div className="flex flex-col items-center justify-center h-full bg-gradient-to-br from-green-600 to-teal-600 text-white">
-      <h2 className="text-4xl font-bold mb-8">Spinning...</h2>
-      <div className="relative">
-        <div className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-2">
-          <div className="w-0 h-0 border-l-4 border-r-4 border-b-8 border-transparent border-b-red-500"></div>
-        </div>
-      </div>
-    </div>
-  );
-
-  const renderOrchard = () => (
-    <div className="h-full bg-gradient-to-br from-orange-600 to-amber-600 text-white p-8 overflow-y-auto">
-      {/* <button
-        onClick={handleBackToLanding}
-        className="absolute top-4 left-4 bg-white bg-opacity-20 hover:bg-opacity-30 px-4 py-2 rounded-lg font-medium transition-colors z-10"
-      >
-        ← Back to Games
-      </button> */}
-
-      <div className="text-center mb-8 pt-16">
-        <h1 className="text-6xl font-bold mb-4">🌳 The Orchard 🌳</h1>
-        <p className="text-xl opacity-90">Choose your microgame adventure!</p>
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 max-w-7xl mx-auto">
-        {allPlannedGames.map((game) => (
-          <div
-            key={game.id}
-            onClick={() => handleSelectGameFromOrchard(game)}
-            className={`bg-white bg-opacity-20 rounded-lg p-6 cursor-pointer transition-all transform hover:scale-105 hover:bg-opacity-30 ${
-              isGameImplemented(game.id)
-                ? "border-2 border-green-400"
-                : "border-2 border-gray-400 opacity-75"
-            }`}
-          >
-            <div className="text-center">
-              <h3 className="text-lg font-bold mb-2 line-clamp-2">
-                {game.name}
-              </h3>
-              <p className="text-sm opacity-90 mb-4 line-clamp-3">
-                {game.description}
-              </p>
-
-              <div className="text-xs space-y-1">
-                <div className="flex justify-between">
-                  <span>Category:</span>
-                  <span className="font-medium">{game.category}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span>Difficulty:</span>
-                  <span className="font-medium">
-                    {"★".repeat(game.difficulty)}
-                    {"☆".repeat(5 - game.difficulty)}
-                  </span>
-                </div>
-                {game.requiresVoice && (
-                  <div className="text-yellow-300 font-medium">
-                    🎤 Voice Required
-                  </div>
-                )}
-              </div>
-
-              <div className="mt-4">
-                {isGameImplemented(game.id) ? (
-                  <span className="bg-green-500 text-white px-3 py-1 rounded-full text-xs font-bold">
-                    ✓ Ready to Play
-                  </span>
-                ) : (
-                  <span className="bg-gray-500 text-white px-3 py-1 rounded-full text-xs font-bold">
-                    Coming Soon
-                  </span>
-                )}
-              </div>
-            </div>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-
   const renderGamePlay = () => {
-    const gradient = selectedGame ? getGradientForGame(selectedGame.id) : null;
     return (
-    <div className="w-full h-full" style={gradient ? { backgroundImage: `linear-gradient(135deg, ${gradient.from}, ${gradient.to})` } : undefined}>
-      {/* <button
-        onClick={handleBackToLanding}
-        className="absolute top-4 left-4 bg-white bg-opacity-20 hover:bg-opacity-30 px-4 py-2 rounded-lg font-medium transition-colors"
-      >
-        ← Back to Games
-      </button> */}
-
-      {selectedGame && (
-        <div className="w-full h-full">
-          {GameComponent ? (
-            <GameComponent
-              onGameEnd={handleGameEnd}
-              sendPlayerText={sendUserText}
-              isPTTUserSpeaking={isPTTUserSpeaking}
+      <div className="w-full h-full relative">
+        {selectedGame && GameComponent && (
+          <>
+            <FlyingFruitsBackground
+              className="absolute inset-0 z-0"
+              speed={2.5}
+              count={80}
+              depth={50}
+              modelPath={currentFruit.model}
+              backgroundColor={currentFruit.color}
             />
-          ) : (
-            <div className="text-center max-w-2xl mx-auto flex flex-col justify-center h-full">
-              <h2 className="text-5xl font-bold mb-4">{selectedGame.name}</h2>
-              <p className="text-xl mb-8">{selectedGame.description}</p>
-
-              <div className="bg-white bg-opacity-20 rounded-lg p-8 mb-8">
-                <h3 className="text-2xl font-bold mb-4">Game Coming Soon!</h3>
-                <p className="text-lg">
-                  This game is currently under development. Each game will be a
-                  10-second voice-interactive experience using the realtime AI
-                  capabilities.
-                </p>
-                <p className="text-sm mt-4 opacity-75">
-                  Category: {selectedGame.category} | Difficulty: {" "}
-                  {selectedGame.difficulty}/5
-                  {selectedGame.requiresVoice && " | Voice Required"}
-                </p>
-              </div>
-
-              <button
-                onClick={handleBackToLanding}
-                className="bg-yellow-500 hover:bg-yellow-600 text-black px-6 py-3 rounded-lg font-bold text-xl transition-colors"
-              >
-                Play Another Game
-              </button>
+            <div className="relative z-10 w-full h-full">
+              <GameComponent
+                onGameEnd={handleGameEnd}
+                sendPlayerText={sendUserText}
+                isPTTUserSpeaking={isPTTUserSpeaking}
+              />
             </div>
-          )}
-        </div>
-      )}
-    </div>
+          </>
+        )}
+      </div>
     );
   };
 
@@ -637,8 +494,6 @@ export default function Games() {
       <PTTAnimation isActive={isPTTUserSpeaking} />
 
       {gameState === "landing" && renderLandingPage()}
-      {gameState === "spinning" && renderSpinner()}
-      {gameState === "orchard" && renderOrchard()}
       {gameState === "playing" && renderGamePlay()}
       {gameState === "transition" && renderTransition()}
     </div>
