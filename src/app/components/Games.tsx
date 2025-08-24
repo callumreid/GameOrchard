@@ -425,27 +425,17 @@ export default function Games() {
 
   const renderGamePlay = () => {
     return (
-      <div className="w-full h-full relative">
+      <>
         {selectedGame && GameComponent && (
-          <>
-            <FlyingFruitsBackground
-              className="absolute inset-0 z-0"
-              speed={2.5}
-              count={80}
-              depth={50}
-              modelPath={currentFruit.model}
-              backgroundColor={currentFruit.color}
+          <div className="relative z-10 w-full h-full">
+            <GameComponent
+              onGameEnd={handleGameEnd}
+              sendPlayerText={sendUserText}
+              isPTTUserSpeaking={isPTTUserSpeaking}
             />
-            <div className="relative z-10 w-full h-full">
-              <GameComponent
-                onGameEnd={handleGameEnd}
-                sendPlayerText={sendUserText}
-                isPTTUserSpeaking={isPTTUserSpeaking}
-              />
-            </div>
-          </>
+          </div>
         )}
-      </div>
+      </>
     );
   };
 
@@ -493,6 +483,16 @@ export default function Games() {
 
       {/* PTT Animation */}
       <PTTAnimation isActive={isPTTUserSpeaking} />
+
+      <FlyingFruitsBackground
+        className="absolute inset-0 z-0"
+        speed={2.5}
+        count={80}
+        depth={50}
+        modelPath={currentFruit.model}
+        backgroundColor={currentFruit.color}
+        isVisible={gameState === "playing"}
+      />
 
       {gameState === "landing" && renderLandingPage()}
       {gameState === "playing" && renderGamePlay()}
