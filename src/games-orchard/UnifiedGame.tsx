@@ -66,15 +66,15 @@ function ConversationPane({
   const { latestHost, latestUser } = getLatestTranscripts();
 
   return (
-    <div className="bg-gray-50 border-2 border-gray-200 rounded-lg p-6 mb-4 min-h-[220px] flex flex-col justify-center">
+    <div className="bg-gray-50 border-b-2 border-gray-200 p-6 mb-2 min-h-[220px] flex flex-col justify-center">
       {latestHost && (
         <div className="mb-4">
-          <div className="flex justify-start">
+          <div className="flex justify-start gap-1">
             <div className="bg-blue-100 border-2 border-blue-300 rounded-2xl rounded-bl-none p-4 max-w-lg text-black">
-              <div className="text-sm text-blue-800 font-medium mb-1">
+              <div className="text-sm text-blue-800 font-semibold">
                 {hostLabel}:
               </div>
-              <div className="text-blue-900 text-lg">{latestHost}</div>
+              <div className="text-blue-900 text-base">{latestHost}</div>
             </div>
           </div>
         </div>
@@ -82,12 +82,12 @@ function ConversationPane({
 
       {(latestUser || isPTTUserSpeaking) && (
         <div className="mb-2">
-          <div className="flex justify-end">
+          <div className="flex justify-end gap-1">
             <div className="bg-green-100 border-2 border-green-300 rounded-2xl rounded-br-none p-4 max-w-lg text-black">
-              <div className="text-sm text-green-800 font-medium mb-1">
+              <div className="text-sm text-green-800 font-semibold">
                 {userLabel}:
               </div>
-              <div className="text-green-900 text-lg">
+              <div className="text-green-900 text-base">
                 {isPTTUserSpeaking
                   ? userActiveBubbleText || "🎤 Speaking..."
                   : latestUser}
@@ -185,9 +185,9 @@ function UnifiedRuntime({
 
   return (
     <div
-      className={`min-h-screen flex flex-col justify-center items-center p-4 pb-24 bg-gradient-to-br ${backgroundGradient}`}
+      className={`min-h-screen flex flex-col justify-center items-center p-4 bg-gradient-to-br ${backgroundGradient}`}
     >
-      <div className="bg-white rounded-lg shadow-lg p-6 max-w-5xl w-full mt-16">
+      <div className="bg-white rounded-lg shadow-lg p-6 max-w-5xl w-full">
         <div className="flex justify-between items-center mb-6">
           <h2 className="text-2xl font-bold text-center text-gray-800">
             {title}
@@ -204,26 +204,24 @@ function UnifiedRuntime({
           userActiveBubbleText={userActiveBubbleText}
           userHintBubbleText={userHintBubbleText}
         />
-      </div>
-
-      {sessionStatus === "CONNECTED" && isWebRTCReady && (
-        <div className="flex flex-col items-center mt-8 md:mt-8 md:relative fixed bottom-4 left-1/2 transform -translate-x-1/2 md:transform-none md:left-auto md:bottom-auto z-50">
+        {sessionStatus === "CONNECTED" && isWebRTCReady && (
           <button
             onMouseDown={handleTalkButtonDown}
             onMouseUp={handleTalkButtonUp}
             onMouseLeave={handleTalkButtonUp}
             onTouchStart={handleTalkButtonDown}
             onTouchEnd={handleTalkButtonUp}
+            className="flex flex-col items-center justify-center border-2 bg-gray-100 border-gray-200 rounded-xl p-4 mx-auto hover:bg-gray-500"
           >
-            <div className="text-6xl md:text-8xl sm:md:text-9xl">
+            <div className="text-4xl md:text-5xl sm:md:text-6xl">
               {isPTTUserSpeaking ? talkButtonActiveEmoji : talkButtonIdleEmoji}
             </div>
+            <div className="text-sm text-gray-600 font-medium">
+              {talkButtonLabel}
+            </div>
           </button>
-          <div className="text-sm text-gray-600 mt-2 font-medium">
-            {talkButtonLabel}
-          </div>
-        </div>
-      )}
+        )}
+      </div>
     </div>
   );
 }
