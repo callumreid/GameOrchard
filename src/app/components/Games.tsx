@@ -72,12 +72,8 @@ export default function Games() {
   const videoRef = useRef<HTMLVideoElement>(null);
   const audioRef = useRef<HTMLAudioElement>(null);
 
-  // PTT state
-  const [isPTTUserSpeaking] = useState<boolean>(false);
-
-  // Former gradient background has been replaced with a 3D bananas scene
-
-  const { sendUserText, sessionStatus, isWebRTCReady } = useGameSession();
+  const { sendUserText, sessionStatus, isWebRTCReady, isPTTUserSpeaking } =
+    useGameSession();
 
   // Debug logging for session state
   useEffect(() => {
@@ -486,7 +482,7 @@ export default function Games() {
 
       <FlyingFruitsBackground
         className="absolute inset-0 z-0"
-        speed={2.5}
+        speed={isPTTUserSpeaking ? 7.5 : 2.5}
         count={80}
         depth={50}
         modelPath={currentFruit.model}
