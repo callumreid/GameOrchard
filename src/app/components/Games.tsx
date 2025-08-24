@@ -96,7 +96,7 @@ export default function Games() {
       // Play video during transition state or when ready on landing
       if (gameState === "transition" || (gameState === "landing" && isReady)) {
         videoRef.current.currentTime = 0;
-        videoRef.current.play();
+        videoRef.current.play().catch(() => {});
       }
     }
   }, [sessionStatus, isWebRTCReady, gameState, isStarted]);
@@ -217,10 +217,9 @@ export default function Games() {
         // Start transition to next game
         setGameState("transition");
 
-        // Play transition video
+        // Play transition video (handled by effect/autoplay)
         if (videoRef.current) {
           videoRef.current.currentTime = 0; // Rewind to start
-          videoRef.current.play();
         }
 
         // After 8 seconds, start next game
@@ -270,11 +269,12 @@ export default function Games() {
         <video
           ref={videoRef}
           loop
-          // muted
+          muted
           playsInline
           preload="metadata"
           poster="/video-frame-0.jpg"
           className="absolute inset-0 w-full h-full object-cover z-0"
+          autoPlay
         >
           <source src="/bg-video-apple.mp4" type="video/mp4" />
         </video>
@@ -455,10 +455,11 @@ export default function Games() {
       <video
         ref={videoRef}
         loop
-        // muted
+        muted
         playsInline
         className="absolute inset-0 w-full h-full object-cover z-0"
         key={transitionVideos[currentTransitionVideo]} // Force re-render when video changes
+        autoPlay
       >
         <source
           src={transitionVideos[currentTransitionVideo]}
