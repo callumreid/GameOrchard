@@ -1,94 +1,56 @@
-import { GameMetadata } from "./types";
-import SaveTheirSoulGame, {
-  metadata as saveTheirSoulMetadata,
-} from "./save-their-soul";
-import AdviseTheChildGame, {
-  metadata as adviseTheChildMetadata,
-} from "./advise-the-child";
-import StallThePoliceGame, {
-  metadata as stallThePoliceMetadata,
-} from "./stall-the-police";
-import ConvinceTheAliensGame, {
-  metadata as convinceTheAliensMetadata,
-} from "./convince-the-aliens";
-import EvaluateYourselfGame, {
-  metadata as evaluateYourselfMetadata,
-} from "./evaluate-yourself";
-import PointTheTaskGame, {
-  metadata as pointTheTaskMetadata,
-} from "./point-the-task";
-import SellTheLemonGame, {
-  metadata as sellTheLemonMetadata,
-} from "./sell-the-lemon";
-import PwnTheBullyGame, {
-  metadata as pwnTheBullyMetadata,
-} from "./pwn-the-bully";
-import ExplainDeathGame, {
-  metadata as explainDeathMetadata,
-} from "./explain-death";
-import AttractTheTurkeyGame, {
-  metadata as attractTheTurkeyMetadata,
-} from "./attract-the-turkey";
-import ExcuseTheBossGame, {
-  metadata as excuseTheBossMetadata,
-} from "./excuse-the-boss";
-import PitchStartupGame, {
-  metadata as pitchStartupMetadata,
-} from "./pitch-startup";
+import React from "react";
+import UnifiedGame from "./UnifiedGame";
+import type { GameDefinitionMeta, GameMetadata } from "./types";
+import rawDefinitions from "./gameDefinitions.json";
+import { GameDefinitionsSchema } from "./schema";
 
-// Minimal export for build - no actual games imported
+// Bridge: metadata array for listing and filtering
+const definitions = GameDefinitionsSchema.parse(
+  rawDefinitions
+) as GameDefinitionMeta[];
 
-// Game registry mapping
-export const implementedGames = {
-  "save-their-soul": SaveTheirSoulGame,
-  "pitch-startup": PitchStartupGame,
-  "excuse-the-boss": ExcuseTheBossGame,
-  "attract-the-turkey": AttractTheTurkeyGame,
-  "pwn-the-bully": PwnTheBullyGame,
-  "explain-death": ExplainDeathGame,
-  "advise-the-child": AdviseTheChildGame,
-  "stall-the-police": StallThePoliceGame,
-  "convince-the-aliens": ConvinceTheAliensGame,
-  "evaluate-yourself": EvaluateYourselfGame,
-  "point-the-task": PointTheTaskGame,
-  "sell-the-lemon": SellTheLemonGame,
-};
+export const implementedGameMetadata: GameMetadata[] = (
+  definitions as GameDefinitionMeta[]
+).map(
+  ({
+    id,
+    name,
+    description,
+    category,
+    difficulty,
+    requiresVoice,
+    requiresAudio,
+    estimatedDuration,
+  }) => ({
+    id,
+    name,
+    description,
+    category,
+    difficulty,
+    requiresVoice,
+    requiresAudio,
+    estimatedDuration,
+  })
+);
 
-// Implemented game metadata
-export const implementedGameMetadata: GameMetadata[] = [
-  adviseTheChildMetadata,
-  pitchStartupMetadata,
-  attractTheTurkeyMetadata,
-  excuseTheBossMetadata,
-  pwnTheBullyMetadata,
-  explainDeathMetadata,
-  sellTheLemonMetadata,
-  pointTheTaskMetadata,
-  convinceTheAliensMetadata,
-  evaluateYourselfMetadata,
-  stallThePoliceMetadata,
-  sellTheLemonMetadata,
-  saveTheirSoulMetadata,
-];
-
-// Complete list of all planned games (implemented + planned)
-export const allPlannedGames: GameMetadata[] = [
-  // Include all implemented games
-  ...implementedGameMetadata,
-  // Add any additional planned games here
-];
-
-// Helper functions
+// For selection by id -> component
 export function getGameById(id: string) {
-  return implementedGames[id as keyof typeof implementedGames];
+  const def = (definitions as GameDefinitionMeta[]).find((d) => d.id === id);
+  if (!def) return undefined as any;
+  // Return a component factory that injects the definition (avoid JSX in .ts)
+  const Component = (props: any) =>
+    React.createElement(UnifiedGame as any, { definition: def, ...props });
+  return Component as any;
 }
 
 export function getGameMetadata(id: string) {
-  return allPlannedGames.find((game) => game.id === id);
+  return implementedGameMetadata.find((g) => g.id === id);
 }
 
+export const allPlannedGames: GameMetadata[] = implementedGameMetadata;
+
 export function getGamesByCategory(category: string) {
-  return allPlannedGames.filter((game) => game.category === category);
+  return implementedGameMetadata.filter((game) => game.category === category);
 }
 
 export function getImplementedGames() {
@@ -96,5 +58,5 @@ export function getImplementedGames() {
 }
 
 export function isGameImplemented(id: string) {
-  return id in implementedGames;
+  return (definitions as GameDefinitionMeta[]).some((d) => d.id === id);
 }

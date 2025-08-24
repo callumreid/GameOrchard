@@ -453,7 +453,7 @@ export function useGameAgent(options: UseGameAgentOptions = {}) {
         }
         // Handle save-their-soul game
         else if (
-          item.title.includes("start_soul_saving_game") &&
+          item.title.includes("start_save_their_soul_game") &&
           item.data &&
           gameType === "save-their-soul"
         ) {
@@ -464,26 +464,35 @@ export function useGameAgent(options: UseGameAgentOptions = {}) {
             onGameStart?.(scenario);
             setProcessedItemIds((prev) => new Set(prev).add(item.itemId));
           } catch (e) {
-            console.error("Failed to parse save-their-soul game start scenario:", e);
+            console.error(
+              "Failed to parse save-their-soul game start scenario:",
+              e
+            );
           }
         } else if (
-          item.title.includes("finish_soul_saving_game") &&
+          item.title.includes("finish_save_their_soul_game") &&
           gameType === "save-their-soul"
         ) {
           try {
-            console.log("🔍 Found finish_soul_saving_game breadcrumb:", item);
+            console.log(
+              "🔍 Found finish_save_their_soul_game breadcrumb:",
+              item
+            );
             const result = item.data as GameFinishResult;
             console.log("🔍 Parsed result:", result);
             setIsGameActive(false);
             onGameFinish?.(result);
             setProcessedItemIds((prev) => new Set(prev).add(item.itemId));
           } catch (e) {
-            console.error("Failed to parse save-their-soul game finish result:", e);
+            console.error(
+              "Failed to parse save-their-soul game finish result:",
+              e
+            );
           }
         }
         // Handle pitch-startup game
         else if (
-          item.title.includes("start_startup_pitch_game") &&
+          item.title.includes("start_pitch_startup_game") &&
           item.data &&
           gameType === "pitch-startup"
         ) {
@@ -494,21 +503,27 @@ export function useGameAgent(options: UseGameAgentOptions = {}) {
             onGameStart?.(scenario);
             setProcessedItemIds((prev) => new Set(prev).add(item.itemId));
           } catch (e) {
-            console.error("Failed to parse pitch-startup game start scenario:", e);
+            console.error(
+              "Failed to parse pitch-startup game start scenario:",
+              e
+            );
           }
         } else if (
-          item.title.includes("finish_startup_pitch_game") &&
+          item.title.includes("finish_pitch_startup_game") &&
           gameType === "pitch-startup"
         ) {
           try {
-            console.log("🔍 Found finish_startup_pitch_game breadcrumb:", item);
+            console.log("🔍 Found finish_pitch_startup_game breadcrumb:", item);
             const result = item.data as GameFinishResult;
             console.log("🔍 Parsed result:", result);
             setIsGameActive(false);
             onGameFinish?.(result);
             setProcessedItemIds((prev) => new Set(prev).add(item.itemId));
           } catch (e) {
-            console.error("Failed to parse pitch-startup game finish result:", e);
+            console.error(
+              "Failed to parse pitch-startup game finish result:",
+              e
+            );
           }
         }
       }
@@ -531,9 +546,9 @@ export function useGameAgent(options: UseGameAgentOptions = {}) {
     // Send a message to trigger the game host agent to start the appropriate game
     const gameMessages = {
       "save-their-soul":
-        "Hello! I'm ready to play Save Their Soul. Please start the game!",
+        "Hello! I'm ready to play Save Their Soul. Please start the game (call the tool start_save_their_soul_game)!",
       "pitch-startup":
-        "Hello! I'm ready to play Pitch Startup. Please start the game!",
+        "Hello! I'm ready to play Pitch Startup. Please start the game (call the tool start_pitch_startup_game)!",
       "excuse-the-boss":
         "Hello! I'm ready to play Excuse for the Boss. Please start the game (call the tool start_boss_excuse_game)!",
       "attract-the-turkey":
