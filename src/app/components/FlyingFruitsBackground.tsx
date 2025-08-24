@@ -18,6 +18,7 @@ type FlyingFruitsBackgroundProps = {
   modelPath?: string;
   backgroundColor?: string;
   scale?: number;
+  isVisible?: boolean;
 };
 
 function FruitInstance({
@@ -112,6 +113,7 @@ export default function FlyingFruitsBackground({
   modelPath = "/banana.glb",
   backgroundColor = "#ffbf40",
   scale = 1,
+  isVisible = true,
 }: FlyingFruitsBackgroundProps) {
   return (
     <div
@@ -121,6 +123,7 @@ export default function FlyingFruitsBackground({
         inset: 0,
         zIndex: 0,
         pointerEvents: "none",
+        opacity: isVisible ? 1 : 0,
       }}
     >
       <Suspense

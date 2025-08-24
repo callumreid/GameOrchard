@@ -62,3 +62,32 @@ export interface GameMetadata {
   requiresAudio: boolean;
   estimatedDuration: number; // in seconds
 }
+
+export interface GameDefinitionMeta extends GameMetadata {
+  gameType:
+    | "save-their-soul"
+    | "pitch-startup"
+    | "excuse-the-boss"
+    | "attract-the-turkey"
+    | "pwn-the-bully"
+    | "explain-death"
+    | "advise-the-child"
+    | "stall-the-police"
+    | "convince-the-aliens"
+    | "evaluate-yourself"
+    | "point-the-task"
+    | "sell-the-lemon";
+  title: string;
+  instructions: string;
+  startDelayMs: number;
+  startMessage: string;
+  activeMessage: string;
+  hostLabel: string;
+  userLabel: string;
+  talkButtonIdleEmoji: string;
+  talkButtonActiveEmoji: string;
+  talkButtonLabel: string;
+  backgroundGradient: string;
+  userActiveBubbleText?: string;
+  userHintBubbleText?: string;
+}

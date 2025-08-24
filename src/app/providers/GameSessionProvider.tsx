@@ -22,6 +22,7 @@ interface GameSessionContextValue {
   interrupt: () => void;
   pushToTalkStart: () => Promise<void>;
   pushToTalkStop: () => Promise<void>;
+  isPTTUserSpeaking: boolean;
 }
 
 const GameSessionContext = createContext<GameSessionContextValue | undefined>(
@@ -38,6 +39,7 @@ export function GameSessionProvider({ children }: GameSessionProviderProps) {
   const { addTranscriptBreadcrumb } = useTranscript();
   const connectionAttemptedRef = useRef(false);
   const [isWebRTCReady, setIsWebRTCReady] = useState(false);
+  const [isPTTUserSpeaking, setIsPTTUserSpeaking] = useState(false);
 
   const {
     connect,
@@ -68,6 +70,19 @@ export function GameSessionProvider({ children }: GameSessionProviderProps) {
       }
     },
   });
+
+  // Wrap PTT controls to expose speaking state in context
+  const wrappedPushToTalkStart = async () => {
+    if (sessionStatus !== "CONNECTED" || !isWebRTCReady) return;
+    setIsPTTUserSpeaking(true);
+    await pushToTalkStart();
+  };
+
+  const wrappedPushToTalkStop = async () => {
+    if (sessionStatus !== "CONNECTED") return;
+    setIsPTTUserSpeaking(false);
+    await pushToTalkStop();
+  };
 
   // Auto-connect to game host agent on mount
   useEffect(() => {
@@ -154,8 +169,9 @@ export function GameSessionProvider({ children }: GameSessionProviderProps) {
     sendUserText,
     mute,
     interrupt,
-    pushToTalkStart,
-    pushToTalkStop,
+    pushToTalkStart: wrappedPushToTalkStart,
+    pushToTalkStop: wrappedPushToTalkStop,
+    isPTTUserSpeaking,
   };
 
   return (

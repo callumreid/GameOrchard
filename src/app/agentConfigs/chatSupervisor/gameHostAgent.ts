@@ -639,10 +639,12 @@ const childAdviceScenarios = [
 const soulSavingScenarios = [
   {
     id: "bus_stop_missionary",
-    problem: "Convert a forlorn stranger slumping on a wobbly bus-stop bench at 3 a.m.",
+    problem:
+      "Convert a forlorn stranger slumping on a wobbly bus-stop bench at 3 a.m.",
     strangerQuote:
       "The neon light flickers ominously as pigeons perch judgmentally overhead. A forlorn stranger slumps on the wobbly bus-stop bench, endlessly scrolling doom-posts on a cracked phone screen. The host elbows you forward with a manic grin: 'Go on, missionary—snatch that soul before the rival cult hotline does!' Armed with nothing but your holy elevator pitch, a dog-eared pamphlet, and the wild-eyed zeal of a late-night infomercial, you must convert this rando to your highly questionable religion!",
-    context: "3 a.m. bus stop soul-saving mission with MLM pyramid scheme energy meets cosmic enlightenment",
+    context:
+      "3 a.m. bus stop soul-saving mission with MLM pyramid scheme energy meets cosmic enlightenment",
     goodSoulKeywords: [
       "tithe in vibes",
       "salsa and salvation",
@@ -775,7 +777,7 @@ const soulSavingScenarios = [
       "bliss",
       "ecstasy",
       "rapture",
-      "euphoria"
+      "euphoria",
     ],
     badSoulKeywords: [
       "generic",
@@ -868,7 +870,7 @@ const soulSavingScenarios = [
       "leave me alone",
       "not interested",
       "go away",
-      "stop bothering me"
+      "stop bothering me",
     ],
   },
 ];
@@ -879,14 +881,16 @@ function getRandomSoulSavingScenario() {
   return soulSavingScenarios[randomIndex];
 }
 
-// Startup pitch game scenarios  
+// Startup pitch game scenarios
 const startupPitchScenarios = [
   {
     id: "vc_boardroom",
-    problem: "Present your disruptive startup vision to skeptical venture capitalists in a mahogany boardroom",
+    problem:
+      "Present your disruptive startup vision to skeptical venture capitalists in a mahogany boardroom",
     vcQuote:
       "Welcome to the mahogany boardroom where dreams come to die! The VCs adjust their Patagonia vests and tap Apple Pencils against their $9 latte sippers. One VC slides your pitch deck across the table: '**??? (insert disruptive buzzword here)**' - The room falls silent. You must blurt out a 30-second elevator pitch for a startup idea so ludicrously visionary that their collective vests burst at the seams from excitement!",
-    context: "Silicon Valley venture capital pitch meeting requiring maximum buzzword density",
+    context:
+      "Silicon Valley venture capital pitch meeting requiring maximum buzzword density",
     goodPitchKeywords: [
       "disruptive",
       "revolutionary",
@@ -896,7 +900,7 @@ const startupPitchScenarios = [
       "artificial intelligence",
       "machine learning",
       "deep learning",
-      "neural networks", 
+      "neural networks",
       "quantum",
       "web3",
       "web 4.5",
@@ -1422,7 +1426,7 @@ const startupPitchScenarios = [
       "hotfix",
       "workaround",
       "temporary solution",
-      "quick fix"
+      "quick fix",
     ],
   },
 ];
@@ -2762,8 +2766,8 @@ export function getGameHostAgentInstructions(): string {
   return getBasePrompt();
 }
 // Tool to start the startup pitch game
-export const startStartupPitchGame = tool({
-  name: "start_startup_pitch_game",
+export const startPitchStartupGame = tool({
+  name: "start_pitch_startup_game",
   description:
     "Starts a Pitch Startup game where the player must present a disruptive startup vision to skeptical VCs.",
   parameters: {
@@ -2773,7 +2777,7 @@ export const startStartupPitchGame = tool({
     additionalProperties: false,
   },
   execute: async (input, details) => {
-    console.log("start_startup_pitch_game called");
+    console.log("start_pitch_startup_game called");
 
     const scenario = getRandomStartupPitchScenario();
 
@@ -2797,8 +2801,8 @@ export const startStartupPitchGame = tool({
 });
 
 // Tool to finish the startup pitch game
-export const finishStartupPitchGame = tool({
-  name: "finish_startup_pitch_game",
+export const finishPitchStartupGame = tool({
+  name: "finish_pitch_startup_game",
   description:
     "Ends the current Pitch Startup game and reports the result to the UI.",
   parameters: {
@@ -2806,7 +2810,8 @@ export const finishStartupPitchGame = tool({
     properties: {
       success: {
         type: "boolean",
-        description: "true if the player delivered a buzzword-heavy, disruptive startup pitch that exploits gig workers",
+        description:
+          "true if the player delivered a buzzword-heavy, disruptive startup pitch that exploits gig workers",
       },
       score: {
         type: "integer",
@@ -2814,14 +2819,15 @@ export const finishStartupPitchGame = tool({
       },
       message: {
         type: "string",
-        description: "Response message about the startup pitch outcome and VC reaction",
+        description:
+          "Response message about the startup pitch outcome and VC reaction",
       },
     },
     required: ["success", "score", "message"],
     additionalProperties: false,
   },
   execute: async (input, details) => {
-    console.log("finish_startup_pitch_game called with input:", input);
+    console.log("finish_pitch_startup_game called with input:", input);
 
     const { success, score, message } = input as {
       success: boolean;
@@ -2848,8 +2854,8 @@ export const finishStartupPitchGame = tool({
 });
 
 // Tool to start the save-their-soul game
-export const startSoulSavingGame = tool({
-  name: "start_soul_saving_game",
+export const startSaveTheirSoulGame = tool({
+  name: "start_save_their_soul_game",
   description:
     "Starts a Save Their Soul game where the player must convert a forlorn stranger at a 3 a.m. bus stop to their questionable religion.",
   parameters: {
@@ -2859,7 +2865,7 @@ export const startSoulSavingGame = tool({
     additionalProperties: false,
   },
   execute: async (input, details) => {
-    console.log("start_soul_saving_game called");
+    console.log("start_save_their_soul_game called");
 
     const scenario = getRandomSoulSavingScenario();
 
@@ -2883,8 +2889,8 @@ export const startSoulSavingGame = tool({
 });
 
 // Tool to finish the save-their-soul game
-export const finishSoulSavingGame = tool({
-  name: "finish_soul_saving_game",
+export const finishSaveTheirSoulGame = tool({
+  name: "finish_save_their_soul_game",
   description:
     "Ends the current Save Their Soul game and reports the result to the UI.",
   parameters: {
@@ -2892,7 +2898,8 @@ export const finishSoulSavingGame = tool({
     properties: {
       success: {
         type: "boolean",
-        description: "true if the player successfully converted the stranger with creative religious pitch and got belief spark + commitment flex",
+        description:
+          "true if the player successfully converted the stranger with creative religious pitch and got belief spark + commitment flex",
       },
       score: {
         type: "integer",
@@ -2900,14 +2907,15 @@ export const finishSoulSavingGame = tool({
       },
       message: {
         type: "string",
-        description: "Response message about the soul-saving mission outcome and host proclamation",
+        description:
+          "Response message about the soul-saving mission outcome and host proclamation",
       },
     },
     required: ["success", "score", "message"],
     additionalProperties: false,
   },
   execute: async (input, details) => {
-    console.log("finish_soul_saving_game called with input:", input);
+    console.log("finish_save_their_soul_game called with input:", input);
 
     const { success, score, message } = input as {
       success: boolean;
@@ -3233,7 +3241,7 @@ You are hosting 30-second micro-games. The current game will be indicated by the
    • Then deliver your cynical commentary about the dark art of car sales
 
 **"Pitch the Startup"** Game Rules:
-1. When the game starts you MUST call the tool \`start_startup_pitch_game()\`. Use the returned scenario to brief the player:
+1. When the game starts you MUST call the tool \`start_pitch_startup_game()\`. Use the returned scenario to brief the player:
    • Read the VC quote verbatim, with dramatic emphasis on their skepticism and Patagonia vests
    • Challenge the player: "Time to pitch like your unicorn depends on it! Make their vests burst at the seams!"
    • Keep briefing under 12 seconds with venture capital energy
@@ -3251,7 +3259,7 @@ You are hosting 30-second micro-games. The current game will be indicated by the
    • success = score ≥ 70 → VCs' Patagonia vests literally burst from excitement
    • otherwise → VCs yawn and check their phones, security escorts player out
 
-5. Call \`finish_startup_pitch_game({success,score,message})\` where \`message\` describes the VC boardroom reaction
+5. Call \`finish_pitch_startup_game({success,score,message})\` where \`message\` describes the VC boardroom reaction
 
 6. After calling the tool, deliver the victory/loss celebration:
    • If they WON: Shout "HOOOOOORAYYYY UNICORN ALERT! PATAGONIA VESTS EXPLODING!" with maximum hype
@@ -3259,7 +3267,7 @@ You are hosting 30-second micro-games. The current game will be indicated by the
    • Then deliver your cynical commentary about Silicon Valley's obsession with disruption over profitability
 
 **"Save Their Soul"** Game Rules:
-1. When the game starts you MUST call the tool \`start_soul_saving_game()\`. Use the returned scenario to brief the player:
+1. When the game starts you MUST call the tool \`start_save_their_soul_game()\`. Use the returned scenario to brief the player:
    • Read the stranger quote verbatim, with dramatic emphasis on the 3 a.m. bus stop atmosphere and missionary challenge
    • Challenge the player: "Time to save their soul! Name your religion and convert this lost stranger!"
    • Keep briefing under 12 seconds with late-night infomercial evangelical energy
@@ -3278,7 +3286,7 @@ You are hosting 30-second micro-games. The current game will be indicated by the
    • success = score ≥ 70 → "Another glorious soul saved! Stock price rising!" with confetti cannons and celestial saxophone
    • otherwise → "Congrats, heathen—eternal hold music for you" and bus splashes with gutter water
 
-5. Call \`finish_soul_saving_game({success,score,message})\` where \`message\` describes the conversion outcome and host proclamation
+5. Call \`finish_save_their_soul_game({success,score,message})\` where \`message\` describes the conversion outcome and host proclamation
 
 6. After calling the tool, deliver the victory/loss celebration:
    • If they WON: Shout "HOOOOOORAYYYY SOUL SAVED! CELESTIAL SAXOPHONE SOLOS!" with maximum evangelical fervor
@@ -3289,8 +3297,8 @@ Keep the tone sharp, cynical, and entertaining while celebrating wins or mournin
 
 // Export the tools array
 export const gameHostTools = [
-  startSoulSavingGame,
-  finishSoulSavingGame,
+  startSaveTheirSoulGame,
+  finishSaveTheirSoulGame,
   startChildAdviceGame,
   finishChildAdviceGame,
   startPoliceStallGame,
@@ -3311,6 +3319,6 @@ export const gameHostTools = [
   finishTurkeyAttractionGame,
   startBossExcuseGame,
   finishBossExcuseGame,
-  startStartupPitchGame,
-  finishStartupPitchGame,
+  startPitchStartupGame,
+  finishPitchStartupGame,
 ];
