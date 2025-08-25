@@ -319,7 +319,7 @@ export default function Games() {
               e
             </span>
             <span
-              className={isFlashing ? "animate-bounce inline-block" : ""}
+              className={isFlashing ? "animate-bounce" : ""}
               style={{ animationDelay: "0.4s" }}
             >
               {" "}
@@ -391,13 +391,14 @@ export default function Games() {
 
           {/* Connection Status */}
           <div className="mb-8 text-center">
-            <div className="flex items-center justify-center mb-4">
+            <div className="flex items-center justify-center mb-4 -mt-4">
               {!isReady && (
                 <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-white mr-3"></div>
               )}
               <span className="text-lg sm:text-xl">
-                {getConnectionStatus() !== "Ready to play!" &&
-                  getConnectionStatus()}
+                {getConnectionStatus() !== "Ready to play!"
+                  ? getConnectionStatus()
+                  : "Talk Your Way Out of Anything"}
               </span>
             </div>
             {!isStarted && (
@@ -406,7 +407,7 @@ export default function Games() {
                 disabled={!isReady}
                 className={`px-8 py-3 rounded-lg font-bold text-xl transition-colors ${
                   isReady
-                    ? "bg-green-500 hover:bg-green-600 text-black"
+                    ? "bg-green-500 hover:bg-green-600 text-black animate-bounce"
                     : "bg-gray-600 text-gray-300 cursor-not-allowed"
                 }`}
               >

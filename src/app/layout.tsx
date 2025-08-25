@@ -4,8 +4,9 @@ import "./lib/envSetup";
 import { Analytics } from "@vercel/analytics/next";
 
 export const metadata: Metadata = {
-  title: "Realtime API Agents",
-  description: "A demo app from OpenAI.",
+  title: "Game Orchard | Talk Your Way Out of Anything",
+  description:
+    "Woo aliens, sell a lemon, befriend a paranoid turkey. Quick, witty, and slightly unhinged—powered by realtime AI.",
 };
 
 export default function RootLayout({
