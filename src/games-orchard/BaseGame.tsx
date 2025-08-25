@@ -190,7 +190,7 @@ export default function BaseGame({
         </div>
 
         {/* Status Message */}
-        <div className="p-4 bg-black bg-opacity-20 text-center">
+        {/* <div className="p-4 bg-black bg-opacity-20 text-center">
           <p className="text-lg">{gameState.message}</p>
           {gameState.status === "playing" && (
             <div className="mt-2">
@@ -204,7 +204,7 @@ export default function BaseGame({
               </div>
             </div>
           )}
-        </div>
+        </div> */}
       </div>
 
       {/* Horror Banner - Full Screen Takeover */}
@@ -216,7 +216,7 @@ export default function BaseGame({
           );
           return (
             <div
-              className={`fixed inset-0 w-screen h-screen flex items-center justify-center z-[999999] transition-colors duration-[50ms] ${
+              className={`fixed inset-0 w-screen h-full flex items-center justify-center z-[999999] transition-colors duration-[50ms] ${
                 horrorFlickerCount % 2 === 0 ? "bg-black" : "bg-white"
               }`}
             >

@@ -37,6 +37,7 @@ function ConversationPane({
   userColor?: string;
 }) {
   const { transcriptItems } = useTranscript();
+  const hostScrollRef = useRef<HTMLDivElement | null>(null);
 
   const getLatestTranscripts = useCallback(() => {
     const hostItems = transcriptItems
@@ -68,6 +69,12 @@ function ConversationPane({
 
   const { latestHost, latestUser } = getLatestTranscripts();
 
+  useEffect(() => {
+    const element = hostScrollRef.current;
+    if (!element) return;
+    element.scrollTop = element.scrollHeight;
+  }, [latestHost]);
+
   return (
     <div
       className="bg-gray-50 rounded-lg p-2 sm:p-4 mb-2 min-h-[220px] flex flex-col justify-center"
@@ -77,9 +84,12 @@ function ConversationPane({
       }}
     >
       {latestHost && (
-        <div className="mb-4 max-h-56 overflow-y-auto">
+        <div className="mb-4">
           <div className="flex justify-start gap-1">
-            <div className="bg-gray-100 border-2 border-gray-300 rounded-2xl rounded-bl-none p-4 max-w-lg text-black">
+            <div
+              ref={hostScrollRef}
+              className="bg-gray-100 border-2 border-gray-300 rounded-2xl rounded-bl-none p-4 max-w-lg text-black max-h-60 overflow-y-auto"
+            >
               <div className="text-xs sm:text-sm text-gray-800 font-semibold">
                 {hostLabel}:
               </div>
@@ -202,7 +212,7 @@ function UnifiedRuntime({
 
   return (
     <div
-      className={`min-h-screen flex flex-col justify-center items-center bg-gradient-to-br ${backgroundGradient}`}
+      className={`h-full flex flex-col justify-center items-center bg-gradient-to-br ${backgroundGradient}`}
     >
       <div className="bg-white rounded-lg shadow-lg p-2 sm:p-4 max-w-5xl w-full">
         <div className="flex justify-between items-center mb-2 sm:mb-4">
