@@ -70,14 +70,14 @@ function ConversationPane({
 
   return (
     <div
-      className="bg-gray-50 rounded-lg p-4 mb-2 min-h-[220px] flex flex-col justify-center"
+      className="bg-gray-50 rounded-lg p-2 sm:p-4 mb-2 min-h-[220px] flex flex-col justify-center"
       style={{
         backgroundColor: userColor ? `${userColor}20` : undefined,
         borderColor: userColor ? userColor : undefined,
       }}
     >
       {latestHost && (
-        <div className="mb-4">
+        <div className="mb-4 max-h-56 overflow-y-auto">
           <div className="flex justify-start gap-1">
             <div className="bg-gray-100 border-2 border-gray-300 rounded-2xl rounded-bl-none p-4 max-w-lg text-black">
               <div className="text-xs sm:text-sm text-gray-800 font-semibold">
@@ -95,7 +95,7 @@ function ConversationPane({
         <div className="mb-2">
           <div className="flex justify-end gap-1">
             <div
-              className="rounded-2xl rounded-br-none p-4 max-w-lg text-black border-2"
+              className="rounded-2xl rounded-br-none p-2 sm:p-4 max-w-lg text-black border-2"
               style={{
                 backgroundColor: userColor ? `${userColor}20` : undefined,
                 borderColor: userColor ? userColor : undefined,
@@ -204,8 +204,8 @@ function UnifiedRuntime({
     <div
       className={`min-h-screen flex flex-col justify-center items-center bg-gradient-to-br ${backgroundGradient}`}
     >
-      <div className="bg-white rounded-lg shadow-lg p-4 max-w-5xl w-full">
-        <div className="flex justify-between items-center mb-4">
+      <div className="bg-white rounded-lg shadow-lg p-2 sm:p-4 max-w-5xl w-full">
+        <div className="flex justify-between items-center mb-2 sm:mb-4">
           <h2 className="text-lg sm:text-2xl font-bold text-gray-800">
             {title}
           </h2>
@@ -229,7 +229,7 @@ function UnifiedRuntime({
             onMouseLeave={handleTalkButtonUp}
             onTouchStart={handleTalkButtonDown}
             onTouchEnd={handleTalkButtonUp}
-            className="flex flex-col items-center justify-center border-2 bg-gray-100 border-gray-200 rounded-xl py-2 px-8 mx-auto hover:bg-gray-200"
+            className="flex flex-col items-center justify-center border-2 bg-gray-100 border-gray-200 rounded-xl py-0.5 sm:py-2 px-4 sm:px-8 mx-auto hover:bg-gray-200"
           >
             <div className="text-4xl md:text-5xl sm:md:text-6xl">
               {isPTTUserSpeaking ? talkButtonActiveEmoji : talkButtonIdleEmoji}

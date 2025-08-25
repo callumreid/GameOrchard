@@ -165,15 +165,17 @@ export default function BaseGame({
   if (showCountdown) {
     return (
       <div className="flex flex-col items-center justify-center h-full p-2 text-white">
-        <h1 className="text-4xl font-bold mb-8">{title}</h1>
-        <div className="text-8xl font-bold mb-4">{countdown}</div>
-        <p className="text-xl text-center max-w-md">{instructions}</p>
+        <h1 className="text-2xl sm:text-4xl font-bold mb-8">{title}</h1>
+        <div className="text-4xl sm:text-8xl font-bold mb-4">{countdown}</div>
+        <p className="text-sm sm:text-xl text-center max-w-md">
+          {instructions}
+        </p>
       </div>
     );
   }
 
   return (
-    <div className="relative w-screen h-screen overflow-hidden">
+    <div className="relative w-full h-full overflow-hidden">
       {/* Normal Game UI - Hidden when horror banner is active */}
       <div
         className={`flex flex-col h-full text-white ${
@@ -214,60 +216,29 @@ export default function BaseGame({
           );
           return (
             <div
-              className="fixed inset-0 w-screen h-screen flex items-center justify-center"
-              style={{
-                zIndex: 999999,
-                backgroundColor:
-                  horrorFlickerCount % 2 === 0 ? "#000000" : "#ffffff",
-                transition: "background-color 0.05s",
-              }}
+              className={`fixed inset-0 w-screen h-screen flex items-center justify-center z-[999999] transition-colors duration-[50ms] ${
+                horrorFlickerCount % 2 === 0 ? "bg-black" : "bg-white"
+              }`}
             >
               {horrorFlickerCount >= 8 && (
                 <div className="w-full h-full flex items-center justify-center">
                   <div
-                    style={{
-                      backgroundColor: finalResult.success
-                        ? "#00ff00"
-                        : "#ff0000",
-                      color: "#000000",
-                      fontSize: "4rem",
-                      fontWeight: "900",
-                      border: "10px solid #000000",
-                      borderRadius: "20px",
-                      minWidth: "800px",
-                      minHeight: "500px",
-                      display: "flex",
-                      flexDirection: "column",
-                      justifyContent: "center",
-                      alignItems: "center",
-                      textAlign: "center",
-                      padding: "40px",
-                    }}
+                    className={`text-black text-4xl sm:text-6xl font-black border-[10px] border-black rounded-[20px] min-h-[500px] flex flex-col justify-center items-center text-center p-[40px] max-w-[95%] ${
+                      finalResult.success ? "bg-[#00ff00]" : "bg-[#ff0000]"
+                    }`}
                   >
-                    <div style={{ fontSize: "8rem", marginBottom: "30px" }}>
+                    <div className="text-8xl sm:text-10xl mb-[30px]">
                       {finalResult.success ? "🏆" : "😢"}
                     </div>
-                    <div
-                      style={{
-                        fontSize: "4rem",
-                        fontWeight: "900",
-                        lineHeight: "1.2",
-                      }}
-                    >
+                    <div className="text-4xl sm:text-6xl font-black leading-[1.2]">
                       {finalResult.success ? "WINNER WINNER" : "LOSER LOSER"}
                     </div>
-                    <div
-                      style={{
-                        fontSize: "4rem",
-                        fontWeight: "900",
-                        lineHeight: "1.2",
-                      }}
-                    >
+                    <div className="text-4xl sm:text-6xl font-black leading-[1.2]">
                       {finalResult.success
                         ? "CHICKEN DINNER!"
                         : "CHICKEN HOOSIER!"}
                     </div>
-                    <div style={{ fontSize: "3rem", marginTop: "30px" }}>
+                    <div className="text-3xl sm:text-4xl mt-[30px]">
                       Score: {finalResult.score}
                     </div>
                   </div>

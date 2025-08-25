@@ -284,12 +284,12 @@ export default function Games() {
 
         {/* Content overlay */}
         <div
-          className={`relative z-20 flex flex-col items-center justify-center transition-opacity duration-1000 ${
+          className={`relative z-20 max-w-[95%] flex flex-col items-center justify-center transition-opacity duration-1000 ${
             showContent ? "opacity-100" : "opacity-0"
           }`}
         >
           <h1
-            className={`text-8xl font-bold mb-12 text-center ${
+            className={`text-6xl sm:text-7xl md:text-8xl font-bold mb-12 text-center ${
               isFlashing ? "animate-pulse" : ""
             }`}
             style={{
@@ -322,7 +322,7 @@ export default function Games() {
               className={isFlashing ? "animate-bounce inline-block" : ""}
               style={{ animationDelay: "0.4s" }}
             >
-              &nbsp;
+              {" "}
             </span>
             <span
               className={isFlashing ? "animate-bounce inline-block" : ""}
@@ -395,7 +395,7 @@ export default function Games() {
               {!isReady && (
                 <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-white mr-3"></div>
               )}
-              <span className="text-xl">
+              <span className="text-lg sm:text-xl">
                 {getConnectionStatus() !== "Ready to play!" &&
                   getConnectionStatus()}
               </span>
@@ -459,7 +459,7 @@ export default function Games() {
 
       {/* Transition content */}
       <div className="relative z-20 flex flex-col items-center justify-center">
-        <h1 className="text-6xl font-bold mb-8 text-center animate-pulse">
+        <h1 className="text-5xl sm:text-6xl font-bold mb-8 text-center animate-pulse">
           Next Game Loading...
         </h1>
         <div className="text-xl opacity-90 text-center">
@@ -472,7 +472,7 @@ export default function Games() {
   );
 
   return (
-    <div className="h-screen">
+    <div className="h-dvh">
       {/* Background Music */}
       <audio ref={audioRef} loop preload="auto" className="hidden">
         <source src="/bg-music-full.mp3" type="audio/mpeg" />
