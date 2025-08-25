@@ -428,6 +428,7 @@ export default function Games() {
               onGameEnd={handleGameEnd}
               sendPlayerText={sendUserText}
               isPTTUserSpeaking={isPTTUserSpeaking}
+              userColor={currentFruit.color}
             />
           </div>
         )}

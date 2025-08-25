@@ -16,6 +16,7 @@ export default function BaseGame({
   onGameEnd,
   sendPlayerText,
   playSound,
+  userColor,
   children,
 }: BaseGameProps) {
   const [gameState, setGameState] = useState<GameState>({
@@ -158,11 +159,12 @@ export default function BaseGame({
     gameState,
     sendPlayerText,
     playSound,
+    userColor,
   };
 
   if (showCountdown) {
     return (
-      <div className="flex flex-col items-center justify-center h-full bg-gradient-to-br from-orange-500 to-red-500 text-white">
+      <div className="flex flex-col items-center justify-center h-full text-white">
         <h1 className="text-4xl font-bold mb-8">{title}</h1>
         <div className="text-8xl font-bold mb-4">{countdown}</div>
         <p className="text-xl text-center max-w-md">{instructions}</p>

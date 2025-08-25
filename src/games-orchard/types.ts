@@ -10,6 +10,7 @@ export interface GameProps {
   sendPlayerText?: (text: string) => void;
   playSound?: (soundId: string) => void;
   isPTTUserSpeaking?: boolean;
+  userColor?: string;
 }
 
 export interface MicroGame {
