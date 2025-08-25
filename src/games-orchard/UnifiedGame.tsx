@@ -70,7 +70,7 @@ function ConversationPane({
 
   return (
     <div
-      className="bg-gray-50 rounded-lg p-6 mb-2 min-h-[220px] flex flex-col justify-center"
+      className="bg-gray-50 rounded-lg p-4 mb-2 min-h-[220px] flex flex-col justify-center"
       style={{
         backgroundColor: userColor ? `${userColor}20` : undefined,
         borderColor: userColor ? userColor : undefined,
@@ -198,7 +198,7 @@ function UnifiedRuntime({
 
   return (
     <div
-      className={`min-h-screen flex flex-col justify-center items-center p-4 bg-gradient-to-br ${backgroundGradient}`}
+      className={`min-h-screen flex flex-col justify-center items-center bg-gradient-to-br ${backgroundGradient}`}
     >
       <div className="bg-white rounded-lg shadow-lg p-4 max-w-5xl w-full">
         <div className="flex justify-between items-center mb-4">

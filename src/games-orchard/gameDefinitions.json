@@ -15,7 +15,7 @@
     "startMessage": "The AI host is presenting your scenario. Listen carefully...",
     "activeMessage": "Now give your advice! You have 30 seconds to respond thoughtfully.",
     "hostLabel": "🎭 Host",
-    "userLabel": "👤 You",
+    "userLabel": "👤 You (Adult)",
     "talkButtonIdleEmoji": "👶",
     "talkButtonActiveEmoji": "🫵",
     "talkButtonLabel": "Hold to Give Advice",
