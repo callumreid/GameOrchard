@@ -80,10 +80,12 @@ function ConversationPane({
         <div className="mb-4">
           <div className="flex justify-start gap-1">
             <div className="bg-gray-100 border-2 border-gray-300 rounded-2xl rounded-bl-none p-4 max-w-lg text-black">
-              <div className="text-sm text-gray-800 font-semibold">
+              <div className="text-xs sm:text-sm text-gray-800 font-semibold">
                 {hostLabel}:
               </div>
-              <div className="text-gray-900 text-base">{latestHost}</div>
+              <div className="text-gray-900 text-sm sm:text-base">
+                {latestHost}
+              </div>
             </div>
           </div>
         </div>
@@ -99,8 +101,10 @@ function ConversationPane({
                 borderColor: userColor ? userColor : undefined,
               }}
             >
-              <div className="text-sm font-semibold">{userLabel}:</div>
-              <div className="text-base">
+              <div className="text-xs sm:text-sm font-semibold">
+                {userLabel}:
+              </div>
+              <div className="text-sm sm:text-base">
                 {isPTTUserSpeaking
                   ? userActiveBubbleText || "🎤 Speaking..."
                   : latestUser}
@@ -202,10 +206,10 @@ function UnifiedRuntime({
     >
       <div className="bg-white rounded-lg shadow-lg p-4 max-w-5xl w-full">
         <div className="flex justify-between items-center mb-4">
-          <h2 className="text-2xl font-bold text-center text-gray-800">
+          <h2 className="text-lg sm:text-2xl font-bold text-gray-800">
             {title}
           </h2>
-          <div className="text-lg font-semibold text-gray-800 p-3 bg-gray-100 rounded-lg">
+          <div className="text-xs sm:text-lg font-semibold text-gray-800 p-3 bg-gray-100 rounded-lg">
             Time: {controls.gameState?.timeRemaining || estimatedDuration}s
           </div>
         </div>

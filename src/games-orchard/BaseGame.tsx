@@ -164,7 +164,7 @@ export default function BaseGame({
 
   if (showCountdown) {
     return (
-      <div className="flex flex-col items-center justify-center h-full text-white">
+      <div className="flex flex-col items-center justify-center h-full p-2 text-white">
         <h1 className="text-4xl font-bold mb-8">{title}</h1>
         <div className="text-8xl font-bold mb-4">{countdown}</div>
         <p className="text-xl text-center max-w-md">{instructions}</p>
