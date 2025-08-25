@@ -106,6 +106,7 @@ export default function Games() {
         audioRef.current.pause();
       } else {
         if (!hasUserInteracted) return;
+        audioRef.current.volume = 0.5;
         audioRef.current.play().catch((error) => {
           console.log("Audio play failed:", error);
         });
