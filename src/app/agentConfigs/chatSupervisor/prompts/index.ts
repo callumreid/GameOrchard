@@ -10,9 +10,11 @@ import convinceTheAliensJson from "./convince-the-aliens.json";
 import evaluateYourselfJson from "./evaluate-yourself.json";
 import pointTheTaskJson from "./point-the-task.json";
 import sellTheLemonJson from "./sell-the-lemon.json";
+import saveTheirSoulJson from "./save-their-soul.json";
+import pitchStartupJson from "./pitch-startup.json";
 
 // Game-specific prompts map
-const gamePrompts: Record<string, string> = {
+const gamePrompts: Record<GameKey, string> = {
   "excuse-the-boss": excuseTheBossJson.content,
   "attract-the-turkey": attractTheTurkeyJson.content,
   "pwn-the-bully": pwnTheBullyJson.content,
@@ -23,13 +25,15 @@ const gamePrompts: Record<string, string> = {
   "evaluate-yourself": evaluateYourselfJson.content,
   "point-the-task": pointTheTaskJson.content,
   "sell-the-lemon": sellTheLemonJson.content,
+  "save-their-soul": saveTheirSoulJson.content,
+  "pitch-startup": pitchStartupJson.content,
 };
 
 export function getBasePrompt(): string {
   return gameHostBaseJson.content;
 }
 
-export function getGamePrompt(gameKey: string): string {
+export function getGamePrompt(gameKey: GameKey): string {
   const prompt = gamePrompts[gameKey];
   if (!prompt) {
     throw new Error(`Game prompt not found for key: ${gameKey}`);
@@ -37,7 +41,7 @@ export function getGamePrompt(gameKey: string): string {
   return prompt;
 }
 
-export function buildGameInstruction(gameKey: string): string {
+export function buildGameInstruction(gameKey: GameKey): string {
   const base = getBasePrompt();
   const game = getGamePrompt(gameKey);
   return `${base}\n\n${game}`;
@@ -55,6 +59,8 @@ export const GAME_KEYS = {
   EVALUATE_YOURSELF: "evaluate-yourself",
   POINT_THE_TASK: "point-the-task",
   SELL_THE_LEMON: "sell-the-lemon",
+  SAVE_THEIR_SOUL: "save-their-soul",
+  PITCH_STARTUP: "pitch-startup",
 } as const;
 
 export type GameKey = (typeof GAME_KEYS)[keyof typeof GAME_KEYS];

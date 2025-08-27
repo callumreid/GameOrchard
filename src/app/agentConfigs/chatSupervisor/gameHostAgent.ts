@@ -4,10 +4,11 @@ import {
   getBasePrompt,
   GAME_KEYS,
   getGamePrompt,
+  GameKey,
 } from "./prompts";
 
 // Helper function to update session instructions
-function updateSessionInstructions(gameKey: string, details: any) {
+function updateSessionInstructions(gameKey: GameKey, details: any) {
   const instructions = buildGameInstruction(gameKey);
   const updateInstructions = (details?.context as any)
     ?.updateSessionInstructions as ((instructions: string) => void) | undefined;
@@ -2796,6 +2797,7 @@ export const startPitchStartupGame = tool({
       context: scenario.context,
       goodPitchKeywords: scenario.goodPitchKeywords,
       badPitchKeywords: scenario.badPitchKeywords,
+      rules: getGamePrompt(GAME_KEYS.PITCH_STARTUP),
     };
   },
 });
@@ -2884,6 +2886,7 @@ export const startSaveTheirSoulGame = tool({
       context: scenario.context,
       goodSoulKeywords: scenario.goodSoulKeywords,
       badSoulKeywords: scenario.badSoulKeywords,
+      rules: getGamePrompt(GAME_KEYS.SAVE_THEIR_SOUL),
     };
   },
 });
