@@ -30,6 +30,19 @@ export function useRealtimeSession(callbacks: RealtimeSessionCallbacks = {}) {
   const { logClientEvent } = useEvent();
   const { requestMicrophonePermission, checkSecureContext } = usePermissions();
 
+  // Tracks whether a game started/finished so we can enforce finish_* tool calls
+  const gameStateRef = useRef<{
+    currentStartFunction: string | null;
+    currentFinishFunction: string | null;
+    finishCalled: boolean;
+    enforcementSent: boolean;
+  }>({
+    currentStartFunction: null,
+    currentFinishFunction: null,
+    finishCalled: false,
+    enforcementSent: false,
+  });
+
   const updateStatus = useCallback(
     (s: SessionStatus) => {
       setStatus(s);
@@ -42,6 +55,53 @@ export function useRealtimeSession(callbacks: RealtimeSessionCallbacks = {}) {
   const { logServerEvent } = useEvent();
 
   const historyHandlers = useHandleSessionHistory().current;
+
+  function extractGameSuffixFromStart(fnName?: string | null): string | null {
+    if (!fnName) return null;
+    const m = fnName.match(/^start_(.*)_game$/);
+    return m ? m[1] : null;
+  }
+
+  function extractGameSuffixFromFinish(fnName?: string | null): string | null {
+    if (!fnName) return null;
+    const m = fnName.match(/^finish_(.*)_game$/);
+    return m ? m[1] : null;
+  }
+
+  function containsCelebrationOrJudgement(text: string): boolean {
+    const t = text.toLowerCase();
+    return (
+      /ho+ra+y/.test(t) || // HOOOOOORAYYYY variants
+      /bo+o+/.test(t) || // BOOOOO variants
+      t.includes("unicorn alert") ||
+      t.includes("big dogs bark") ||
+      t.includes("soul saved") ||
+      t.includes("vests exploding") ||
+      t.includes("you win") ||
+      t.includes("you lose")
+    );
+  }
+
+  async function enforceFinishIfNeeded(text: string) {
+    const state = gameStateRef.current;
+    if (!state.currentFinishFunction) return;
+    if (state.finishCalled) return;
+    if (state.enforcementSent) return;
+    if (!containsCelebrationOrJudgement(text)) return;
+
+    try {
+      // Stop current output and instruct the agent to call the finish tool only
+      sessionRef.current?.interrupt();
+      const finishFn = state.currentFinishFunction;
+      // Provide a terse corrective instruction
+      sessionRef.current?.sendMessage(
+        `Call ${finishFn}({success, score, message}) now. Only call the function, no additional words.`
+      );
+      state.enforcementSent = true;
+    } catch (err) {
+      console.warn("Failed to enforce finish tool call:", err);
+    }
+  }
 
   function handleTransportEvent(event: any) {
     // Handle additional server events that aren't managed by the session
@@ -97,22 +157,72 @@ export function useRealtimeSession(callbacks: RealtimeSessionCallbacks = {}) {
 
       // history events
       sessionRef.current.on("agent_handoff", handleAgentHandoff);
+
+      // Wrap tool events to maintain game state for finish enforcement
       sessionRef.current.on(
         "agent_tool_start",
-        historyHandlers.handleAgentToolStart
+        (details: any, agent: any, fn: any) => {
+          const fnName: string | undefined = fn?.name;
+          const startSuffix = extractGameSuffixFromStart(fnName ?? null);
+          if (startSuffix) {
+            gameStateRef.current.currentStartFunction = `start_${startSuffix}_game`;
+            gameStateRef.current.currentFinishFunction = `finish_${startSuffix}_game`;
+            gameStateRef.current.finishCalled = false;
+            gameStateRef.current.enforcementSent = false;
+          }
+          historyHandlers.handleAgentToolStart(details, agent, fn);
+        }
       );
+
       sessionRef.current.on(
         "agent_tool_end",
-        historyHandlers.handleAgentToolEnd
+        (details: any, agent: any, fn: any, result: any) => {
+          const fnName: string | undefined = fn?.name;
+          const finishSuffix = extractGameSuffixFromFinish(fnName ?? null);
+          if (finishSuffix) {
+            // Mark finished and clear enforcement flag
+            gameStateRef.current.finishCalled = true;
+            gameStateRef.current.enforcementSent = false;
+          }
+          historyHandlers.handleAgentToolEnd(details, agent, fn, result);
+        }
       );
-      sessionRef.current.on(
-        "history_updated",
-        historyHandlers.handleHistoryUpdated
-      );
-      sessionRef.current.on(
-        "history_added",
-        historyHandlers.handleHistoryAdded
-      );
+
+      sessionRef.current.on("history_updated", (items: any[]) => {
+        // Check for celebratory text before finish tool call
+        try {
+          items.forEach((item: any) => {
+            if (!item || item.type !== "message" || item.role !== "assistant")
+              return;
+            const content: any[] = item.content ?? [];
+            const text = content
+              .map((c: any) => (c?.type === "input_text" ? c.text ?? "" : ""))
+              .filter(Boolean)
+              .join("\n");
+            if (text) enforceFinishIfNeeded(text);
+          });
+        } catch (e) {
+          console.error("Error in history_updated:", e);
+        }
+        historyHandlers.handleHistoryUpdated(items);
+      });
+
+      sessionRef.current.on("history_added", (item: any) => {
+        try {
+          if (item && item.type === "message" && item.role === "assistant") {
+            const content: any[] = item.content ?? [];
+            const text = content
+              .map((c: any) => (c?.type === "input_text" ? c.text ?? "" : ""))
+              .filter(Boolean)
+              .join("\n");
+            if (text) enforceFinishIfNeeded(text);
+          }
+        } catch (e) {
+          console.error("Error in history_updated:", e);
+        }
+        historyHandlers.handleHistoryAdded(item);
+      });
+
       sessionRef.current.on(
         "guardrail_tripped",
         historyHandlers.handleGuardrailTripped
@@ -185,6 +295,7 @@ export function useRealtimeSession(callbacks: RealtimeSessionCallbacks = {}) {
           },
           turnDetection: undefined,
         },
+        // Add a lightweight guardrail that nudges the agent to call the finish_* tool
         outputGuardrails: outputGuardrails ?? [],
         context: extraContext ?? {},
       });
