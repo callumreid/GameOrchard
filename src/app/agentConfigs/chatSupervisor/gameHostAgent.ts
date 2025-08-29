@@ -122,6 +122,48 @@ const bossExcuseScenarios = [
       "ordinary",
     ],
   },
+  {
+    id: "zoom_square_of_shame",
+    problem:
+      "Your boss is staring at your empty Zoom square during standup and demands a non-cliché explanation",
+    bossQuote:
+      "RING RING! It's your boss again, voice flat as week-old soda: 'I'm staring at your empty rectangle in standup. Spare me traffic and alarm clock fairy tales. Give me a story I can sell upstream without getting a migraine.' Time to conjure an excuse so audacious it becomes company lore for the next three reorgs!",
+    context:
+      "Emergency video-call shakedown requiring a legendary, chaos-powered excuse",
+    goodExcuseKeywords: [
+      "wormhole",
+      "aliens",
+      "meteor",
+      "quantum",
+      "portal",
+      "dimension",
+      "wizard",
+      "dragon",
+      "government",
+      "conspiracy",
+      "secret mission",
+      "time paradox",
+      "solar flare",
+      "unicorn",
+      "legendary",
+    ],
+    badExcuseKeywords: [
+      "alarm",
+      "traffic",
+      "kids",
+      "car trouble",
+      "sorry",
+      "overslept",
+      "tired",
+      "phone died",
+      "weather",
+      "bus",
+      "subway",
+      "usual",
+      "normal",
+      "regular",
+    ],
+  },
 ];
 
 // Attract the turkey game scenarios
@@ -202,6 +244,41 @@ const turkeyAttractionScenarios = [
       "startled",
     ],
   },
+  {
+    id: "city_rooftop_courtship",
+    problem:
+      "A cocky urban turkey struts across a city rooftop and only silky-smooth gobbles will lure it to the ledge",
+    turkeyQuote:
+      "Tonight's episode: Concrete Serenade. A smug city turkey paces the rooftop edge like it owns the skyline. You, armed with nothing but your lungs and misplaced confidence, must croon a gobble sequence so smooth it moonwalks your way. Hit the rhythm. Flirt with melody. Make that bird feel seen.",
+    context: "Urban rooftop bird-courtship through musical gobbling",
+    goodTurkeyKeywords: [
+      "gobble",
+      "gobbles",
+      "cluck",
+      "trill",
+      "rhythm",
+      "tempo",
+      "waddle",
+      "ruffle",
+      "head-bob",
+      "seductive",
+      "thicc",
+      "melodic",
+      "variation",
+    ],
+    badTurkeyKeywords: [
+      "whisper",
+      "timid",
+      "screech",
+      "angry",
+      "monotone",
+      "boring",
+      "attack",
+      "flee",
+      "run away",
+      "hide",
+    ],
+  },
 ];
 
 // Pwn the bully game scenarios
@@ -252,6 +329,35 @@ const bullyPwnScenarios = [
       "my bad",
       "I'm wrong",
       "you're right",
+      "give up",
+      "surrender",
+    ],
+  },
+  {
+    id: "hallway_ambush",
+    problem: "Bully corners you in the hallway with a sneering roast",
+    bullyQuote:
+      "Footsteps echo. The hallway bully leans in, breath of cafeteria onions: 'Look at you, discount background character. You even try, or do you spawn like that?'",
+    context: "Ambush roast requiring a creative, reality-shattering comeback",
+    goodComebackKeywords: [
+      "meaningless",
+      "void",
+      "nihilistic",
+      "absurd",
+      "dominant",
+      "power",
+      "pwn",
+      "demolished",
+      "existential",
+      "nothing",
+    ],
+    badComebackKeywords: [
+      "sorry",
+      "please",
+      "afraid",
+      "weak",
+      "submit",
+      "apologize",
       "give up",
       "surrender",
     ],
@@ -318,6 +424,35 @@ const deathExplanationScenarios = [
       "comfortable",
       "happy place",
       "still with us",
+      "spirit lives on",
+    ],
+  },
+  {
+    id: "goldfish_funeral",
+    problem:
+      "Your child holds a shoebox funeral for a goldfish and asks what death is",
+    daughterQuote:
+      "Bathroom tiles cold, toilet lid down like a stage. Construction paper cross taped crooked to a shoebox. Small hands, big eyes: 'We put Bubbles in the shoebox... is he coming back? What is death, really?'",
+    context: "A child processing pet loss and the concept of mortality",
+    goodDeathKeywords: [
+      "nothing",
+      "void",
+      "cease",
+      "gone forever",
+      "finality",
+      "entropy",
+      "brain shuts down",
+      "consciousness stops",
+      "like before you were born",
+      "dreamless sleep",
+    ],
+    badDeathKeywords: [
+      "heaven",
+      "afterlife",
+      "God",
+      "angel",
+      "better place",
+      "watching over",
       "spirit lives on",
     ],
   },
@@ -874,12 +1009,56 @@ const soulSavingScenarios = [
       "stop bothering me",
     ],
   },
+  {
+    id: "laundromat_conversion",
+    problem:
+      "Convert a doom-scrolling stranger at a flickering laundromat between cycles",
+    strangerQuote:
+      "Neon hum. Quarter cascade. A stranger leans on a rattling washer, eyes glazed by the infinite scroll. The host shoves you forward: 'Go, prophet—close the conversion before the rinse cycle ends!' Craft a late-night religion so catchy it needs a trademark.",
+    context:
+      "Laundromat evangelical blitz with cult startup vibes and cosmic buzzwords",
+    goodSoulKeywords: [
+      "cosmic",
+      "enlightenment",
+      "belief spark",
+      "commitment",
+      "ritual",
+      "app",
+      "mixer",
+      "divine",
+      "sacred",
+      "membership",
+      "donation",
+      "transcendent",
+      "awakening",
+      "rebirth",
+      "path",
+    ],
+    badSoulKeywords: [
+      "generic",
+      "platitudes",
+      "boring",
+      "traditional",
+      "conventional",
+      "love one another",
+      "restraining order",
+      "police",
+      "not interested",
+      "go away",
+    ],
+  },
 ];
 
 // Function to get a random soul saving scenario
 function getRandomSoulSavingScenario() {
   const randomIndex = Math.floor(Math.random() * soulSavingScenarios.length);
   return soulSavingScenarios[randomIndex];
+}
+
+// Function to get a random boss excuse scenario
+function getRandomBossExcuseScenario() {
+  const randomIndex = Math.floor(Math.random() * bossExcuseScenarios.length);
+  return bossExcuseScenarios[randomIndex];
 }
 
 // Startup pitch game scenarios
@@ -1430,25 +1609,39 @@ const startupPitchScenarios = [
       "quick fix",
     ],
   },
+  {
+    id: "elevator_pitch_meltdown",
+    problem:
+      "Deliver an elevator pitch while the actual elevator malfunctions with three VCs inside",
+    vcQuote:
+      "Ding. The elevator lurches, halts between floors. Three VCs adjust their vests in unison. One squints at you: 'So... what's your category-creating thing again?' You have 30 seconds before maintenance—or mercy—arrives. Make those buzzwords sing.",
+    context:
+      "High-pressure micro-pitch with maximum disruption theater and vest energy",
+    goodPitchKeywords: [
+      "AI",
+      "blockchain",
+      "quantum synergy",
+      "platform",
+      "network effects",
+      "unicorn",
+      "TAM",
+      "web3",
+      "metaverse",
+      "growth",
+      "hockey stick",
+      "virality",
+    ],
+    badPitchKeywords: [
+      "profitable",
+      "realistic",
+      "practical",
+      "simple",
+      "conservative",
+      "safe",
+      "incremental",
+    ],
+  },
 ];
-
-// Function to get a random child advice scenario
-function getRandomChildScenario() {
-  const randomIndex = Math.floor(Math.random() * childAdviceScenarios.length);
-  return childAdviceScenarios[randomIndex];
-}
-
-// Function to get a random police stall scenario
-function getRandomPoliceScenario() {
-  const randomIndex = Math.floor(Math.random() * policeStallScenarios.length);
-  return policeStallScenarios[randomIndex];
-}
-
-// Function to get a random alien convince scenario
-function getRandomAlienScenario() {
-  const randomIndex = Math.floor(Math.random() * alienConvinceScenarios.length);
-  return alienConvinceScenarios[randomIndex];
-}
 
 // Self-evaluation game scenarios
 const selfEvaluationScenarios = [
@@ -1500,14 +1693,6 @@ const selfEvaluationScenarios = [
     ],
   },
 ];
-
-// Function to get a random self-evaluation scenario
-function getRandomSelfEvaluationScenario() {
-  const randomIndex = Math.floor(
-    Math.random() * selfEvaluationScenarios.length
-  );
-  return selfEvaluationScenarios[randomIndex];
-}
 
 // Point-the-task game scenarios
 const pointTheTaskScenarios = [
@@ -1802,6 +1987,32 @@ const lemonSaleScenarios = [
   },
 ];
 
+// Function to get a random child advice scenario
+function getRandomChildScenario() {
+  const randomIndex = Math.floor(Math.random() * childAdviceScenarios.length);
+  return childAdviceScenarios[randomIndex];
+}
+
+// Function to get a random police stall scenario
+function getRandomPoliceScenario() {
+  const randomIndex = Math.floor(Math.random() * policeStallScenarios.length);
+  return policeStallScenarios[randomIndex];
+}
+
+// Function to get a random alien convince scenario
+function getRandomAlienScenario() {
+  const randomIndex = Math.floor(Math.random() * alienConvinceScenarios.length);
+  return alienConvinceScenarios[randomIndex];
+}
+
+// Function to get a random self-evaluation scenario
+function getRandomSelfEvaluationScenario() {
+  const randomIndex = Math.floor(
+    Math.random() * selfEvaluationScenarios.length
+  );
+  return selfEvaluationScenarios[randomIndex];
+}
+
 // Function to get a random lemon sale scenario
 function getRandomLemonSaleScenario() {
   const randomIndex = Math.floor(Math.random() * lemonSaleScenarios.length);
@@ -1812,6 +2023,28 @@ function getRandomLemonSaleScenario() {
 function getRandomStartupPitchScenario() {
   const randomIndex = Math.floor(Math.random() * startupPitchScenarios.length);
   return startupPitchScenarios[randomIndex];
+}
+
+// Function to get a random bully pwn scenario
+function getRandomBullyPwnScenario() {
+  const randomIndex = Math.floor(Math.random() * bullyPwnScenarios.length);
+  return bullyPwnScenarios[randomIndex];
+}
+
+// Function to get a random death explanation scenario
+function getRandomDeathExplanationScenario() {
+  const randomIndex = Math.floor(
+    Math.random() * deathExplanationScenarios.length
+  );
+  return deathExplanationScenarios[randomIndex];
+}
+
+// Function to get a random turkey attraction scenario
+function getRandomTurkeyAttractionScenario() {
+  const randomIndex = Math.floor(
+    Math.random() * turkeyAttractionScenarios.length
+  );
+  return turkeyAttractionScenarios[randomIndex];
 }
 
 // Tool to start the child advice game
@@ -2403,7 +2636,7 @@ export const startBullyPwnGame = tool({
     // Update session instructions for this game
     // updateSessionInstructions(GAME_KEYS.PWN_THE_BULLY, details);
 
-    const scenario = bullyPwnScenarios[0]; // Use the main bully scenario
+    const scenario = getRandomBullyPwnScenario();
 
     const addBreadcrumb = (details?.context as any)?.addTranscriptBreadcrumb as
       | ((title: string, data?: any) => void)
@@ -2497,7 +2730,7 @@ export const startDeathExplanationGame = tool({
     // Update session instructions for this game
     updateSessionInstructions(GAME_KEYS.EXPLAIN_DEATH, details);
 
-    const scenario = deathExplanationScenarios[0]; // Use the main death scenario
+    const scenario = getRandomDeathExplanationScenario();
 
     const addBreadcrumb = (details?.context as any)?.addTranscriptBreadcrumb as
       | ((title: string, data?: any) => void)
@@ -2591,7 +2824,7 @@ export const startTurkeyAttractionGame = tool({
     // Update session instructions for this game
     updateSessionInstructions(GAME_KEYS.ATTRACT_THE_TURKEY, details);
 
-    const scenario = turkeyAttractionScenarios[0]; // Use the main turkey scenario
+    const scenario = getRandomTurkeyAttractionScenario();
 
     const addBreadcrumb = (details?.context as any)?.addTranscriptBreadcrumb as
       | ((title: string, data?: any) => void)
@@ -2685,7 +2918,7 @@ export const startBossExcuseGame = tool({
     // Update session instructions for this game
     // updateSessionInstructions(GAME_KEYS.EXCUSE_THE_BOSS, details);
 
-    const scenario = bossExcuseScenarios[0]; // Use the main boss scenario
+    const scenario = getRandomBossExcuseScenario();
 
     const addBreadcrumb = (details?.context as any)?.addTranscriptBreadcrumb as
       | ((title: string, data?: any) => void)
