@@ -99,6 +99,47 @@ export default function Games() {
   const bgSourceNodeRef = useRef<MediaElementAudioSourceNode | null>(null);
   const bgConnectedRef = useRef(false);
 
+  function setupMobileWebAudio() {
+    if (!isMobileBrowser()) return;
+    if (!audioRef.current) return;
+    try {
+      if (!bgAudioContextRef.current) {
+        bgAudioContextRef.current = new AudioContext();
+      }
+      const ctx = bgAudioContextRef.current;
+      // Resume must happen inside user gesture for iOS
+      if (ctx && ctx.state === "suspended") {
+        // Intentionally not awaiting to keep gesture chain synchronous
+        ctx.resume().catch(() => {});
+      }
+      if (ctx && !bgSourceNodeRef.current) {
+        bgSourceNodeRef.current = ctx.createMediaElementSource(
+          audioRef.current
+        );
+      }
+      if (ctx && !bgGainNodeRef.current) {
+        bgGainNodeRef.current = ctx.createGain();
+      }
+      if (
+        ctx &&
+        bgSourceNodeRef.current &&
+        bgGainNodeRef.current &&
+        !bgConnectedRef.current
+      ) {
+        try {
+          bgSourceNodeRef.current.connect(bgGainNodeRef.current);
+          bgGainNodeRef.current.connect(ctx.destination);
+          bgConnectedRef.current = true;
+        } catch (_) {}
+      }
+      if (bgGainNodeRef.current) {
+        bgGainNodeRef.current.gain.value = BG_VOLUME_MOBILE;
+      }
+      // Avoid double playback using element volume=0 instead of muted (iOS bug avoidance)
+      audioRef.current.volume = 0;
+    } catch (_) {}
+  }
+
   const {
     sendUserText,
     sessionStatus,
@@ -179,39 +220,7 @@ export default function Games() {
       } else {
         if (!hasUserInteracted) return;
         if (isMobileBrowser()) {
-          // Ensure WebAudio graph is set up on mobile
-          try {
-            if (!bgAudioContextRef.current) {
-              bgAudioContextRef.current = new AudioContext();
-            }
-            const ctx = bgAudioContextRef.current;
-            if (ctx && ctx.state === "suspended") ctx.resume().catch(() => {});
-            if (ctx && audioRef.current && !bgSourceNodeRef.current) {
-              bgSourceNodeRef.current = ctx.createMediaElementSource(
-                audioRef.current
-              );
-            }
-            if (ctx && !bgGainNodeRef.current) {
-              bgGainNodeRef.current = ctx.createGain();
-            }
-            if (
-              ctx &&
-              bgSourceNodeRef.current &&
-              bgGainNodeRef.current &&
-              !bgConnectedRef.current
-            ) {
-              try {
-                bgSourceNodeRef.current.connect(bgGainNodeRef.current);
-                bgGainNodeRef.current.connect(ctx.destination);
-                bgConnectedRef.current = true;
-              } catch (_) {}
-            }
-            if (bgGainNodeRef.current) {
-              bgGainNodeRef.current.gain.value = BG_VOLUME_MOBILE;
-            }
-            // Avoid double playback by muting element when routing through WebAudio
-            audioRef.current.muted = true;
-          } catch (_) {}
+          setupMobileWebAudio();
         } else {
           audioRef.current.volume = BG_VOLUME_DESKTOP;
           audioRef.current.muted = false;
@@ -246,18 +255,12 @@ export default function Games() {
       if (!el) return;
       try {
         if (isMobileBrowser()) {
-          // Resume WebAudio context and keep element muted to avoid double path
-          try {
-            if (!bgAudioContextRef.current) {
-              bgAudioContextRef.current = new AudioContext();
-            }
-            const ctx = bgAudioContextRef.current;
-            if (ctx && ctx.state === "suspended") ctx.resume().catch(() => {});
-          } catch (_) {}
-          el.muted = true;
+          // Cannot reliably resume outside gesture; show resume prompt above if needed
           if (bgGainNodeRef.current) {
             bgGainNodeRef.current.gain.value = BG_VOLUME_MOBILE;
           }
+          // Keep element volume at 0 to avoid double audio
+          el.volume = 0;
         } else {
           el.muted = false;
           el.volume = BG_VOLUME_DESKTOP;
@@ -306,17 +309,7 @@ export default function Games() {
     if (el) {
       try {
         if (isMobileBrowser()) {
-          try {
-            if (!bgAudioContextRef.current) {
-              bgAudioContextRef.current = new AudioContext();
-            }
-            const ctx = bgAudioContextRef.current;
-            if (ctx && ctx.state === "suspended") ctx.resume().catch(() => {});
-          } catch (_) {}
-          el.muted = true;
-          if (bgGainNodeRef.current) {
-            bgGainNodeRef.current.gain.value = BG_VOLUME_MOBILE;
-          }
+          setupMobileWebAudio();
         } else {
           el.muted = false;
           el.volume = BG_VOLUME_DESKTOP;
@@ -587,9 +580,12 @@ export default function Games() {
       setHasUserInteracted(true);
       setIsStarted(true);
       if (audioRef.current) {
-        audioRef.current.volume = isMobileBrowser()
-          ? BG_VOLUME_MOBILE
-          : BG_VOLUME_DESKTOP;
+        if (isMobileBrowser()) {
+          setupMobileWebAudio();
+        } else {
+          audioRef.current.volume = BG_VOLUME_DESKTOP;
+          audioRef.current.muted = false;
+        }
         audioRef.current.play().catch(() => {});
       }
     };
