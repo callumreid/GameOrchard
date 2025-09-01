@@ -188,12 +188,12 @@ export default function Games() {
         setShowOverlay(false);
       }, 6000);
 
-      // After 8 seconds, start the game
+      // After 10 seconds, start the game
       const startGameTimer = setTimeout(() => {
         if (selectedGame && GameComponent) {
           startCurrentRound();
         }
-      }, 8000);
+      }, 10000);
 
       return () => {
         clearTimeout(flashTimer);
