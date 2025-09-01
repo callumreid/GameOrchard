@@ -79,6 +79,7 @@ function DebugApp() {
     mute,
     pushToTalkStart,
     pushToTalkStop,
+    pauseMicHardware,
   } = useRealtimeSession({
     onConnectionChange: (s) => setSessionStatus(s as SessionStatus),
     onAgentHandoff: (agentName: string) => {
@@ -116,6 +117,57 @@ function DebugApp() {
   };
 
   useHandleSessionHistory();
+
+  useEffect(() => {
+    // Background/foreground handlers to release mic and mute audio
+    const handleHidden = () => {
+      try {
+        mute(true);
+        pauseMicHardware();
+      } catch (err) {
+        console.warn("[DebugApp] Failed to pause on background:", err);
+      }
+      const el = audioElementRef.current;
+      if (el) {
+        try {
+          el.muted = true;
+          el.pause();
+        } catch (_) {}
+      }
+      // Stop local recording to fully release mic hardware
+      try {
+        stopRecording();
+      } catch (_) {}
+    };
+    const handleVisible = () => {
+      const el = audioElementRef.current;
+      if (el) {
+        try {
+          el.muted = false;
+          el.play().catch(() => {});
+        } catch (_) {}
+      }
+      // Optionally resume local recording if remote stream exists
+      try {
+        if (el && el.srcObject) {
+          const remoteStream = el.srcObject as MediaStream;
+          startRecording(remoteStream);
+        }
+      } catch (_) {}
+    };
+    const onVisibilityChange = () => {
+      if (document.hidden) handleHidden();
+      else handleVisible();
+    };
+    window.addEventListener("pagehide", handleHidden);
+    window.addEventListener("pageshow", handleVisible);
+    document.addEventListener("visibilitychange", onVisibilityChange);
+    return () => {
+      window.removeEventListener("pagehide", handleHidden);
+      window.removeEventListener("pageshow", handleVisible);
+      document.removeEventListener("visibilitychange", onVisibilityChange);
+    };
+  }, [mute, pauseMicHardware]);
 
   useEffect(() => {
     let finalAgentConfig = searchParams.get("agentConfig");

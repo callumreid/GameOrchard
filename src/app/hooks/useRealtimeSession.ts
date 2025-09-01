@@ -30,6 +30,13 @@ export function useRealtimeSession(callbacks: RealtimeSessionCallbacks = {}) {
   const { logClientEvent } = useEvent();
   const { requestMicrophonePermission, checkSecureContext } = usePermissions();
 
+  // Keep a handle to the active RTCPeerConnection used by the SDK transport so
+  // we can manipulate the outbound microphone track when the app backgrounds.
+  const pcRef = useRef<RTCPeerConnection | null>(null);
+  // Track whether we explicitly stopped the mic track due to backgrounding
+  // so we can conditionally restore it upon a foreground PTT event.
+  const micStoppedByBackgroundRef = useRef<boolean>(false);
+
   // Tracks whether a game started/finished so we can enforce finish_* tool calls
   const gameStateRef = useRef<{
     currentStartFunction: string | null;
@@ -283,6 +290,9 @@ export function useRealtimeSession(callbacks: RealtimeSessionCallbacks = {}) {
               "[RealtimeSession] Setting up WebRTC with muted microphone initially - will unmute on PTT"
             );
 
+            // Capture a reference to the RTCPeerConnection for mic track control
+            pcRef.current = pc;
+
             return pc;
           },
         }),
@@ -314,6 +324,7 @@ export function useRealtimeSession(callbacks: RealtimeSessionCallbacks = {}) {
   const disconnect = useCallback(() => {
     sessionRef.current?.close();
     sessionRef.current = null;
+    pcRef.current = null;
     updateStatus("DISCONNECTED");
   }, [updateStatus]);
 
@@ -340,11 +351,106 @@ export function useRealtimeSession(callbacks: RealtimeSessionCallbacks = {}) {
     sessionRef.current?.mute(m);
   }, []);
 
+  /**
+   * Best-effort: Ensure there is a live local microphone track attached to the
+   * outbound audio sender. If the track was stopped (e.g., due to backgrounding),
+   * reacquire permission and attach a fresh track. Invoked before PTT start.
+   */
+  const ensureLocalMicTrack = useCallback(async () => {
+    try {
+      const pc = pcRef.current;
+      if (!pc) return;
+      const sender = pc
+        .getSenders()
+        .find((s) => s.track && s.track.kind === "audio");
+
+      // Case 1: We have a sender with a live track
+      if (sender && sender.track && sender.track.readyState === "live") {
+        return;
+      }
+
+      // Case 2: We have a sender but its track is ended or null
+      let targetSender = sender;
+      if (!targetSender) {
+        // Try to find an audio sender even if its track was cleared
+        targetSender = pc
+          .getSenders()
+          .find((s) => (s.track?.kind ?? "audio") === "audio") as
+          | RTCRtpSender
+          | undefined;
+      }
+
+      // Reacquire microphone
+      const hasPermission = await requestMicrophonePermission();
+      if (!hasPermission) {
+        console.warn(
+          "[RealtimeSession] Microphone permission not granted when attempting to ensure mic track"
+        );
+        return;
+      }
+      const gum = await navigator.mediaDevices.getUserMedia({ audio: true });
+      const newTrack = gum.getAudioTracks()[0];
+      if (!newTrack) return;
+
+      if (targetSender) {
+        await targetSender.replaceTrack(newTrack);
+      } else {
+        // Fallback: add a new sendonly transceiver if none exists
+        pc.addTransceiver(newTrack, { direction: "sendonly" });
+      }
+    } catch (err) {
+      console.warn("[RealtimeSession] Failed to ensure local mic track:", err);
+    }
+  }, [requestMicrophonePermission]);
+
+  /**
+   * Stop and detach the local microphone track to release hardware (iOS orange dot)
+   * and mute the session so nothing is sent upstream while in background.
+   */
+  const pauseMicHardware = useCallback(async () => {
+    try {
+      sessionRef.current?.mute(true);
+      const pc = pcRef.current;
+      if (!pc) return;
+      const sender = pc
+        .getSenders()
+        .find((s) => s.track && s.track.kind === "audio");
+      if (sender?.track) {
+        try {
+          sender.track.stop();
+        } catch (_) {}
+        try {
+          await sender.replaceTrack(null);
+        } catch (_) {}
+        micStoppedByBackgroundRef.current = true;
+      }
+    } catch (err) {
+      console.warn("[RealtimeSession] pauseMicHardware failed:", err);
+    }
+  }, []);
+
+  /**
+   * Optionally restore the microphone track if we previously stopped it due to backgrounding.
+   * Prefer calling this from a user gesture (e.g., PTT start) to satisfy browser policies.
+   */
+  const resumeMicHardware = useCallback(async () => {
+    if (!micStoppedByBackgroundRef.current) return;
+    try {
+      await ensureLocalMicTrack();
+      micStoppedByBackgroundRef.current = false;
+    } catch (err) {
+      console.warn("[RealtimeSession] resumeMicHardware failed:", err);
+    }
+  }, [ensureLocalMicTrack]);
+
   const pushToTalkStart = useCallback(async () => {
     if (!sessionRef.current) return;
 
     // Unmute the session for push-to-talk
     console.log("[PTT] Unmuting WebRTC session");
+    // Ensure there is a live microphone track (may have been stopped on background)
+    await resumeMicHardware();
+    await ensureLocalMicTrack();
     sessionRef.current.mute(false);
 
     sessionRef.current.transport.sendEvent({
@@ -375,5 +481,7 @@ export function useRealtimeSession(callbacks: RealtimeSessionCallbacks = {}) {
     pushToTalkStart,
     pushToTalkStop,
     interrupt,
+    pauseMicHardware,
+    resumeMicHardware,
   } as const;
 }

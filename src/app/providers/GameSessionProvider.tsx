@@ -40,6 +40,7 @@ export function GameSessionProvider({ children }: GameSessionProviderProps) {
   const connectionAttemptedRef = useRef(false);
   const [isWebRTCReady, setIsWebRTCReady] = useState(false);
   const [isPTTUserSpeaking, setIsPTTUserSpeaking] = useState(false);
+  const audioElementRef = useRef<HTMLAudioElement | null>(null);
 
   const {
     connect,
@@ -49,6 +50,7 @@ export function GameSessionProvider({ children }: GameSessionProviderProps) {
     interrupt,
     pushToTalkStart,
     pushToTalkStop,
+    pauseMicHardware,
   } = useRealtimeSession({
     onConnectionChange: (status) => {
       console.log("[GameSession] Connection status changed to:", status);
@@ -122,6 +124,7 @@ export function GameSessionProvider({ children }: GameSessionProviderProps) {
         audioElement.autoplay = true;
         audioElement.style.display = "none";
         document.body.appendChild(audioElement);
+        audioElementRef.current = audioElement;
 
         console.log(
           "[GameSession] Connecting with agents:",
@@ -154,6 +157,54 @@ export function GameSessionProvider({ children }: GameSessionProviderProps) {
       disconnect();
     };
   }, []); // Empty dependency array - only run once on mount
+
+  // Handle backgrounding/foregrounding: stop mic and mute audio when hidden
+  useEffect(() => {
+    const handleHidden = () => {
+      try {
+        // Mute upstream and release microphone hardware to avoid iOS orange dot
+        mute(true);
+        pauseMicHardware();
+      } catch (err) {
+        console.warn(
+          "[GameSessionProvider] Failed to pause on background:",
+          err
+        );
+      }
+      const el = audioElementRef.current;
+      if (el) {
+        try {
+          el.muted = true;
+          el.pause();
+        } catch (_) {}
+      }
+    };
+
+    const handleVisible = () => {
+      // Do not auto-resume mic; PTT will restore it on user gesture
+      const el = audioElementRef.current;
+      if (el) {
+        try {
+          el.muted = false;
+          el.play().catch(() => {});
+        } catch (_) {}
+      }
+    };
+
+    const onVisibilityChange = () => {
+      if (document.hidden) handleHidden();
+      else handleVisible();
+    };
+
+    window.addEventListener("pagehide", handleHidden);
+    window.addEventListener("pageshow", handleVisible);
+    document.addEventListener("visibilitychange", onVisibilityChange);
+    return () => {
+      window.removeEventListener("pagehide", handleHidden);
+      window.removeEventListener("pageshow", handleVisible);
+      document.removeEventListener("visibilitychange", onVisibilityChange);
+    };
+  }, [mute, pauseMicHardware]);
 
   // Debug logging for state changes
   useEffect(() => {

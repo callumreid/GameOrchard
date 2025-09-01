@@ -7,6 +7,9 @@ function useAudioDownload() {
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   // Ref to collect all recorded Blob chunks.
   const recordedChunksRef = useRef<Blob[]>([]);
+  // Keep references to resources so we can properly release them on stop
+  const micStreamRef = useRef<MediaStream | null>(null);
+  const audioContextRef = useRef<AudioContext | null>(null);
   const { requestMicrophonePermission, checkSecureContext } = usePermissions();
 
   /**
@@ -36,11 +39,13 @@ function useAudioDownload() {
       // Fallback to an empty MediaStream if microphone access fails.
       micStream = new MediaStream();
     }
+    micStreamRef.current = micStream;
 
     // Create an AudioContext to merge the streams.
     // Use 16kHz sample rate for better compatibility with OpenAI realtime
     const audioContext = new AudioContext({ sampleRate: 16000 });
     const destination = audioContext.createMediaStreamDestination();
+    audioContextRef.current = audioContext;
 
     // Connect the remote audio stream.
     try {
@@ -109,6 +114,28 @@ function useAudioDownload() {
       mediaRecorderRef.current.stop();
       mediaRecorderRef.current = null;
     }
+
+    // Stop mic tracks to release hardware, important for iOS background behaviour
+    try {
+      const mic = micStreamRef.current;
+      if (mic) {
+        mic.getTracks().forEach((t) => {
+          try {
+            t.stop();
+          } catch (_) {}
+        });
+      }
+    } catch (_) {}
+    micStreamRef.current = null;
+
+    // Close AudioContext to free audio pipeline resources
+    try {
+      const ctx = audioContextRef.current;
+      if (ctx && ctx.state !== "closed") {
+        ctx.close();
+      }
+    } catch (_) {}
+    audioContextRef.current = null;
   };
 
   /**

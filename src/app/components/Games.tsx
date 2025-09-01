@@ -169,6 +169,41 @@ export default function Games() {
     }
   }, [gameState, hasUserInteracted, isStarted]);
 
+  // Mute/pause background music when the app goes to the background
+  useEffect(() => {
+    const handleHidden = () => {
+      const el = audioRef.current;
+      if (!el) return;
+      try {
+        el.muted = true;
+        el.pause();
+      } catch (_) {}
+    };
+    const handleVisible = () => {
+      const el = audioRef.current;
+      if (!el) return;
+      // Only attempt to resume if user started the app and we're not in playing state
+      try {
+        el.muted = false;
+        if (hasUserInteracted && isStarted && gameState !== "playing") {
+          el.play().catch(() => {});
+        }
+      } catch (_) {}
+    };
+    const onVisibilityChange = () => {
+      if (document.hidden) handleHidden();
+      else handleVisible();
+    };
+    window.addEventListener("pagehide", handleHidden);
+    window.addEventListener("pageshow", handleVisible);
+    document.addEventListener("visibilitychange", onVisibilityChange);
+    return () => {
+      window.removeEventListener("pagehide", handleHidden);
+      window.removeEventListener("pageshow", handleVisible);
+      document.removeEventListener("visibilitychange", onVisibilityChange);
+    };
+  }, [hasUserInteracted, isStarted, gameState]);
+
   // Auto-start sequence
   useEffect(() => {
     if (
