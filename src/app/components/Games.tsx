@@ -688,7 +688,7 @@ export default function Games() {
           <div className="text-2xl sm:text-3xl mb-4">
             Total Score: {totalScore}
           </div>
-          <div className="bg-white/10 rounded-xl p-4 text-lg text-left">
+          <div className="bg-white/10 rounded-xl p-4 text-base sm:text-lg text-left">
             {isGeneratingSummary && (
               <div>Summarizing your legendary performance...</div>
             )}

@@ -141,6 +141,9 @@ export default function BaseGame({
       const finalScore = score ?? gameState.score;
       const timeElapsed = duration - gameState.timeRemaining;
 
+      // Pause the game timer immediately on finish
+      setTimerStarted(false);
+
       console.log("🎬 BaseGame endGame called - starting horror sequence:", {
         success,
         message,

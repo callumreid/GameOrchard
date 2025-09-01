@@ -166,11 +166,14 @@ function UnifiedRuntime({
     pushToTalkStop,
   } = useGameSession();
   const [isPTTUserSpeaking, setIsPTTUserSpeaking] = useState(false);
+  const [isPTTDisabled, setIsPTTDisabled] = useState(false);
   const pttStartTimeRef = useRef<number>(0);
 
   const { startGame } = useGameAgent({
     gameType,
     onGameStart: (_scenario: GameScenario) => {
+      // Re-enable PTT at the start of a new game
+      setIsPTTDisabled(false);
       controls.updateMessage?.(startMessage);
       setTimeout(() => {
         controls.startTimer?.();
@@ -178,6 +181,10 @@ function UnifiedRuntime({
       }, Math.max(0, startDelayMs));
     },
     onGameFinish: (result: GameFinishResult) => {
+      // Ensure local speaking state is off
+      setIsPTTUserSpeaking(false);
+      // Disable PTT button to prevent further input until next round
+      setIsPTTDisabled(true);
       const success = result.success === true;
       const score = result.score || 0;
       const message = result.message || "Game completed!";
@@ -194,6 +201,7 @@ function UnifiedRuntime({
 
   const handleTalkButtonDown = useCallback(async () => {
     if (sessionStatus !== "CONNECTED" || !isWebRTCReady) return;
+    if (isPTTDisabled) return;
     if (isPTTUserSpeaking) return;
     interrupt();
     pttStartTimeRef.current = Date.now();
@@ -202,6 +210,7 @@ function UnifiedRuntime({
   }, [
     sessionStatus,
     isWebRTCReady,
+    isPTTDisabled,
     isPTTUserSpeaking,
     interrupt,
     pushToTalkStart,
@@ -250,8 +259,11 @@ function UnifiedRuntime({
             onMouseLeave={handleTalkButtonUp}
             onTouchStart={handleTalkButtonDown}
             onTouchEnd={handleTalkButtonUp}
+            disabled={isPTTDisabled}
             className={`flex flex-col items-center justify-center px-6 sm:px-10 py-2 sm:py-3 mx-auto rounded-full transition-all ${
-              isPTTUserSpeaking
+              isPTTDisabled
+                ? "bg-gray-400 text-black opacity-60 cursor-not-allowed"
+                : isPTTUserSpeaking
                 ? "bg-gradient-to-r from-emerald-400 via-green-400 to-teal-400 text-black shadow-lg shadow-emerald-400/30 active:scale-95 focus:outline-none focus:ring-4 focus:ring-emerald-300"
                 : "bg-gradient-to-r from-emerald-400 via-green-400 to-teal-400 text-black hover:scale-105 shadow-lg shadow-emerald-400/30 focus:outline-none focus:ring-4 focus:ring-emerald-300"
             }`}
