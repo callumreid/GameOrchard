@@ -205,6 +205,7 @@ export default function BaseGame({
     updateMessage: (message: string) =>
       setGameState((prev) => ({ ...prev, message })),
     startTimer: () => setTimerStarted(true),
+    resumeAllowed,
     gameState,
     sendPlayerText,
     playSound,

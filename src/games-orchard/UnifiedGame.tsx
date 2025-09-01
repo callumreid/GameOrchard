@@ -21,6 +21,7 @@ interface GameControlProps {
   userColor?: string;
   roundIndex?: number;
   totalRounds?: number;
+  resumeAllowed?: boolean;
 }
 
 function ConversationPane({
@@ -202,6 +203,8 @@ function UnifiedRuntime({
   const handleTalkButtonDown = useCallback(async () => {
     if (sessionStatus !== "CONNECTED" || !isWebRTCReady) return;
     if (isPTTDisabled) return;
+    // Disable if BaseGame cooldown has not resumed
+    if (controls.resumeAllowed === false) return;
     if (isPTTUserSpeaking) return;
     interrupt();
     pttStartTimeRef.current = Date.now();
@@ -211,6 +214,7 @@ function UnifiedRuntime({
     sessionStatus,
     isWebRTCReady,
     isPTTDisabled,
+    controls.resumeAllowed,
     isPTTUserSpeaking,
     interrupt,
     pushToTalkStart,
@@ -232,10 +236,9 @@ function UnifiedRuntime({
             <h2 className="text-lg sm:text-2xl font-bold text-gray-800">
               {title}
             </h2>
-            {typeof (controls as any).roundIndex === "number" && (
+            {typeof controls.roundIndex === "number" && (
               <div className="text-xs sm:text-sm text-gray-600 mt-1">
-                Round {(controls as any).roundIndex + 1} of{" "}
-                {(controls as any).totalRounds || 3}
+                Round {controls.roundIndex + 1} of {controls.totalRounds || 3}
               </div>
             )}
           </div>
@@ -259,9 +262,9 @@ function UnifiedRuntime({
             onMouseLeave={handleTalkButtonUp}
             onTouchStart={handleTalkButtonDown}
             onTouchEnd={handleTalkButtonUp}
-            disabled={isPTTDisabled}
+            disabled={isPTTDisabled || controls.resumeAllowed === false}
             className={`flex flex-col items-center justify-center px-6 sm:px-10 py-2 sm:py-3 mx-auto rounded-full transition-all ${
-              isPTTDisabled
+              isPTTDisabled || controls.resumeAllowed === false
                 ? "bg-gray-400 text-black opacity-60 cursor-not-allowed"
                 : isPTTUserSpeaking
                 ? "bg-gradient-to-r from-emerald-400 via-green-400 to-teal-400 text-black shadow-lg shadow-emerald-400/30 active:scale-95 focus:outline-none focus:ring-4 focus:ring-emerald-300"
