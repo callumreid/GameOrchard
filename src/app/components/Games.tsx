@@ -23,7 +23,7 @@ export default function Games() {
   const [isStarted, setIsStarted] = useState(false);
 
   // Target background music volumes
-  const BG_VOLUME_MOBILE = 0.3;
+  const BG_VOLUME_MOBILE = 0.25;
   const BG_VOLUME_DESKTOP = 0.45;
 
   // Multi-game sequence state
