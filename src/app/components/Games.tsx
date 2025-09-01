@@ -369,6 +369,17 @@ export default function Games() {
     startCurrentRound();
   };
 
+  function isMobileBrowser() {
+    if (typeof navigator === "undefined") return false;
+    const ua = (navigator.userAgent || "").toLowerCase();
+    const uaIsMobile =
+      /android|iphone|ipad|ipod|iemobile|blackberry|opera mini/.test(ua);
+    const hasTouch =
+      typeof window !== "undefined" &&
+      ("ontouchstart" in window || (navigator as any).maxTouchPoints > 0);
+    return uaIsMobile || hasTouch;
+  }
+
   const handleShareToX = async () => {
     const url = "https://gameorchard.beer";
     const text =
@@ -378,7 +389,11 @@ export default function Games() {
     const maxText = text.slice(0, 240);
 
     try {
-      if (typeof navigator !== "undefined" && (navigator as any).share) {
+      if (
+        typeof navigator !== "undefined" &&
+        isMobileBrowser() &&
+        (navigator as any).share
+      ) {
         await (navigator as any).share({
           title: "Game Orchard",
           text: maxText,
