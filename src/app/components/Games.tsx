@@ -406,11 +406,12 @@ export default function Games() {
               <button
                 onClick={handleStart}
                 disabled={!isReady}
-                className={`px-8 py-3 rounded-lg font-bold text-xl transition-colors ${
+                className={`group relative inline-flex items-center justify-center px-10 py-4 rounded-full font-extrabold text-2xl tracking-wide transition-all ${
                   isReady
-                    ? "bg-green-500 hover:bg-green-600 text-black animate-bounce"
-                    : "bg-gray-600 text-gray-300 cursor-not-allowed"
+                    ? "bg-gradient-to-r from-emerald-400 via-green-500 to-teal-500 text-black shadow-lg shadow-emerald-500/30 hover:shadow-xl hover:scale-105 focus:outline-none focus:ring-4 focus:ring-emerald-300 active:scale-95 animate-bounce"
+                    : "bg-gray-700 text-gray-400 cursor-not-allowed opacity-70"
                 }`}
+                aria-label="Start game"
               >
                 Start
               </button>

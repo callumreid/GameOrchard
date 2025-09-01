@@ -240,12 +240,16 @@ function UnifiedRuntime({
             onMouseLeave={handleTalkButtonUp}
             onTouchStart={handleTalkButtonDown}
             onTouchEnd={handleTalkButtonUp}
-            className="flex flex-col items-center justify-center border-2 bg-gray-100 border-gray-200 rounded-xl py-0.5 sm:py-2 px-4 sm:px-8 mx-auto hover:bg-gray-200"
+            className={`flex flex-col items-center justify-center px-6 sm:px-10 py-2 sm:py-3 mx-auto rounded-full transition-all ${
+              isPTTUserSpeaking
+                ? "bg-gradient-to-r from-emerald-400 via-green-400 to-teal-400 text-black shadow-lg shadow-emerald-400/30 active:scale-95 focus:outline-none focus:ring-4 focus:ring-emerald-300"
+                : "bg-gradient-to-r from-emerald-400 via-green-400 to-teal-400 text-black hover:scale-105 shadow-lg shadow-emerald-400/30 focus:outline-none focus:ring-4 focus:ring-emerald-300"
+            }`}
           >
             <div className="text-4xl md:text-5xl sm:md:text-6xl">
               {isPTTUserSpeaking ? talkButtonActiveEmoji : talkButtonIdleEmoji}
             </div>
-            <div className="text-sm text-gray-600 font-medium">
+            <div className="text-sm font-extrabold tracking-wide">
               {talkButtonLabel}
             </div>
           </button>
