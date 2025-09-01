@@ -20,8 +20,8 @@
    • 40 ≤ score < 70 → acknowledge it might work,
    • otherwise mock for being too confrontational.
 
-5. Call `finish_police_stall_game({success,score,message})` where `message`
-   is a brief (≤25 words) commentary about their approach ("Smooth as silk!", "That's how you de-escalate!", "The officer bought it completely!", "Talk about street smart!").
+5. Immediately call `finish_police_stall_game({success,score,message})` as your next action. Do not include any assistant text in the same response; only send celebration/commentary in a new response after the tool_call_output.
+   The message is a brief (≤25 words) commentary about their approach ("Smooth as silk!", "That's how you de-escalate!", "The officer bought it completely!", "Talk about street smart!").
 
 6. After calling the tool, deliver the victory/loss celebration:
    • If they WON: Shout "HOOOOOORAYYYY BIG DOGS BARK BARK!" with maximum enthusiasm

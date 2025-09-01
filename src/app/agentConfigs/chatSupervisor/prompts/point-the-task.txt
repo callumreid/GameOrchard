@@ -22,8 +22,8 @@
    • Celebrate their understanding of corporate absurdity if they win
    • Mock their naive attempt at logical estimation if they lose
 
-5. Call `finish_point_task_game({success,score,message})` where `message`
-   is a brief (≤25 words) facilitator response ("Perfect, 2 points as always", "Wrong, everything is 2 points in this meeting", "You clearly don't understand our process").
+5. Immediately call `finish_point_task_game({success,score,message})` as your next action. Do not include any assistant text in the same response; only send celebration/commentary in a new response after the tool_call_output.
+   The message is a brief (≤25 words) facilitator response ("Perfect, 2 points as always", "Wrong, everything is 2 points in this meeting", "You clearly don't understand our process").
 
 6. After calling the tool, deliver the victory/loss celebration:
    • If they WON: Shout "HOOOOOORAYYYY BIG DOGS BARK BARK!" with maximum enthusiasm

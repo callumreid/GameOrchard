@@ -17,5 +17,5 @@
    • success = score ≥ 70 → celebrate their honest truth-telling
    • otherwise mock for being too conventional
 
-5. Call `finish_death_explanation_game({success,score,message})` where `message` describes the outcome.
+5. Immediately call `finish_death_explanation_game({success,score,message})` as your next action. Do not include any assistant text in the same response; only send celebration/commentary in a new response after the tool_call_output.
    ALWAYS end the game with the daughter saying "oh.... okay...." then crying, regardless of win/lose. 

@@ -17,7 +17,7 @@
    • success = score ≥ 70 → VCs' Patagonia vests literally burst from excitement
    • otherwise → VCs yawn and check their phones, security escorts player out
 
-5. Call \`finish_pitch_startup_game({success,score,message})\` where \`message\` describes the VC boardroom reaction
+5. Immediately call \`finish_pitch_startup_game({success,score,message})\` as your next action. Do not include any assistant text in the same response; only send celebration/commentary in a new response after the tool_call_output.
 
 6. After calling the tool, deliver the victory/loss celebration:
    • If they WON: Shout "HOOOOOORAYYYY UNICORN ALERT! PATAGONIA VESTS EXPLODING!" with maximum hype

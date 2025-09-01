@@ -2060,7 +2060,7 @@ export const startChildAdviceGame = tool({
   },
   execute: async (input, details) => {
     // Update session instructions for this game
-    // updateSessionInstructions(GAME_KEYS.ADVISE_THE_CHILD, details);
+    updateSessionInstructions(GAME_KEYS.ADVISE_THE_CHILD, details);
 
     const scenario = getRandomChildScenario();
 
@@ -2115,7 +2115,7 @@ export const finishChildAdviceGame = tool({
     console.log("finish_child_advice_game called with input:", input);
 
     // Revert to base instructions when game ends
-    // revertToBaseInstructions(details);
+    revertToBaseInstructions(details);
 
     const { success, score, message } = input as {
       success: boolean;
@@ -2166,7 +2166,7 @@ export const startPoliceStallGame = tool({
   },
   execute: async (input, details) => {
     // Update session instructions for this game
-    // updateSessionInstructions(GAME_KEYS.STALL_THE_POLICE, details);
+    updateSessionInstructions(GAME_KEYS.STALL_THE_POLICE, details);
 
     const scenario = getRandomPoliceScenario();
 
@@ -2219,7 +2219,7 @@ export const finishPoliceStallGame = tool({
     console.log("finish_police_stall_game called with input:", input);
 
     // Revert to base instructions when game ends
-    // revertToBaseInstructions(details);
+    revertToBaseInstructions(details);
 
     const { success, score, message } = input as {
       success: boolean;
@@ -2267,7 +2267,7 @@ export const startAlienConvinceGame = tool({
   },
   execute: async (input, details) => {
     // Update session instructions for this game
-    // updateSessionInstructions(GAME_KEYS.CONVINCE_THE_ALIENS, details);
+    updateSessionInstructions(GAME_KEYS.CONVINCE_THE_ALIENS, details);
 
     const scenario = getRandomAlienScenario();
 
@@ -2317,7 +2317,7 @@ export const finishAlienConvinceGame = tool({
   },
   execute: async (input, details) => {
     // Revert to base instructions when game ends
-    // revertToBaseInstructions(details);
+    revertToBaseInstructions(details);
 
     const { success, score, message } = input as {
       success: boolean;
@@ -2352,7 +2352,7 @@ export const startSelfEvaluationGame = tool({
   },
   execute: async (input, details) => {
     // Update session instructions for this game
-    // updateSessionInstructions(GAME_KEYS.EVALUATE_YOURSELF, details);
+    updateSessionInstructions(GAME_KEYS.EVALUATE_YOURSELF, details);
 
     const scenario = getRandomSelfEvaluationScenario();
 
@@ -2403,7 +2403,7 @@ export const finishSelfEvaluationGame = tool({
     console.log("finish_self_evaluation_game called with input:", input);
 
     // Revert to base instructions when game ends
-    // revertToBaseInstructions(details);
+    revertToBaseInstructions(details);
 
     const { success, score, message } = input as {
       success: boolean;
@@ -2442,7 +2442,7 @@ export const startLemonSaleGame = tool({
   },
   execute: async (input, details) => {
     // Update session instructions for this game
-    // updateSessionInstructions(GAME_KEYS.SELL_THE_LEMON, details);
+    updateSessionInstructions(GAME_KEYS.SELL_THE_LEMON, details);
 
     const scenario = getRandomLemonSaleScenario();
 
@@ -2494,7 +2494,7 @@ export const finishLemonSaleGame = tool({
     console.log("finish_lemon_sale_game called with input:", input);
 
     // Revert to base instructions when game ends
-    // revertToBaseInstructions(details);
+    revertToBaseInstructions(details);
 
     const { success, score, message } = input as {
       success: boolean;
@@ -2542,7 +2542,7 @@ export const startPointTaskGame = tool({
   },
   execute: async (input, details) => {
     // Update session instructions for this game
-    // updateSessionInstructions(GAME_KEYS.POINT_THE_TASK, details);
+    updateSessionInstructions(GAME_KEYS.POINT_THE_TASK, details);
 
     const scenario = getRandomPointTheTaskScenario();
 
@@ -2593,7 +2593,7 @@ export const finishPointTaskGame = tool({
     console.log("finish_point_task_game called with input:", input);
 
     // Revert to base instructions when game ends
-    // revertToBaseInstructions(details);
+    revertToBaseInstructions(details);
 
     const { success, score, message } = input as {
       success: boolean;
@@ -2634,7 +2634,7 @@ export const startBullyPwnGame = tool({
     console.log("start_bully_pwn_game called");
 
     // Update session instructions for this game
-    // updateSessionInstructions(GAME_KEYS.PWN_THE_BULLY, details);
+    updateSessionInstructions(GAME_KEYS.PWN_THE_BULLY, details);
 
     const scenario = getRandomBullyPwnScenario();
 
@@ -2687,7 +2687,7 @@ export const finishBullyPwnGame = tool({
     console.log("finish_bully_pwn_game called with input:", input);
 
     // Revert to base instructions when game ends
-    // revertToBaseInstructions(details);
+    revertToBaseInstructions(details);
 
     const { success, score, message } = input as {
       success: boolean;
@@ -2916,7 +2916,7 @@ export const startBossExcuseGame = tool({
     console.log("start_boss_excuse_game called");
 
     // Update session instructions for this game
-    // updateSessionInstructions(GAME_KEYS.EXCUSE_THE_BOSS, details);
+    updateSessionInstructions(GAME_KEYS.EXCUSE_THE_BOSS, details);
 
     const scenario = getRandomBossExcuseScenario();
 
@@ -2969,7 +2969,7 @@ export const finishBossExcuseGame = tool({
     console.log("finish_boss_excuse_game called with input:", input);
 
     // Revert to base instructions when game ends
-    // revertToBaseInstructions(details);
+    revertToBaseInstructions(details);
 
     const { success, score, message } = input as {
       success: boolean;
@@ -3012,6 +3012,8 @@ export const startPitchStartupGame = tool({
   },
   execute: async (input, details) => {
     console.log("start_pitch_startup_game called");
+
+    updateSessionInstructions(GAME_KEYS.PITCH_STARTUP, details);
 
     const scenario = getRandomStartupPitchScenario();
 
@@ -3064,6 +3066,9 @@ export const finishPitchStartupGame = tool({
   execute: async (input, details) => {
     console.log("finish_pitch_startup_game called with input:", input);
 
+    // Revert to base instructions when game ends
+    revertToBaseInstructions(details);
+
     const { success, score, message } = input as {
       success: boolean;
       score: number;
@@ -3101,6 +3106,8 @@ export const startSaveTheirSoulGame = tool({
   },
   execute: async (input, details) => {
     console.log("start_save_their_soul_game called");
+
+    updateSessionInstructions(GAME_KEYS.SAVE_THEIR_SOUL, details);
 
     const scenario = getRandomSoulSavingScenario();
 
@@ -3152,6 +3159,9 @@ export const finishSaveTheirSoulGame = tool({
   },
   execute: async (input, details) => {
     console.log("finish_save_their_soul_game called with input:", input);
+
+    // Revert to base instructions when game ends
+    revertToBaseInstructions(details);
 
     const { success, score, message } = input as {
       success: boolean;

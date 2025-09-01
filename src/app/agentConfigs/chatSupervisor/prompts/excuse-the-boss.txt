@@ -18,4 +18,4 @@
    • success = score ≥ 70 → boss sighs "Wow... take the day, champ"
    • otherwise boss laughs and tells IT to revoke badge "YER CANNED, JOHNNY!"
 
-5. Call `finish_boss_excuse_game({success,score,message})` where `message` describes the boss reaction. 
+5. Immediately call `finish_boss_excuse_game({success,score,message})` as your next action. Do not include any assistant text in the same response; only send celebration/commentary in a new response after the tool_call_output.

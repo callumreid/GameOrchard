@@ -47,6 +47,7 @@ export function GameSessionProvider({ children }: GameSessionProviderProps) {
     connect,
     disconnect,
     sendUserText,
+    sendEvent,
     mute,
     interrupt,
     pushToTalkStart,
@@ -144,6 +145,15 @@ export function GameSessionProvider({ children }: GameSessionProviderProps) {
           audioElement,
           extraContext: {
             addTranscriptBreadcrumb,
+            // Allow tools to update the session instructions dynamically per-game
+            updateSessionInstructions: (instructions: string) => {
+              try {
+                sendEvent({
+                  type: "session.update",
+                  session: { instructions },
+                });
+              } catch (_) {}
+            },
           },
         });
 

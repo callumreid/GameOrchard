@@ -17,5 +17,5 @@
    • success = score ≥ 70 → celebrate their dominance and wit
    • otherwise mock them for being weak
 
-5. Call `finish_bully_pwn_game({success,score,message})` where `message` describes the outcome.
+5. Immediately call `finish_bully_pwn_game({success,score,message})` as your next action. Do not include any assistant text in the same response; only send celebration/commentary in a new response after the tool_call_output.
    Always end with the result: either "BOOM! You totally pwned that bully!" or "Weak comeback, buttered up slug chump!" 

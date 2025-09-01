@@ -17,5 +17,5 @@
    • success = score ≥ 70 → turkey prances out and nuzzles knee
    • otherwise turkey either skitters away (too timid) or dive-bombs face (too aggressive)
 
-5. Call `finish_turkey_attraction_game({success,score,message})` where `message` describes the outcome.
+5. Immediately call `finish_turkey_attraction_game({success,score,message})` as your next action. Do not include any assistant text in the same response; only send celebration/commentary in a new response after the tool_call_output.
    ALWAYS end with host whisper-gobbling either "Gobble on, legend..." or "Gobble off, loser." 
