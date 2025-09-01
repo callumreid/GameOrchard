@@ -369,14 +369,28 @@ export default function Games() {
     startCurrentRound();
   };
 
-  const handleShareToX = () => {
-    const baseUrl = "https://twitter.com/intent/tweet";
+  const handleShareToX = async () => {
     const url = "https://gameorchard.beer";
     const text =
       summaryText && summaryText.trim().length > 0
         ? summaryText
         : `I played Game Orchard! Total Score: ${totalScore}`;
     const maxText = text.slice(0, 240);
+
+    try {
+      if (typeof navigator !== "undefined" && (navigator as any).share) {
+        await (navigator as any).share({
+          title: "Game Orchard",
+          text: maxText,
+          url,
+        });
+        return;
+      }
+    } catch (_) {
+      // Ignore and fallback
+    }
+
+    const baseUrl = "https://twitter.com/intent/tweet";
     const shareUrl = `${baseUrl}?text=${encodeURIComponent(
       maxText
     )}&url=${encodeURIComponent(url)}`;
