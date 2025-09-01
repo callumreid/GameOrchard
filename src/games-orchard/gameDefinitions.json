@@ -230,7 +230,7 @@
     "startDelayMs": 8000,
     "startMessage": "The mothership opens a channel...",
     "activeMessage": "Make it count!",
-    "hostLabel": "👽 Alien Overlord:",
+    "hostLabel": "👽 Alien Overlord",
     "userLabel": "🌍 Ambassador of the Long Pig (You)",
     "talkButtonIdleEmoji": "🛸",
     "talkButtonActiveEmoji": "🗣️",
