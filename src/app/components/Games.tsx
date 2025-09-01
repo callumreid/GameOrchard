@@ -91,6 +91,8 @@ export default function Games() {
   // Media refs
   const videoRef = useRef<HTMLVideoElement>(null);
   const audioRef = useRef<HTMLAudioElement>(null);
+  const [requiresResume, setRequiresResume] = useState(false);
+  const didBackgroundRef = useRef(false);
 
   const {
     sendUserText,
@@ -190,11 +192,18 @@ export default function Games() {
         el.muted = true;
         el.pause();
       } catch (_) {}
+      didBackgroundRef.current = true;
     };
     const handleVisible = () => {
+      // On mobile, gate resumption behind explicit user gesture
+      if (isMobileBrowser() && didBackgroundRef.current) {
+        setRequiresResume(true);
+        didBackgroundRef.current = false;
+        return;
+      }
+
       const el = audioRef.current;
       if (!el) return;
-      // Only attempt to resume if user started the app and we're not in playing state
       try {
         el.muted = false;
         el.volume = isMobileBrowser() ? BG_VOLUME_MOBILE : BG_VOLUME_DESKTOP;
@@ -222,7 +231,34 @@ export default function Games() {
       window.removeEventListener("pageshow", handleVisible);
       document.removeEventListener("visibilitychange", onVisibilityChange);
     };
-  }, [hasUserInteracted, isStarted, gameState]);
+  }, [
+    hasUserInteracted,
+    isStarted,
+    gameState,
+    sessionStatus,
+    resumeOutputAudio,
+    mute,
+  ]);
+
+  const handleResumeClick = () => {
+    try {
+      resumeOutputAudio();
+    } catch (_) {}
+    try {
+      mute(false);
+    } catch (_) {}
+    const el = audioRef.current;
+    if (el) {
+      try {
+        el.muted = false;
+        el.volume = isMobileBrowser() ? BG_VOLUME_MOBILE : BG_VOLUME_DESKTOP;
+        if (hasUserInteracted && isStarted && gameState !== "playing") {
+          el.play().catch(() => {});
+        }
+      } catch (_) {}
+    }
+    setRequiresResume(false);
+  };
 
   // Auto-start sequence
   useEffect(() => {
@@ -804,6 +840,22 @@ export default function Games() {
       {gameState === "playing" && renderGamePlay()}
       {gameState === "transition" && renderTransition()}
       {gameState === "end" && renderEndScreen()}
+      {requiresResume && (
+        <div className="fixed inset-0 z-[9999] bg-black/70 flex items-center justify-center">
+          <div className="bg-white rounded-xl p-6 max-w-sm w-[90%] text-center shadow-xl">
+            <div className="text-lg font-semibold mb-3">Resume</div>
+            <div className="text-gray-600 mb-5">
+              Tap Resume to continue and enable audio.
+            </div>
+            <button
+              onClick={handleResumeClick}
+              className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-lg font-medium"
+            >
+              Resume
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
