@@ -11,6 +11,9 @@ export interface GameProps {
   playSound?: (soundId: string) => void;
   isPTTUserSpeaking?: boolean;
   userColor?: string;
+  // Optional round info for multi-round loops
+  roundIndex?: number;
+  totalRounds?: number;
 }
 
 export interface MicroGame {

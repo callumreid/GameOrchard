@@ -8,6 +8,8 @@ interface BaseGameProps extends GameProps {
   duration?: number; // in seconds, defaults to 10
   children: React.ReactNode;
   onTimeout?: () => void;
+  roundIndex?: number;
+  totalRounds?: number;
 }
 
 export default function BaseGame({
@@ -20,6 +22,8 @@ export default function BaseGame({
   userColor,
   isPTTUserSpeaking,
   onTimeout,
+  roundIndex,
+  totalRounds,
   children,
 }: BaseGameProps) {
   const [gameState, setGameState] = useState<GameState>({
@@ -226,9 +230,14 @@ export default function BaseGame({
       >
         {/* Game Area */}
         <div className="flex-1 flex flex-col items-center justify-center p-4">
-          {React.cloneElement(children as React.ReactElement, {
-            ...gameControls,
-          })}
+          {React.cloneElement(
+            children as React.ReactElement<any>,
+            {
+              ...(gameControls as any),
+              roundIndex,
+              totalRounds,
+            } as any
+          )}
         </div>
 
         {/* Status Message */}

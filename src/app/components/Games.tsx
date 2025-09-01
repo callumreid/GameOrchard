@@ -1,15 +1,11 @@
 "use client";
 import React, { useState, useEffect, useRef } from "react";
 import dynamic from "next/dynamic";
-import {
-  allPlannedGames,
-  getGameById,
-  isGameImplemented,
-  getImplementedGames,
-} from "@/games-orchard";
+import { getGameById, getImplementedGames } from "@/games-orchard";
 import { GameMetadata } from "@/games-orchard/types";
 import { useGameSession } from "../providers/GameSessionProvider";
 import PTTAnimation from "./PTTAnimation";
+import { useTranscript } from "../contexts/TranscriptContext";
 
 const FlyingFruitsBackground = dynamic(
   () => import("./FlyingFruitsBackground"),
@@ -18,7 +14,7 @@ const FlyingFruitsBackground = dynamic(
 
 export default function Games() {
   const [gameState, setGameState] = useState<
-    "landing" | "playing" | "transition"
+    "landing" | "playing" | "transition" | "end"
   >("landing");
   const [selectedGame, setSelectedGame] = useState<GameMetadata | null>(null);
   const [GameComponent, setGameComponent] =
@@ -27,12 +23,32 @@ export default function Games() {
   const [isStarted, setIsStarted] = useState(false);
 
   // Multi-game sequence state
-  const [currentGameIndex, setCurrentGameIndex] = useState(0);
+  // Note: kept for compatibility with existing props, mirrors currentRoundIndex
+  const [, setCurrentGameIndex] = useState<number>(0);
   const [implementedGames] = useState<GameMetadata[]>(() => {
     const games = getImplementedGames();
     // Shuffle the games array for random order
     return [...games].sort(() => Math.random() - 0.5);
   });
+  // Current loop of 3 rounds
+  const TOTAL_ROUNDS = 3;
+  const [roundGames, setRoundGames] = useState<GameMetadata[]>([]);
+  const [currentRoundIndex, setCurrentRoundIndex] = useState(0);
+  const [totalScore, setTotalScore] = useState(0);
+  const [roundResults, setRoundResults] = useState<
+    Array<{
+      id: string;
+      name: string;
+      success: boolean;
+      score: number;
+      message?: string;
+      timeElapsed?: number;
+      conversation?: string;
+    }>
+  >([]);
+  const [summaryText, setSummaryText] = useState<string>("");
+  const [isGeneratingSummary, setIsGeneratingSummary] = useState(false);
+  const [summaryError, setSummaryError] = useState<string>("");
   const [currentTransitionVideo, setCurrentTransitionVideo] = useState(0);
   const transitionVideos = [
     "/bg-video-apple.mp4",
@@ -74,6 +90,45 @@ export default function Games() {
 
   const { sendUserText, sessionStatus, isWebRTCReady, isPTTUserSpeaking } =
     useGameSession();
+  const { transcriptItems, addTranscriptBreadcrumb } = useTranscript();
+  const [currentRoundStartMs, setCurrentRoundStartMs] = useState<number>(0);
+
+  function startCurrentRound() {
+    setCurrentRoundStartMs(Date.now());
+    const roundNumber = currentRoundIndex + 1;
+    if (selectedGame) {
+      addTranscriptBreadcrumb(
+        `[Round ${roundNumber}] Start: ${selectedGame.name}`,
+        {
+          round: roundNumber,
+          gameId: selectedGame.id,
+          gameName: selectedGame.name,
+        }
+      );
+    } else {
+      addTranscriptBreadcrumb(`[Round ${roundNumber}] Start`, {
+        round: roundNumber,
+      });
+    }
+    setGameState("playing");
+  }
+
+  function collectRoundConversation(startMs: number, endMs: number): string {
+    const lines = transcriptItems
+      .filter(
+        (t) =>
+          t.type === "MESSAGE" &&
+          t.createdAtMs >= startMs &&
+          t.createdAtMs <= endMs
+      )
+      .sort((a, b) => a.createdAtMs - b.createdAtMs)
+      .map((t) => {
+        const speaker =
+          t.role === "assistant" ? "Host" : t.role === "user" ? "You" : "Other";
+        return `${speaker}: ${t.title ?? ""}`;
+      });
+    return lines.join("\n");
+  }
 
   // Debug logging for session state
   useEffect(() => {
@@ -136,7 +191,7 @@ export default function Games() {
       // After 8 seconds, start the game
       const startGameTimer = setTimeout(() => {
         if (selectedGame && GameComponent) {
-          setGameState("playing");
+          startCurrentRound();
         }
       }, 8000);
 
@@ -155,57 +210,76 @@ export default function Games() {
     isStarted,
   ]);
 
-  // Initialize game sequence
+  // Initialize 3-round game loop
   useEffect(() => {
     if (implementedGames.length === 0) {
       console.warn("No implemented games found!");
       return;
     }
 
-    // Check for specific game in URL hash
-    const gameId = window.location.hash.replace("#", "");
-    if (gameId) {
-      const game = allPlannedGames.find((g) => g.id === gameId);
-      if (game && isGameImplemented(game.id)) {
-        setSelectedGame(game);
-        const component = getGameById(game.id);
-        setGameComponent(() => component);
-        return;
+    const pickRoundGames = (pool: GameMetadata[], count: number) => {
+      const unique = [...pool];
+      // Already shuffled in implementedGames; make a fresh shallow copy and re-shuffle
+      for (let i = unique.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [unique[i], unique[j]] = [unique[j], unique[i]];
       }
-    }
+      return unique.slice(0, Math.min(count, unique.length));
+    };
 
-    // Default to first implemented game for the sequence
-    const firstGame = implementedGames[0];
-    setSelectedGame(firstGame);
-    const component = getGameById(firstGame.id);
+    const initialRoundGames = pickRoundGames(implementedGames, TOTAL_ROUNDS);
+    setRoundGames(initialRoundGames);
+    setCurrentRoundIndex(0);
+    setTotalScore(0);
+    setRoundResults([]);
+    setSummaryText("");
+    setSummaryError("");
+
+    // Allow URL hash override to force a single specific game as first round
+    const gameId = window.location.hash.replace("#", "");
+    const first =
+      initialRoundGames.find((g) => g.id === gameId) || initialRoundGames[0];
+    setSelectedGame(first);
+    const component = getGameById(first.id);
     setGameComponent(() => component);
     setCurrentGameIndex(0);
   }, [implementedGames]);
 
-  const handleBackToLanding = () => {
-    setGameState("landing");
-    // Reset game sequence
-    setCurrentGameIndex(0);
-    setCurrentTransitionVideo(0);
-    setShowContent(true);
-    setShowOverlay(true);
-
-    // Reset to first game
-    if (implementedGames.length > 0) {
-      const firstGame = implementedGames[0];
-      setSelectedGame(firstGame);
-      const component = getGameById(firstGame.id);
-      setGameComponent(() => component);
-    }
-  };
-
   const handleGameEnd = (_result: any) => {
-    console.log("Game ended:", _result, "Current index:", currentGameIndex);
+    console.log("Game ended:", _result, "Current round:", currentRoundIndex);
 
-    // Wait for BaseGame banner to finish (6 seconds) before starting transition
+    // Accumulate score and store result
+    const score = Number(_result?.score || 0);
+    const success = !!_result?.success;
+    const message = _result?.message as string | undefined;
+    const timeElapsed = _result?.timeElapsed as number | undefined;
+    const endedGame = roundGames[currentRoundIndex];
+    const nowMs = Date.now();
+    const conversation = collectRoundConversation(
+      currentRoundStartMs || 0,
+      nowMs
+    );
+    if (endedGame) {
+      setRoundResults((prev) => [
+        ...prev,
+        {
+          id: endedGame.id,
+          name: endedGame.name,
+          score,
+          success,
+          message,
+          timeElapsed,
+          conversation,
+        },
+      ]);
+    }
+    setTotalScore((prev) => prev + score);
+
+    // Wait for BaseGame banner to finish (6 seconds) before starting transition/end
     setTimeout(() => {
-      // Check if there's a next game in the sequence
-      if (currentGameIndex < implementedGames.length - 1) {
+      const isLastRound =
+        currentRoundIndex >= Math.min(TOTAL_ROUNDS, roundGames.length) - 1;
+      if (!isLastRound) {
         // Cycle to next transition video
         setCurrentTransitionVideo(
           (prev) => (prev + 1) % transitionVideos.length
@@ -219,26 +293,94 @@ export default function Games() {
           videoRef.current.currentTime = 0; // Rewind to start
         }
 
-        // After 8 seconds, start next game
+        // After 8 seconds, start next round
         setTimeout(() => {
-          const nextIndex = currentGameIndex + 1;
-          const nextGame = implementedGames[nextIndex];
+          const nextIndex = currentRoundIndex + 1;
+          const nextGame = roundGames[nextIndex];
 
+          setCurrentRoundIndex(nextIndex);
           setCurrentGameIndex(nextIndex);
           setSelectedGame(nextGame);
 
           const component = getGameById(nextGame.id);
           setGameComponent(() => component);
 
-          setGameState("playing");
+          startCurrentRound();
         }, 8000);
       } else {
-        // All games completed, return to landing
-        setTimeout(() => {
-          handleBackToLanding();
-        }, 3000);
+        // All 3 rounds completed → show end screen, generate summary
+        setGameState("end");
+        setIsGeneratingSummary(true);
+        setSummaryError("");
+        // Kick off summary generation
+        const generate = async () => {
+          try {
+            const res = await fetch("/api/summary", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                results: [
+                  ...roundResults,
+                  {
+                    id: endedGame?.id,
+                    name: endedGame?.name,
+                    score,
+                    success,
+                    message,
+                    timeElapsed,
+                    conversation,
+                  },
+                ],
+                totalScore: totalScore + score,
+                rounds: Math.min(TOTAL_ROUNDS, roundGames.length),
+              }),
+            });
+            const data = await res.json();
+            if (!res.ok) throw new Error(data?.error || "Failed to summarize");
+            setSummaryText(data?.summary || "");
+          } catch (e: any) {
+            console.error("Summary generation failed", e);
+            setSummaryError(e?.message || "Failed to generate summary");
+          } finally {
+            setIsGeneratingSummary(false);
+          }
+        };
+        generate();
       }
-    }, 6000); // Wait for BaseGame banner to complete
+    }, 6000);
+  };
+
+  const handlePlayMore = () => {
+    // Start a fresh 3-round loop immediately
+    if (implementedGames.length === 0) return;
+    const fresh = [...implementedGames].sort(() => Math.random() - 0.5);
+    const chosen = fresh.slice(0, Math.min(TOTAL_ROUNDS, fresh.length));
+    setRoundGames(chosen);
+    setCurrentRoundIndex(0);
+    setCurrentGameIndex(0);
+    setTotalScore(0);
+    setRoundResults([]);
+    setSummaryText("");
+    setSummaryError("");
+    const firstGame = chosen[0];
+    setSelectedGame(firstGame);
+    const component = getGameById(firstGame.id);
+    setGameComponent(() => component);
+    startCurrentRound();
+  };
+
+  const handleShareToX = () => {
+    const baseUrl = "https://twitter.com/intent/tweet";
+    const url = "https://gameorchard.beer";
+    const text =
+      summaryText && summaryText.trim().length > 0
+        ? summaryText
+        : `I played Game Orchard! Total Score: ${totalScore}`;
+    const maxText = text.slice(0, 240);
+    const shareUrl = `${baseUrl}?text=${encodeURIComponent(
+      maxText
+    )}&url=${encodeURIComponent(url)}`;
+    window.open(shareUrl, "_blank", "noopener,noreferrer");
   };
 
   const renderLandingPage = () => {
@@ -432,6 +574,11 @@ export default function Games() {
               sendPlayerText={sendUserText}
               isPTTUserSpeaking={isPTTUserSpeaking}
               userColor={currentFruit.color}
+              roundIndex={currentRoundIndex}
+              totalRounds={Math.min(
+                TOTAL_ROUNDS,
+                roundGames.length || TOTAL_ROUNDS
+              )}
             />
           </div>
         )}
@@ -462,17 +609,89 @@ export default function Games() {
 
       {/* Transition content */}
       <div className="relative z-20 flex flex-col items-center justify-center">
-        <h1 className="text-5xl sm:text-6xl font-bold mb-8 text-center animate-pulse">
-          Next Game Loading...
+        <h1 className="text-5xl sm:text-6xl font-bold mb-2 text-center animate-pulse">
+          Next Round Loading...
         </h1>
+        <div className="text-xl opacity-90 text-center mb-6">
+          Round{" "}
+          {Math.min(
+            currentRoundIndex + 2,
+            Math.min(TOTAL_ROUNDS, roundGames.length)
+          )}{" "}
+          of {Math.min(TOTAL_ROUNDS, roundGames.length || TOTAL_ROUNDS)}
+        </div>
         <div className="text-xl opacity-90 text-center">
-          {currentGameIndex < implementedGames.length - 1 && (
-            <p>Up Next: {implementedGames[currentGameIndex + 1]?.name}</p>
+          {currentRoundIndex <
+            Math.min(TOTAL_ROUNDS, roundGames.length) - 1 && (
+            <p>Up Next: {roundGames[currentRoundIndex + 1]?.name}</p>
           )}
         </div>
       </div>
     </div>
   );
+
+  const renderEndScreen = () => {
+    return (
+      <div className="relative flex flex-col items-center justify-center h-full text-white">
+        {/* Background Video */}
+        <video
+          ref={videoRef}
+          loop
+          muted
+          playsInline
+          className="absolute inset-0 w-full h-full object-cover z-0"
+          key={transitionVideos[currentTransitionVideo]}
+          autoPlay
+        >
+          <source
+            src={transitionVideos[currentTransitionVideo]}
+            type="video/mp4"
+          />
+        </video>
+
+        {/* Dark overlay */}
+        <div className="absolute top-0 left-0 w-full h-full bg-black bg-opacity-70 z-10" />
+
+        <div className="relative z-20 max-w-3xl mx-auto p-4 text-center">
+          <h2 className="text-5xl sm:text-7xl font-extrabold mb-6">
+            Game Over
+          </h2>
+          <div className="text-2xl sm:text-3xl mb-4">
+            Total Score: {totalScore}
+          </div>
+          <div className="bg-white/10 rounded-xl p-4 text-lg text-left">
+            {isGeneratingSummary && (
+              <div>Summarizing your legendary performance...</div>
+            )}
+            {!isGeneratingSummary && summaryError && (
+              <div className="text-red-300">{summaryError}</div>
+            )}
+            {!isGeneratingSummary && !summaryError && (
+              <div className="whitespace-pre-wrap">
+                {summaryText || "That was epic. (No summary available)"}
+              </div>
+            )}
+          </div>
+          <div className="mt-8 flex items-center justify-center gap-4 flex-wrap">
+            <button
+              onClick={handlePlayMore}
+              className="bg-gradient-to-r from-emerald-400 via-green-500 to-teal-500 text-black px-8 py-3 rounded-full font-extrabold text-xl shadow-lg shadow-emerald-500/30 hover:shadow-xl hover:scale-105 focus:outline-none focus:ring-4 focus:ring-emerald-300 active:scale-95"
+            >
+              Play More
+            </button>
+            <button
+              onClick={handleShareToX}
+              className="bg-[#000000] text-white px-6 py-3 rounded-full text-lg hover:bg-gray-800"
+              aria-label="Share"
+              title="Share"
+            >
+              Share
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  };
 
   return (
     <div className="h-dvh">
@@ -497,6 +716,7 @@ export default function Games() {
       {gameState === "landing" && renderLandingPage()}
       {gameState === "playing" && renderGamePlay()}
       {gameState === "transition" && renderTransition()}
+      {gameState === "end" && renderEndScreen()}
     </div>
   );
 }

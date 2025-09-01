@@ -19,6 +19,8 @@ interface GameControlProps {
   playSound?: (soundId: string) => void;
   isPTTUserSpeaking?: boolean;
   userColor?: string;
+  roundIndex?: number;
+  totalRounds?: number;
 }
 
 function ConversationPane({
@@ -217,9 +219,17 @@ function UnifiedRuntime({
     >
       <div className="bg-white rounded-lg shadow-lg p-2 sm:p-4 max-w-5xl w-full">
         <div className="flex justify-between items-center mb-2 sm:mb-4">
-          <h2 className="text-lg sm:text-2xl font-bold text-gray-800">
-            {title}
-          </h2>
+          <div>
+            <h2 className="text-lg sm:text-2xl font-bold text-gray-800">
+              {title}
+            </h2>
+            {typeof (controls as any).roundIndex === "number" && (
+              <div className="text-xs sm:text-sm text-gray-600 mt-1">
+                Round {(controls as any).roundIndex + 1} of{" "}
+                {(controls as any).totalRounds || 3}
+              </div>
+            )}
+          </div>
           <div className="text-xs sm:text-lg font-semibold text-gray-800 p-3 bg-gray-100 rounded-lg">
             Time: {controls.gameState?.timeRemaining || estimatedDuration}s
           </div>
