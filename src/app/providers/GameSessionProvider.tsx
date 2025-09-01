@@ -23,6 +23,7 @@ interface GameSessionContextValue {
   pushToTalkStart: () => Promise<void>;
   pushToTalkStop: () => Promise<void>;
   isPTTUserSpeaking: boolean;
+  resumeOutputAudio: () => void;
 }
 
 const GameSessionContext = createContext<GameSessionContextValue | undefined>(
@@ -232,6 +233,7 @@ export function GameSessionProvider({ children }: GameSessionProviderProps) {
     pushToTalkStart: wrappedPushToTalkStart,
     pushToTalkStop: wrappedPushToTalkStop,
     isPTTUserSpeaking,
+    resumeOutputAudio,
   };
 
   return (

@@ -88,8 +88,14 @@ export default function Games() {
   const videoRef = useRef<HTMLVideoElement>(null);
   const audioRef = useRef<HTMLAudioElement>(null);
 
-  const { sendUserText, sessionStatus, isWebRTCReady, isPTTUserSpeaking } =
-    useGameSession();
+  const {
+    sendUserText,
+    sessionStatus,
+    isWebRTCReady,
+    isPTTUserSpeaking,
+    resumeOutputAudio,
+    mute,
+  } = useGameSession();
   const { transcriptItems, addTranscriptBreadcrumb } = useTranscript();
   const [currentRoundStartMs, setCurrentRoundStartMs] = useState<number>(0);
 
@@ -188,6 +194,13 @@ export default function Games() {
         if (hasUserInteracted && isStarted && gameState !== "playing") {
           el.play().catch(() => {});
         }
+      } catch (_) {}
+
+      try {
+        resumeOutputAudio();
+      } catch (_) {}
+      try {
+        mute(false);
       } catch (_) {}
     };
     const onVisibilityChange = () => {
