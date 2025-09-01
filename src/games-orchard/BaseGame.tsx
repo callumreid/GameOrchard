@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import { GameProps, GameState } from "./types";
 
 interface BaseGameProps extends GameProps {
@@ -7,6 +7,7 @@ interface BaseGameProps extends GameProps {
   instructions: string;
   duration?: number; // in seconds, defaults to 10
   children: React.ReactNode;
+  onTimeout?: () => void;
 }
 
 export default function BaseGame({
@@ -17,6 +18,8 @@ export default function BaseGame({
   sendPlayerText,
   playSound,
   userColor,
+  isPTTUserSpeaking,
+  onTimeout,
   children,
 }: BaseGameProps) {
   const [gameState, setGameState] = useState<GameState>({
@@ -35,6 +38,32 @@ export default function BaseGame({
     success: boolean;
     score: number;
   }>({ success: false, score: 0 });
+
+  // Add a 3s grace period after user stops speaking before resuming timer
+  const [resumeAllowed, setResumeAllowed] = useState(true);
+  const prevSpeakingRef = useRef<boolean>(false);
+  const resumeTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    const wasSpeaking = prevSpeakingRef.current;
+    if (wasSpeaking && !isPTTUserSpeaking) {
+      setResumeAllowed(false);
+      if (resumeTimeoutRef.current) {
+        clearTimeout(resumeTimeoutRef.current);
+      }
+      resumeTimeoutRef.current = setTimeout(() => {
+        setResumeAllowed(true);
+      }, 3000);
+    }
+    prevSpeakingRef.current = !!isPTTUserSpeaking;
+
+    return () => {
+      if (resumeTimeoutRef.current) {
+        clearTimeout(resumeTimeoutRef.current);
+        resumeTimeoutRef.current = null;
+      }
+    };
+  }, [isPTTUserSpeaking]);
 
   // Countdown before game starts
   useEffect(() => {
@@ -57,7 +86,9 @@ export default function BaseGame({
     if (
       gameState.status === "playing" &&
       gameState.timeRemaining > 0 &&
-      timerStarted
+      timerStarted &&
+      !isPTTUserSpeaking &&
+      resumeAllowed
     ) {
       const timer = setTimeout(() => {
         setGameState((prev) => ({
@@ -68,11 +99,22 @@ export default function BaseGame({
       return () => clearTimeout(timer);
     } else if (
       gameState.status === "playing" &&
-      gameState.timeRemaining === 0
+      gameState.timeRemaining === 0 &&
+      resumeAllowed
     ) {
+      if (onTimeout) {
+        onTimeout();
+      }
       endGame(false, "Time's up!");
     }
-  }, [gameState.status, gameState.timeRemaining, timerStarted]);
+  }, [
+    gameState.status,
+    gameState.timeRemaining,
+    timerStarted,
+    isPTTUserSpeaking,
+    resumeAllowed,
+    onTimeout,
+  ]);
 
   const startGame = useCallback(() => {
     setGameState((prev) => ({

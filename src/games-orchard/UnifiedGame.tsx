@@ -53,7 +53,8 @@ function ConversationPane({
           item.role === "user" &&
           item.title &&
           item.title.trim() !== "" &&
-          item.title.trim() !== "[inaudible]"
+          item.title.trim() !== "[inaudible]" &&
+          !item.title.trim().startsWith("Timeout: No user response received.")
       )
       .sort((a, b) => b.createdAtMs - a.createdAtMs);
 
@@ -258,11 +259,33 @@ export default function UnifiedGame({
   definition,
   ...props
 }: GameProps & { definition: GameDefinitionMeta }) {
+  const finishFnByType: Record<GameDefinitionMeta["gameType"], string> = {
+    "save-their-soul": "finish_save_their_soul_game",
+    "pitch-startup": "finish_pitch_startup_game",
+    "excuse-the-boss": "finish_boss_excuse_game",
+    "attract-the-turkey": "finish_turkey_attraction_game",
+    "pwn-the-bully": "finish_bully_pwn_game",
+    "explain-death": "finish_death_explanation_game",
+    "advise-the-child": "finish_child_advice_game",
+    "stall-the-police": "finish_police_stall_game",
+    "convince-the-aliens": "finish_alien_convince_game",
+    "evaluate-yourself": "finish_self_evaluation_game",
+    "point-the-task": "finish_point_task_game",
+    "sell-the-lemon": "finish_lemon_sale_game",
+  };
+
+  const handleTimeout = useCallback(() => {
+    const finishFn = finishFnByType[definition.gameType];
+    const timeoutInstruction = `Timeout: No user response received. Call ${finishFn}({success:false, score: 0, message: "No response received within time limit."}) now. Only call the function.`;
+    props.sendPlayerText?.(timeoutInstruction);
+  }, [props.sendPlayerText, definition.gameType]);
+
   return (
     <BaseGame
       title={definition.title}
       instructions={definition.instructions}
       duration={definition.estimatedDuration}
+      onTimeout={handleTimeout}
       {...props}
     >
       <UnifiedRuntime definition={definition} />
