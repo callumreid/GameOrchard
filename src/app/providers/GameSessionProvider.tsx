@@ -51,6 +51,7 @@ export function GameSessionProvider({ children }: GameSessionProviderProps) {
     pushToTalkStart,
     pushToTalkStop,
     pauseMicHardware,
+    resumeOutputAudio,
   } = useRealtimeSession({
     onConnectionChange: (status) => {
       console.log("[GameSession] Connection status changed to:", status);
@@ -189,6 +190,14 @@ export function GameSessionProvider({ children }: GameSessionProviderProps) {
           el.play().catch(() => {});
         } catch (_) {}
       }
+      try {
+        // Best-effort: ensure SDK element resumes on iOS
+        resumeOutputAudio();
+      } catch (_) {}
+      try {
+        // Unmute any server-side output mute that may have been toggled
+        mute(false);
+      } catch (_) {}
     };
 
     const onVisibilityChange = () => {
@@ -204,7 +213,7 @@ export function GameSessionProvider({ children }: GameSessionProviderProps) {
       window.removeEventListener("pageshow", handleVisible);
       document.removeEventListener("visibilitychange", onVisibilityChange);
     };
-  }, [mute, pauseMicHardware]);
+  }, [mute, pauseMicHardware, resumeOutputAudio]);
 
   // Debug logging for state changes
   useEffect(() => {

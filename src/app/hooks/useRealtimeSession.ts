@@ -36,6 +36,8 @@ export function useRealtimeSession(callbacks: RealtimeSessionCallbacks = {}) {
   // Track whether we explicitly stopped the mic track due to backgrounding
   // so we can conditionally restore it upon a foreground PTT event.
   const micStoppedByBackgroundRef = useRef<boolean>(false);
+  // Keep a reference to the SDK's output audio element to resume playback on user gesture
+  const outputAudioElementRef = useRef<HTMLAudioElement | null>(null);
 
   // Tracks whether a game started/finished so we can enforce finish_* tool calls
   const gameStateRef = useRef<{
@@ -312,6 +314,11 @@ export function useRealtimeSession(callbacks: RealtimeSessionCallbacks = {}) {
 
       await sessionRef.current.connect({ apiKey: ek });
 
+      // Track the output audio element used by the SDK
+      outputAudioElementRef.current =
+        (sessionRef.current as any)?.transport?.audioElement ??
+        (typeof audioElement !== "undefined" ? audioElement : null);
+
       // Initially mute the session to prevent automatic transcription
       console.log("[RealtimeSession] Muting WebRTC session initially");
       sessionRef.current.mute(true);
@@ -325,6 +332,7 @@ export function useRealtimeSession(callbacks: RealtimeSessionCallbacks = {}) {
     sessionRef.current?.close();
     sessionRef.current = null;
     pcRef.current = null;
+    outputAudioElementRef.current = null;
     updateStatus("DISCONNECTED");
   }, [updateStatus]);
 
@@ -443,11 +451,26 @@ export function useRealtimeSession(callbacks: RealtimeSessionCallbacks = {}) {
     }
   }, [ensureLocalMicTrack]);
 
+  /**
+   * Resume output audio element playback on a user gesture (e.g., PTT press),
+   * which is required on iOS after backgrounding.
+   */
+  const resumeOutputAudio = useCallback(() => {
+    const el = outputAudioElementRef.current;
+    if (!el) return;
+    try {
+      el.muted = false;
+      el.play().catch(() => {});
+    } catch (_) {}
+  }, []);
+
   const pushToTalkStart = useCallback(async () => {
     if (!sessionRef.current) return;
 
     // Unmute the session for push-to-talk
     console.log("[PTT] Unmuting WebRTC session");
+    // Ensure remote audio playback is resumed on user gesture
+    resumeOutputAudio();
     // Ensure there is a live microphone track (may have been stopped on background)
     await resumeMicHardware();
     await ensureLocalMicTrack();
@@ -483,5 +506,6 @@ export function useRealtimeSession(callbacks: RealtimeSessionCallbacks = {}) {
     interrupt,
     pauseMicHardware,
     resumeMicHardware,
+    resumeOutputAudio,
   } as const;
 }

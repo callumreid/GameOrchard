@@ -80,6 +80,7 @@ function DebugApp() {
     pushToTalkStart,
     pushToTalkStop,
     pauseMicHardware,
+    resumeOutputAudio,
   } = useRealtimeSession({
     onConnectionChange: (s) => setSessionStatus(s as SessionStatus),
     onAgentHandoff: (agentName: string) => {
@@ -147,6 +148,12 @@ function DebugApp() {
           el.play().catch(() => {});
         } catch (_) {}
       }
+      try {
+        resumeOutputAudio();
+      } catch (_) {}
+      try {
+        mute(false);
+      } catch (_) {}
       // Optionally resume local recording if remote stream exists
       try {
         if (el && el.srcObject) {
