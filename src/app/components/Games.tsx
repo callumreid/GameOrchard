@@ -580,7 +580,7 @@ export default function Games() {
   const renderLandingPage = () => {
     const getConnectionStatus = () => {
       if (sessionStatus === "DISCONNECTED")
-        return "Connecting to AI Game Host...";
+        return "Grant mic permission to play!!!";
       if (sessionStatus === "CONNECTING") return "Establishing connection...";
       if (sessionStatus === "CONNECTED" && !isWebRTCReady)
         return "Preparing game engine...";
@@ -735,7 +735,7 @@ export default function Games() {
           {/* Connection Status */}
           <div className="mb-8 text-center">
             <div className="flex items-center justify-center mb-4 -mt-4">
-              {!isReady && (
+              {!isReady && sessionStatus !== "DISCONNECTED" && (
                 <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-white mr-3"></div>
               )}
               <span className="text-lg sm:text-xl">
