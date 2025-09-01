@@ -22,6 +22,10 @@ export default function Games() {
   const [hasUserInteracted, setHasUserInteracted] = useState(false);
   const [isStarted, setIsStarted] = useState(false);
 
+  // Target background music volumes
+  const BG_VOLUME_MOBILE = 0.2;
+  const BG_VOLUME_DESKTOP = 0.45;
+
   // Multi-game sequence state
   // Note: kept for compatibility with existing props, mirrors currentRoundIndex
   const [, setCurrentGameIndex] = useState<number>(0);
@@ -167,7 +171,9 @@ export default function Games() {
         audioRef.current.pause();
       } else {
         if (!hasUserInteracted) return;
-        audioRef.current.volume = 0.5;
+        audioRef.current.volume = isMobileBrowser()
+          ? BG_VOLUME_MOBILE
+          : BG_VOLUME_DESKTOP;
         audioRef.current.play().catch((error) => {
           console.log("Audio play failed:", error);
         });
@@ -191,6 +197,7 @@ export default function Games() {
       // Only attempt to resume if user started the app and we're not in playing state
       try {
         el.muted = false;
+        el.volume = isMobileBrowser() ? BG_VOLUME_MOBILE : BG_VOLUME_DESKTOP;
         if (hasUserInteracted && isStarted && gameState !== "playing") {
           el.play().catch(() => {});
         }
@@ -475,6 +482,9 @@ export default function Games() {
       setHasUserInteracted(true);
       setIsStarted(true);
       if (audioRef.current) {
+        audioRef.current.volume = isMobileBrowser()
+          ? BG_VOLUME_MOBILE
+          : BG_VOLUME_DESKTOP;
         audioRef.current.play().catch(() => {});
       }
     };

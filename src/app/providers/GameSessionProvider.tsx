@@ -125,6 +125,10 @@ export function GameSessionProvider({ children }: GameSessionProviderProps) {
         const audioElement = document.createElement("audio");
         audioElement.autoplay = true;
         audioElement.style.display = "none";
+        // Ensure host audio uses full scale; BG music is controlled separately
+        try {
+          audioElement.volume = 1.0;
+        } catch (_) {}
         document.body.appendChild(audioElement);
         audioElementRef.current = audioElement;
 
@@ -188,6 +192,7 @@ export function GameSessionProvider({ children }: GameSessionProviderProps) {
       if (el) {
         try {
           el.muted = false;
+          el.volume = 1.0;
           el.play().catch(() => {});
         } catch (_) {}
       }

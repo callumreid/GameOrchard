@@ -173,7 +173,7 @@ const turkeyAttractionScenarios = [
     problem:
       "A bashful wild turkey lurks beyond the tree line and you need protein for Thanksgiving",
     turkeyQuote:
-      "The game host dramatically sets the scene - A bashful, wide-eyed wild turkey is lurking just beyond the tree line! Thanksgiving is three days away and you're feeling protein-deficient. You squat in the leaves, elbows akimbo, armed with nothing but your vocal cords and questionable bird-wooing charisma. You must emit gobbles so suave that the turkey waddles out and does a little head-bob of approval!",
+      "A bashful, wide-eyed wild turkey is lurking just beyond the tree line! Thanksgiving is three days away and you're feeling protein-deficient. You squat in the leaves, elbows akimbo, armed with nothing but your vocal cords and questionable bird-wooing charisma. You must emit gobbles so suave that the turkey waddles out and does a little head-bob of approval!",
     context:
       "Pre-Thanksgiving turkey hunt using only vocal seduction techniques",
     goodTurkeyKeywords: [
