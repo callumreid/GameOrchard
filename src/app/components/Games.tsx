@@ -23,7 +23,7 @@ export default function Games() {
   const [isStarted, setIsStarted] = useState(false);
 
   // Target background music volumes
-  const BG_VOLUME_MOBILE = 0.2;
+  const BG_VOLUME_MOBILE = 0.3;
   const BG_VOLUME_DESKTOP = 0.45;
 
   // Multi-game sequence state
@@ -103,8 +103,15 @@ export default function Games() {
     if (!isMobileBrowser()) return;
     if (!audioRef.current) return;
     try {
-      if (!bgAudioContextRef.current) {
+      // Recreate context if closed or missing
+      if (
+        !bgAudioContextRef.current ||
+        (bgAudioContextRef.current as any).state === "closed"
+      ) {
         bgAudioContextRef.current = new AudioContext();
+        bgSourceNodeRef.current = null;
+        bgGainNodeRef.current = null;
+        bgConnectedRef.current = false;
       }
       const ctx = bgAudioContextRef.current;
       // Resume must happen inside user gesture for iOS
@@ -225,8 +232,9 @@ export default function Games() {
           audioRef.current.volume = BG_VOLUME_DESKTOP;
           audioRef.current.muted = false;
         }
-        audioRef.current.play().catch((error) => {
-          console.log("Audio play failed:", error);
+        audioRef.current.play().catch(() => {
+          // If autoplay fails on resume, show resume prompt
+          if (isMobileBrowser()) setRequiresResume(true);
         });
       }
     }
@@ -266,7 +274,9 @@ export default function Games() {
           el.volume = BG_VOLUME_DESKTOP;
         }
         if (hasUserInteracted && isStarted && gameState !== "playing") {
-          el.play().catch(() => {});
+          el.play().catch(() => {
+            if (isMobileBrowser()) setRequiresResume(true);
+          });
         }
       } catch (_) {}
 
@@ -315,7 +325,9 @@ export default function Games() {
           el.volume = BG_VOLUME_DESKTOP;
         }
         if (hasUserInteracted && isStarted && gameState !== "playing") {
-          el.play().catch(() => {});
+          el.play().catch(() => {
+            if (isMobileBrowser()) setRequiresResume(true);
+          });
         }
       } catch (_) {}
     }
