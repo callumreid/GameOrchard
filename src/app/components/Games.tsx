@@ -93,6 +93,11 @@ export default function Games() {
   const audioRef = useRef<HTMLAudioElement>(null);
   const [requiresResume, setRequiresResume] = useState(false);
   const didBackgroundRef = useRef(false);
+  // WebAudio pipeline for reliable volume control on mobile
+  const bgAudioContextRef = useRef<AudioContext | null>(null);
+  const bgGainNodeRef = useRef<GainNode | null>(null);
+  const bgSourceNodeRef = useRef<MediaElementAudioSourceNode | null>(null);
+  const bgConnectedRef = useRef(false);
 
   const {
     sendUserText,
@@ -173,9 +178,44 @@ export default function Games() {
         audioRef.current.pause();
       } else {
         if (!hasUserInteracted) return;
-        audioRef.current.volume = isMobileBrowser()
-          ? BG_VOLUME_MOBILE
-          : BG_VOLUME_DESKTOP;
+        if (isMobileBrowser()) {
+          // Ensure WebAudio graph is set up on mobile
+          try {
+            if (!bgAudioContextRef.current) {
+              bgAudioContextRef.current = new AudioContext();
+            }
+            const ctx = bgAudioContextRef.current;
+            if (ctx && ctx.state === "suspended") ctx.resume().catch(() => {});
+            if (ctx && audioRef.current && !bgSourceNodeRef.current) {
+              bgSourceNodeRef.current = ctx.createMediaElementSource(
+                audioRef.current
+              );
+            }
+            if (ctx && !bgGainNodeRef.current) {
+              bgGainNodeRef.current = ctx.createGain();
+            }
+            if (
+              ctx &&
+              bgSourceNodeRef.current &&
+              bgGainNodeRef.current &&
+              !bgConnectedRef.current
+            ) {
+              try {
+                bgSourceNodeRef.current.connect(bgGainNodeRef.current);
+                bgGainNodeRef.current.connect(ctx.destination);
+                bgConnectedRef.current = true;
+              } catch (_) {}
+            }
+            if (bgGainNodeRef.current) {
+              bgGainNodeRef.current.gain.value = BG_VOLUME_MOBILE;
+            }
+            // Avoid double playback by muting element when routing through WebAudio
+            audioRef.current.muted = true;
+          } catch (_) {}
+        } else {
+          audioRef.current.volume = BG_VOLUME_DESKTOP;
+          audioRef.current.muted = false;
+        }
         audioRef.current.play().catch((error) => {
           console.log("Audio play failed:", error);
         });
@@ -205,8 +245,23 @@ export default function Games() {
       const el = audioRef.current;
       if (!el) return;
       try {
-        el.muted = false;
-        el.volume = isMobileBrowser() ? BG_VOLUME_MOBILE : BG_VOLUME_DESKTOP;
+        if (isMobileBrowser()) {
+          // Resume WebAudio context and keep element muted to avoid double path
+          try {
+            if (!bgAudioContextRef.current) {
+              bgAudioContextRef.current = new AudioContext();
+            }
+            const ctx = bgAudioContextRef.current;
+            if (ctx && ctx.state === "suspended") ctx.resume().catch(() => {});
+          } catch (_) {}
+          el.muted = true;
+          if (bgGainNodeRef.current) {
+            bgGainNodeRef.current.gain.value = BG_VOLUME_MOBILE;
+          }
+        } else {
+          el.muted = false;
+          el.volume = BG_VOLUME_DESKTOP;
+        }
         if (hasUserInteracted && isStarted && gameState !== "playing") {
           el.play().catch(() => {});
         }
@@ -250,8 +305,22 @@ export default function Games() {
     const el = audioRef.current;
     if (el) {
       try {
-        el.muted = false;
-        el.volume = isMobileBrowser() ? BG_VOLUME_MOBILE : BG_VOLUME_DESKTOP;
+        if (isMobileBrowser()) {
+          try {
+            if (!bgAudioContextRef.current) {
+              bgAudioContextRef.current = new AudioContext();
+            }
+            const ctx = bgAudioContextRef.current;
+            if (ctx && ctx.state === "suspended") ctx.resume().catch(() => {});
+          } catch (_) {}
+          el.muted = true;
+          if (bgGainNodeRef.current) {
+            bgGainNodeRef.current.gain.value = BG_VOLUME_MOBILE;
+          }
+        } else {
+          el.muted = false;
+          el.volume = BG_VOLUME_DESKTOP;
+        }
         if (hasUserInteracted && isStarted && gameState !== "playing") {
           el.play().catch(() => {});
         }
@@ -843,13 +912,11 @@ export default function Games() {
       {requiresResume && (
         <div className="fixed inset-0 z-[9999] bg-black/70 flex items-center justify-center">
           <div className="bg-white rounded-xl p-6 max-w-sm w-[90%] text-center shadow-xl">
-            <div className="text-lg font-semibold mb-3">Resume</div>
-            <div className="text-gray-600 mb-5">
-              Tap Resume to continue and enable audio.
-            </div>
+            <div className="text-gray-600 mb-5">Tap Resume to continue.</div>
             <button
               onClick={handleResumeClick}
-              className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-lg font-medium"
+              className="text-white px-5 py-2 rounded-lg font-medium"
+              style={{ backgroundColor: currentFruit.color }}
             >
               Resume
             </button>
