@@ -518,8 +518,14 @@ export default function Games() {
   const handlePlayMore = () => {
     // Start a fresh 3-round loop immediately
     if (implementedGames.length === 0) return;
-    const fresh = [...implementedGames].sort(() => Math.random() - 0.5);
-    const chosen = fresh.slice(0, Math.min(TOTAL_ROUNDS, fresh.length));
+    // Prefer games the player hasn't played yet
+    const playedIds = new Set(roundResults.map((r) => r.id));
+    const unplayed = implementedGames.filter((g) => !playedIds.has(g.id));
+    const played = implementedGames.filter((g) => playedIds.has(g.id));
+    const shuffledUnplayed = [...unplayed].sort(() => Math.random() - 0.5);
+    const shuffledPlayed = [...played].sort(() => Math.random() - 0.5);
+    const combined = [...shuffledUnplayed, ...shuffledPlayed];
+    const chosen = combined.slice(0, Math.min(TOTAL_ROUNDS, combined.length));
     setRoundGames(chosen);
     setCurrentRoundIndex(0);
     setCurrentGameIndex(0);
@@ -527,6 +533,7 @@ export default function Games() {
     setRoundResults([]);
     setSummaryText("");
     setSummaryError("");
+    setCurrentTransitionVideo((prev) => (prev + 1) % transitionVideos.length);
     const firstGame = chosen[0];
     setSelectedGame(firstGame);
     const component = getGameById(firstGame.id);
