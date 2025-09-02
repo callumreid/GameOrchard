@@ -928,6 +928,28 @@ export default function Games() {
       {gameState === "playing" && renderGamePlay()}
       {gameState === "transition" && renderTransition()}
       {gameState === "end" && renderEndScreen()}
+      {(gameState === "landing" || gameState === "end") && (
+        <footer className="fixed bottom-4 sm:bottom-10 left-1/2 -translate-x-1/2 z-50 text-xs sm:text-sm text-white/90 bg-black/50 px-3 py-1 rounded-full shadow-2xl backdrop-blur-sm text-nowrap">
+          Made with ❤️ by{" "}
+          <a
+            href="https://github.com/callumreid"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="underline hover:text-white"
+          >
+            🐄 callum
+          </a>{" "}
+          and{" "}
+          <a
+            href="https://github.com/kevinshen56714"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="underline hover:text-white"
+          >
+            🐈 kev
+          </a>
+        </footer>
+      )}
       {requiresResume && (
         <div className="fixed inset-0 z-[9999] bg-black/70 flex items-center justify-center">
           <div className="bg-white rounded-xl p-6 max-w-sm w-[90%] text-center shadow-xl">
