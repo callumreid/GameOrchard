@@ -598,6 +598,10 @@ export default function Games() {
     const handleStart = () => {
       setHasUserInteracted(true);
       setIsStarted(true);
+      // Ensure SDK output audio element resumes on user gesture (required in IG/Safari)
+      try {
+        resumeOutputAudio();
+      } catch (_) {}
       if (audioRef.current) {
         if (isMobileBrowser()) {
           setupMobileWebAudio();

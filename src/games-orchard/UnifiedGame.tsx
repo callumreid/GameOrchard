@@ -182,8 +182,13 @@ function UnifiedRuntime({
       }, Math.max(0, startDelayMs));
     },
     onGameFinish: (result: GameFinishResult) => {
-      // Ensure local speaking state is off
-      setIsPTTUserSpeaking(false);
+      // Ensure local speaking state is off and stop PTT if stuck
+      if (isPTTUserSpeaking) {
+        setIsPTTUserSpeaking(false);
+        try {
+          pushToTalkStop().catch(() => {});
+        } catch (_) {}
+      }
       // Disable PTT button to prevent further input until next round
       setIsPTTDisabled(true);
       const success = result.success === true;
