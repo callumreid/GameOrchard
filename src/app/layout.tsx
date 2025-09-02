@@ -50,6 +50,26 @@ export default function RootLayout({
       <body className={`antialiased`}>
         {children}
         <Analytics />
+        <footer className="fixed bottom-4 sm:bottom-10 left-1/2 -translate-x-1/2 z-50 text-xs sm:text-sm text-white/90 bg-black/50 px-3 py-1 rounded-full shadow-md backdrop-blur-sm text-nowrap">
+          Made with ❤️ by{" "}
+          <a
+            href="https://github.com/callumreid"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="underline hover:text-white"
+          >
+            🐄 callum
+          </a>{" "}
+          and{" "}
+          <a
+            href="https://github.com/kevinshen56714"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="underline hover:text-white"
+          >
+            🐈 kev
+          </a>
+        </footer>
       </body>
     </html>
   );
