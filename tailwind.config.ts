@@ -18,7 +18,10 @@ export default {
           "text-shadow":
             "0px 1px 2px rgba(0, 0, 0, 0.5), 0px 3px 2px rgba(0, 0, 0, 0.1), 0px 4px 8px rgba(0, 0, 0, 0.1)",
         },
-        // Define other text shadow sizes as needed
+        ".text-shadow-md": {
+          "text-shadow":
+            "0px 1px 2px rgba(0, 0, 0, 0.2), 0px 3px 2px rgba(0, 0, 0, 0.1), 0px 4px 8px rgba(0, 0, 0, 0.1)",
+        },
       };
       addUtilities(newUtilities);
     },

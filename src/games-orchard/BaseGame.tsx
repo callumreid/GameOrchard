@@ -219,7 +219,7 @@ export default function BaseGame({
           {title}
         </h1>
         <div className="text-4xl sm:text-8xl font-bold mb-4">{countdown}</div>
-        <p className="text-sm sm:text-xl text-center max-w-md text-shadow-lg">
+        <p className="text-sm sm:text-xl text-center max-w-md text-shadow-md">
           {instructions}
         </p>
       </div>
