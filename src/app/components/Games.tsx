@@ -1,7 +1,11 @@
 "use client";
 import React, { useState, useEffect, useRef } from "react";
 import dynamic from "next/dynamic";
-import { getGameById, getImplementedGames } from "@/games-orchard";
+import {
+  getGameById,
+  getImplementedGames,
+  getGameMetadata,
+} from "@/games-orchard";
 import { GameMetadata } from "@/games-orchard/types";
 import { useGameSession } from "../providers/GameSessionProvider";
 import PTTAnimation from "./PTTAnimation";
@@ -382,6 +386,44 @@ export default function Games() {
       return;
     }
 
+    // FTUE: On first play, force a specific sequence of 3 games
+    const isFirstTime = (() => {
+      try {
+        if (typeof window === "undefined") return false;
+        const stored = window.localStorage.getItem("ftueCompleted");
+        return !stored;
+      } catch (_) {
+        return false;
+      }
+    })();
+
+    if (isFirstTime) {
+      const ftueIds = [
+        "advise-the-child",
+        "attract-the-turkey",
+        "convince-the-aliens",
+      ];
+      const ftueGames = ftueIds
+        .map((id) => getGameMetadata(id))
+        .filter(Boolean) as GameMetadata[];
+
+      if (ftueGames.length > 0) {
+        setRoundGames(ftueGames);
+        setCurrentRoundIndex(0);
+        setTotalScore(0);
+        setRoundResults([]);
+        setSummaryText("");
+        setSummaryError("");
+
+        const first = ftueGames[0];
+        setSelectedGame(first);
+        const component = getGameById(first.id);
+        setGameComponent(() => component);
+        setCurrentGameIndex(0);
+        return;
+      }
+    }
+
     const pickRoundGames = (pool: GameMetadata[], count: number) => {
       const unique = [...pool];
       // Already shuffled in implementedGames; make a fresh shallow copy and re-shuffle
@@ -475,6 +517,12 @@ export default function Games() {
       } else {
         // All 3 rounds completed → show end screen, generate summary
         setGameState("end");
+        // Mark FTUE complete after finishing a 3-round session
+        try {
+          if (typeof window !== "undefined") {
+            window.localStorage.setItem("ftueCompleted", "true");
+          }
+        } catch (_) {}
         setIsGeneratingSummary(true);
         setSummaryError("");
         // Kick off summary generation
@@ -598,6 +646,12 @@ export default function Games() {
     const handleStart = () => {
       setHasUserInteracted(true);
       setIsStarted(true);
+      // Mark FTUE as completed on first explicit start
+      try {
+        if (typeof window !== "undefined") {
+          window.localStorage.setItem("ftueCompleted", "true");
+        }
+      } catch (_) {}
       // Ensure SDK output audio element resumes on user gesture (required in IG/Safari)
       try {
         resumeOutputAudio();
