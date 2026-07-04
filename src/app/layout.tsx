@@ -4,7 +4,7 @@ import "./lib/envSetup";
 import { Analytics } from "@vercel/analytics/next";
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://gameorchard.beer"),
+  metadataBase: new URL("https://www.gameorchard.beer"),
   title: "Game Orchard | Talk Your Way Out of Anything",
   description:
     "Woo aliens, sell a lemon, befriend a paranoid turkey. Quick, witty, and slightly unhinged—powered by realtime AI.",
@@ -15,7 +15,7 @@ export const metadata: Metadata = {
     title: "Game Orchard | Talk Your Way Out of Anything",
     description:
       "Woo aliens, sell a lemon, befriend a paranoid turkey. Quick, witty, and slightly unhinged—powered by realtime AI.",
-    url: "https://gameorchard.beer",
+    url: "https://www.gameorchard.beer",
     siteName: "Game Orchard",
     images: [
       {

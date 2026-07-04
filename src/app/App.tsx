@@ -197,7 +197,7 @@ function App() {
     const fetchUrl = process.env.NEXT_PUBLIC_API_URL
       ? `http://${process.env.NEXT_PUBLIC_API_URL}/api/session/`
       : "/api/session/";
-    console.log("fetchUrl", fetchUrl);
+
     const tokenResponse = await fetch(fetchUrl);
     const data = await tokenResponse.json();
     logServerEvent(data, "fetch_session_token_response");

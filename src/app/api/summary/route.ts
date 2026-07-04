@@ -1,23 +1,30 @@
 import { NextRequest, NextResponse } from "next/server";
 import OpenAI from "openai";
+import { corsHeadersFor, rateLimit } from "../../lib/apiGuard";
 
 export const dynamic = "force-dynamic";
 
-// CORS headers
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
-  "Access-Control-Allow-Headers": "Content-Type, Authorization",
-};
-
-export async function OPTIONS() {
+export async function OPTIONS(req: NextRequest) {
   return new Response(null, {
     status: 200,
-    headers: corsHeaders,
+    headers: corsHeadersFor(req),
   });
 }
 
 export async function POST(req: NextRequest) {
+  const corsHeaders = corsHeadersFor(req);
+
+  const limit = rateLimit(req, "summary", 20, 15 * 60 * 1000);
+  if (!limit.ok) {
+    return NextResponse.json(
+      { error: "rate limited" },
+      {
+        status: 429,
+        headers: { ...corsHeaders, "Retry-After": String(limit.retryAfterSec) },
+      }
+    );
+  }
+
   try {
     const body = await req.json();
     const { results, totalScore, rounds } = body || {};
