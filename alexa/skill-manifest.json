@@ -1,0 +1,50 @@
+{
+  "manifest": {
+    "manifestVersion": "1.0",
+    "publishingInformation": {
+      "locales": {
+        "en-US": {
+          "name": "Game Orchard",
+          "summary": "Absurd 30-second improv games judged by a cynical AI game-show host.",
+          "description": "Welcome to the Game Orchard, where a world-weary game show host throws you into ridiculous situations and scores your improvised answers with brutal honesty.\n\nTalk a child out of a playground crisis. Point an impossible engineering ticket. Pitch a doomed startup to skeptical VCs. Explain death to a goldfish funeral. Stall the police. Attract the turkey.\n\nEvery scenario is generated fresh, every answer is judged out loud, and every victory earns the official scream of champions. Two free games every visit; the Orchard Pass subscription unlocks unlimited rounds.",
+          "examplePhrases": [
+            "Alexa, open game orchard",
+            "Alexa, play game orchard"
+          ],
+          "keywords": [
+            "party game",
+            "improv",
+            "funny",
+            "comedy",
+            "game show",
+            "ai games"
+          ]
+        }
+      },
+      "isAvailableWorldwide": false,
+      "distributionCountries": ["US"],
+      "testingInstructions": "Open the skill, listen to the scenario, reply with any answer. Two free rounds per session; Orchard Pass ISP subscription unlocks unlimited. LLM-generated content via OpenAI on our server.",
+      "category": "GAMES"
+    },
+    "apis": {
+      "custom": {
+        "endpoint": {
+          "uri": "https://www.gameorchard.beer/api/alexa/",
+          "sslCertificateType": "Trusted"
+        }
+      }
+    },
+    "privacyAndCompliance": {
+      "allowsPurchases": true,
+      "usesPersonalInfo": false,
+      "isChildDirected": false,
+      "isExportCompliant": true,
+      "containsAds": false,
+      "locales": {
+        "en-US": {
+          "privacyPolicyUrl": "https://houseboatstudios.com/privacy"
+        }
+      }
+    }
+  }
+}

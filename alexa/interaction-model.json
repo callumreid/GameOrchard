@@ -1,0 +1,77 @@
+{
+  "interactionModel": {
+    "languageModel": {
+      "invocationName": "game orchard",
+      "intents": [
+        { "name": "AMAZON.StopIntent", "samples": [] },
+        { "name": "AMAZON.CancelIntent", "samples": [] },
+        { "name": "AMAZON.HelpIntent", "samples": [] },
+        { "name": "AMAZON.YesIntent", "samples": [] },
+        { "name": "AMAZON.NoIntent", "samples": [] },
+        { "name": "AMAZON.FallbackIntent", "samples": [] },
+        {
+          "name": "NextGameIntent",
+          "samples": [
+            "next game",
+            "another one",
+            "another round",
+            "play again",
+            "new game",
+            "hit me",
+            "keep going",
+            "next"
+          ]
+        },
+        {
+          "name": "PlayerAnswerIntent",
+          "slots": [
+            {
+              "name": "answer",
+              "type": "CatchAllAnswerType"
+            }
+          ],
+          "samples": [
+            "{answer}",
+            "my answer is {answer}",
+            "i would say {answer}",
+            "i say {answer}",
+            "tell them {answer}",
+            "how about {answer}"
+          ]
+        }
+      ],
+      "types": [
+        {
+          "name": "CatchAllAnswerType",
+          "values": [
+            { "name": { "value": "blame it on the cat and run" } },
+            { "name": { "value": "just lie to your mom about it" } },
+            { "name": { "value": "three story points because the acceptance criteria are vibes" } },
+            { "name": { "value": "my religion worships the great heron of the bay" } },
+            { "name": { "value": "we are disrupting artisanal kelp with blockchain" } },
+            { "name": { "value": "my dog ate the laptop and then the cloud" } },
+            { "name": { "value": "officer i was just walking my invisible dog" } },
+            { "name": { "value": "gobble gobble i am also a turkey trust me" } },
+            { "name": { "value": "death is like a nap that skips the alarm" } },
+            { "name": { "value": "i pivoted the roadmap to synergy" } },
+            { "name": { "value": "tell the bully his shoes are last season" } },
+            { "name": { "value": "this car only crashed twice and both times uphill" } },
+            { "name": { "value": "i exceeded expectations by lowering them first" } },
+            { "name": { "value": "the aliens should spare us for our snacks" } },
+            { "name": { "value": "fake being sick and start a podcast" } },
+            { "name": { "value": "quit the meeting and become a lighthouse keeper" } },
+            { "name": { "value": "offer the stranger soup and eternal salvation" } },
+            { "name": { "value": "five million dollars pre seed at a billion valuation" } },
+            { "name": { "value": "run away to sea and never point tasks again" } },
+            { "name": { "value": "the milk was expired anyway boss" } },
+            { "name": { "value": "yes" } },
+            { "name": { "value": "no" } },
+            { "name": { "value": "i do not know maybe something with lasers" } },
+            { "name": { "value": "whatever keeps the child quiet longest" } },
+            { "name": { "value": "a heartfelt apology and a small bribe" } }
+          ]
+        }
+      ]
+    }
+  }
+}

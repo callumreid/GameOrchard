@@ -1,0 +1,6 @@
+{
+  "version": "1.0",
+  "session": { "new": true, "sessionId": "test-session", "application": { "applicationId": "test-app" } },
+  "context": { "System": { "application": { "applicationId": "test-app" } } },
+  "request": { "type": "LaunchRequest", "requestId": "r1", "timestamp": "2026-07-05T20:00:00Z", "locale": "en-US" }
+}
